@@ -48,11 +48,11 @@ class Sidebar extends StatelessWidget {
           SizedBox(height: 50),
 
           // 메뉴 항목들
-          MenuItem(text: '수도권'),
-          MenuItem(text: '부산'),
-          MenuItem(text: '대구'),
-          MenuItem(text: '광주'),
-          MenuItem(text: '대전'),
+          MenuItem(text: '수도권', onPressed: () {}),
+          MenuItem(text: '부산', onPressed: () {}),
+          MenuItem(text: '대구', onPressed: () {}),
+          MenuItem(text: '광주', onPressed: () {}),
+          MenuItem(text: '대전', onPressed: () {}),
 
           Spacer(),
 
@@ -76,25 +76,32 @@ class Sidebar extends StatelessWidget {
 
 class MenuItem extends StatelessWidget {
   final String text;
+  final VoidCallback onPressed;
 
-  const MenuItem({required this.text});
+  const MenuItem({required this.text, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 18, // 글씨 크기 조정
-              color: Color(0xFF22536F),
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: TextButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              text,
+              style: TextStyle(
+                fontSize: 18,
+                color: Color(0xFF22536F),
+              ),
             ),
-          ),
-          Divider(color: Color(0xFFD5D5D5), thickness: 1),
-        ],
+            Divider(color: Color(0xFFD5D5D5), thickness: 1),
+          ],
+        ),
       ),
     );
   }
