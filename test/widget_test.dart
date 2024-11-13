@@ -8,7 +8,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:flutter_application_1/RegionSettings.dart';
+import 'package:flutter_application_1/StationMap.dart';
+import 'package:flutter_application_1/WriteStation.dart';
+import 'package:flutter_application_1/minimumTransfer.dart';
 import 'package:flutter_application_1/minimumDistance.dart';
+import 'package:flutter_application_1/TermsOfService.dart';
+import 'package:flutter_application_1/PrivacyPolicy.dart';
+
+
 /* void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
