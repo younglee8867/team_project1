@@ -105,43 +105,16 @@ class _FlutterAppState extends State<FlutterApp> {
           Text('소요 시간',
               style: TextStyle(color: Color(0xFF979797), fontSize: 16)),
           SizedBox(height: 10),
-          Text('4 분', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 45)),
-          SizedBox(height: 20),
-          Container(width: 7, height: 145, color: Color(0xFF856869)),
-          Positioned(
-            left: 60,
-            top: 308,
-            child: _circleIndicator(Color(0xFF846868)),
-          ),
-          Positioned(
-            left: 60,
-            top: 444,
-            child: _circleIndicator(Color(0xFF856869)),
-          ),
-          Positioned(
-            left: 76,
-            top: 318,
-            child:
-                Text('1', style: TextStyle(color: Colors.white, fontSize: 20)),
-          ),
-          Positioned(
-            left: 76,
-            top: 454,
-            child:
-                Text('1', style: TextStyle(color: Colors.white, fontSize: 20)),
-          ),
-          Positioned(
-            left: 126,
-            top: 318,
-            child: Text('101',
-                style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 32)),
-          ),
-          Positioned(
-            left: 126,
-            top: 453,
-            child: Text('103',
-                style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 32)),
-          ),
+          // 아래 줄들은 '4분' 텍스트, 세로선, 인디케이터를 숨기기 위해 제거되었습니다.
+          // Text('4 분', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 45)),
+          // SizedBox(height: 20),
+          // Container(width: 7, height: 145, color: Color(0xFF856869)),
+          // Positioned(left: 60, top: 308, child: _circleIndicator(Color(0xFF846868))),
+          // Positioned(left: 60, top: 444, child: _circleIndicator(Color(0xFF856869))),
+          // Positioned(left: 76, top: 318, child: Text('1', style: TextStyle(color: Colors.white, fontSize: 20))),
+          // Positioned(left: 76, top: 454, child: Text('1', style: TextStyle(color: Colors.white, fontSize: 20))),
+          // Positioned(left: 126, top: 318, child: Text('101', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 32))),
+          // Positioned(left: 126, top: 453, child: Text('103', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 32))),
         ],
       ),
     );
