@@ -15,6 +15,9 @@ import 'package:flutter_application_1/minimumTransfer.dart';
 import 'package:flutter_application_1/minimumDistance.dart';
 import 'package:flutter_application_1/TermsOfService.dart';
 import 'package:flutter_application_1/PrivacyPolicy.dart';
+import 'package:flutter_application_1/DisplayMode.dart';
+import 'package:flutter_application_1/favoriteSta.dart';
+import 'package:flutter_application_1/LocalServiceTerms.dart';
 
 
 /* void main() {
