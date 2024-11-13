@@ -78,9 +78,15 @@ class _FiveTwoState extends State<FiveTwo> {
                 top: 40,
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.arrow_back,
-                      color: Color(0xFF22536F), // 아이콘 색상
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Color(0xFF22536F), // 아이콘 색상
+                      ),
+                      onPressed: () {
+                        // 여기에 클릭 시 수행할 동작을 추가하세요.
+                        // 예시: Navigator.pop(context); // 뒤로가기
+                      },
                     ),
                     SizedBox(width: 10), // 아이콘과 텍스트 사이에 간격 추가
                     Text(

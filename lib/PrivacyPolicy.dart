@@ -41,9 +41,15 @@ class Five_four extends StatelessWidget {
               height: 40,
               child: Row(
                 children: [
-                  Icon(
-                    Icons.arrow_back,
-                    color: Color(0xFF22536F), // 아이콘 색상
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Color(0xFF22536F), // 아이콘 색상
+                    ),
+                    onPressed: () {
+                      // 여기에 클릭 시 수행할 동작을 추가하세요.
+                      // 예시: Navigator.pop(context); // 뒤로가기
+                    },
                   ),
                   SizedBox(width: 10), // 아이콘 대신 공간 확보
                   SizedBox(width: 5), // 텍스트와의 간격
@@ -126,15 +132,15 @@ class Five_four extends StatelessWidget {
           ),
           Positioned(
             left: 59,
-            top: 380,
+            top: 300,
             child: Container(
               width: 295,
-              height: 298,
+              height: 400,
               child: Stack(
                 children: [
                   Positioned(
                     left: 0,
-                    top: 0,
+                    top: 100,
                     child: Text.rich(
                       TextSpan(
                         children: [
@@ -152,7 +158,7 @@ class Five_four extends StatelessWidget {
                   ),
                   Positioned(
                     left: 6,
-                    top: 140,
+                    top: 240,
                     child: Text.rich(
                       TextSpan(
                         children: [
@@ -171,7 +177,7 @@ class Five_four extends StatelessWidget {
                   ),
                   Positioned(
                     left: 14,
-                    top: 280,
+                    top: 380,
                     child: Text.rich(
                       TextSpan(
                         children: [
@@ -190,7 +196,7 @@ class Five_four extends StatelessWidget {
                   ),
                   Positioned(
                     left: 186,
-                    top: 280,
+                    top: 380,
                     child: Text.rich(
                       TextSpan(
                         children: [
@@ -209,7 +215,7 @@ class Five_four extends StatelessWidget {
                   ),
                   Positioned(
                     left: 172,
-                    top: 140,
+                    top: 240,
                     child: Text.rich(
                       TextSpan(
                         children: [
@@ -228,7 +234,7 @@ class Five_four extends StatelessWidget {
                   ),
                   Positioned(
                     left: 193,
-                    top: 0,
+                    top: 100,
                     child: Text(
                       '민감정보 수집',
                       textAlign: TextAlign.center,
@@ -239,6 +245,17 @@ class Five_four extends StatelessWidget {
                       ),
                     ),
                   ),
+                  Positioned(
+                    left: -10,
+                    top: 20,
+                    child: Container(
+                        width: 300, // 이미지 너비 설정
+                        height: 350, // 이미지 높이 설정
+                        child: Image.asset(
+                          'assets/images/PrivacyTerm.png',
+                          fit: BoxFit.contain,
+                        )),
+                  )
                 ],
               ),
             ),
