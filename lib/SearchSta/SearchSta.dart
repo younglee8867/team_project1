@@ -1,9 +1,13 @@
 // 역 검색 화면
 // <구현> : 변하는 값들
+// 11.17 화면은 넘어가는데 넘어간 화면에 노란 밑줄이 뜸
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_application_1/SearchSta/SearchStaInfo.dart';
 
 void main() {
+  debugPaintSizeEnabled = false;
   runApp(FlutterApp());
 }
 
@@ -26,9 +30,22 @@ class _searchSta extends StatefulWidget{
 }
 
 class searchSta extends State<_searchSta> {
+
+  // 즐찾 이미지
+  String imagePath = '../assets/images/favStar.png';
+
+  // Function to toggle the image
+  void toggleImage() {
+    setState(() {
+      imagePath = imagePath == '../assets/images/favStar.png'
+          ? '../assets/images/favStarFill.png' // New image path
+          : '../assets/images/favStar.png';
+    });
+  }
+
    @override
     Widget build(BuildContext context) {
-       double screenWidth = MediaQuery.of(context).size.width;
+      double screenWidth = MediaQuery.of(context).size.width;
       double screenHeight = MediaQuery.of(context).size.height;
       return Column(
         children: [
@@ -83,21 +100,103 @@ class searchSta extends State<_searchSta> {
                       ),
 
                       // 검색 아이콘
-                      IconButton(
+                     IconButton(
                         padding: EdgeInsets.only(right: 20.0),
                         icon: Icon(Icons.search, color: Color(0xFF386B88)),
                         onPressed: () {
-                          // 구현 : 검색 아이콘을 눌렀을 때의 동작
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => searchStaInfo()), // 이동할 페이지를 여기에 지정
+                          );
                         },
                       ),
+
+
                     ],
                   ),
                 ),
               ),
             ),
-          ],
 
+            Stack(
+            children: [
+              Transform.translate(
+                offset: Offset(0, -10), // 전체 그룹을 이동시킬 위치
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: 200,
+                      left: 40,
+                      child: Container(
+                        width: 25,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('../assets/images/subway_small.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 240,
+                      left: 35,
+                      child: Container(
+                        width: 360,
+                        height: 3,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('../assets/images/line.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 200,
+                      right: 40,
+                      child: GestureDetector(
+                        onTap: toggleImage,
+                        child: SizedBox(
+                          width: imagePath == '../assets/images/favStar.png' ? 24.0 : 27.0,
+                          height: imagePath == '../assets/images/favStar.png' ? 24.0 : 27.0,
+                          child: Image.asset(
+                            imagePath,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 198,
+                      left: 80,
+                      child: Text(
+                        '101 역',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xFF676363),
+                        ),
+                      ),
+                    ), 
+                    Positioned(
+                      top: 250,
+                      left: 170,
+                      child: Text(
+                        '검색기록 삭제',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFFACACAC),
+                        ),
+                      ),
+                    ),    
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],     
         )
+        
       ), 
       ],
     );
