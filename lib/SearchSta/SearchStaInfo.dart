@@ -3,8 +3,10 @@
 // 시간되면 역정보, 시설정보, 편의시설 앞에 아이콘..
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 void main() {
+  debugPaintSizeEnabled = false;
   runApp(FlutterApp());
 }
 
@@ -14,19 +16,31 @@ class FlutterApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         body: Center(
-          child: _searchStaInfo(),
+          child: searchStaInfo(),
         ),
       ),
     );
   }
 }
 
-class _searchStaInfo extends StatefulWidget{
+class searchStaInfo extends StatefulWidget{
   @override
-  searchStaInfo createState() => searchStaInfo();
+  _searchStaInfo createState() => _searchStaInfo();
 }
 
-class searchStaInfo extends State<_searchStaInfo> {
+class _searchStaInfo extends State<searchStaInfo> {
+
+    // 즐찾 이미지
+  String imagePath = '../assets/images/favStar.png';
+
+  // Function to toggle the image
+  void toggleImage() {
+    setState(() {
+      imagePath = imagePath == '../assets/images/favStar.png'
+          ? '../assets/images/favStarFill.png' // New image path
+          : '../assets/images/favStar.png';
+    });
+  }
 
     // 스타일 속성 정의(제목)
   final TextStyle commonTextStyle = TextStyle(
@@ -63,25 +77,6 @@ class searchStaInfo extends State<_searchStaInfo> {
           child: Stack(
             children: [
               Positioned(
-                left: 5,
-                top: 0,
-                child: Container(
-                  width: 402,
-                  height: 50,
-                  padding: const EdgeInsets.only(top: 21),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 상단 상태바(필요없을듯?)
-                     
-                    ],
-                  ),
-                ),
-              ),
-              
-                  Positioned(
                 top: 30,
                 child: Container(
                   width: 419,
@@ -273,29 +268,6 @@ class searchStaInfo extends State<_searchStaInfo> {
                   ),
                 ),
               ),
-             
-              /*Positioned(
-                left: -234,
-                top: 56,
-                child: Container(
-                  width: 234,
-                  height: 72,
-                  decoration: BoxDecoration(color: Color.fromARGB(255, 157, 98, 98)),
-                ),
-              ),
-              Positioned(
-                left: 10,
-                top: 315,
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(),
-                  //child: Stack(children: [
-                  //,
-                  //]),
-                ),
-              ),*/
               Positioned(
                 left: 400,
                 top: 339,
@@ -312,6 +284,21 @@ class searchStaInfo extends State<_searchStaInfo> {
                   ),
                 ),
               ),
+               Positioned(
+                  top: 250,
+                  right: 32,
+                  child: GestureDetector(
+                      onTap: toggleImage,
+                      child: SizedBox(
+                          width: imagePath == '../assets/images/favStar.png' ? 24.0 : 27.0,
+                          height: imagePath == '../assets/images/favStar.png' ? 24.0 : 27.0,
+                          child: Image.asset(
+                            imagePath,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
               Positioned( // 구현 : 화살표 누르면 이전역, 다음역 정보 뜨게?..가능하면..?
                 left: 392,
                 top: 306,
@@ -601,7 +588,7 @@ class searchStaInfo extends State<_searchStaInfo> {
                 ),
               ),
               Positioned(
-                left: 57,
+                left: 55,
                 top: 805,
                 child: Container(
                   width: 18,
