@@ -5,8 +5,6 @@ void main() {
 }
 
 class FlutterApp extends StatefulWidget {
-  const FlutterApp({super.key});
-
   @override
   _FlutterAppState createState() => _FlutterAppState();
 }
@@ -24,62 +22,22 @@ class _FlutterAppState extends State<FlutterApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: _dark,
-      builder: (context, isDark, child) {
-        return MaterialApp(
-          theme: isDark ? ThemeData.dark() : ThemeData.light(),
-          home: ValueListenableBuilder<double>(
-            valueListenable: _widthFactor,
-            builder: (context, factor, child) {
-              return Scaffold(
-                backgroundColor: isDark
-                    ? Colors.black
-                    : const Color.fromARGB(255, 255, 225, 225),
-                appBar: AppBar(
-                  title: const Text('Flutter App'),
-                  actions: [
-                    Row(
-                      children: [
-                        const Icon(Icons.dark_mode),
-                        Switch(
-                          value: isDark,
-                          onChanged: (value) => _dark.value = value,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 10),
-                    DropdownButton<double>(
-                      value: factor,
-                      onChanged: (value) {
-                        if (value != null) {
-                          _widthFactor.value = value;
-                        }
-                      },
-                      items: const [
-                        DropdownMenuItem(value: 0.5, child: Text('Size: 50%')),
-                        DropdownMenuItem(value: 0.75, child: Text('Size: 75%')),
-                        DropdownMenuItem(value: 1.0, child: Text('Size: 100%')),
-                      ],
-                      underline: Container(),
-                      icon: const Icon(Icons.arrow_drop_down),
-                    ),
-                    const SizedBox(width: 10),
-                  ],
-                ),
-                body: Center(
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * factor,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(child: MinDistanceWidget(isDark: isDark)),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: Column(
+              children: [
+                _buildTopBar(),
+                _buildButtonRow(),
+                _buildTravelDetails(),
+                _buildStationIndicators(),
+                _buildExtraInfo(),
+                _buildBottomText(),
+              ],
+            ),
           ),
         );
       },
@@ -87,6 +45,7 @@ class _FlutterAppState extends State<FlutterApp> {
   }
 }
 
+<<<<<<< HEAD
 class MinDistanceWidget extends StatelessWidget {
   final bool isDark;
 
@@ -114,6 +73,12 @@ class MinDistanceWidget extends StatelessWidget {
         ],
       ),
       child: Stack(
+=======
+  Widget _buildTopBar() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0, left: 10.0),
+      child: Row(
+>>>>>>> onyu
         children: [
           _buildTopStatus(isDark),
           _buildBottomText(),
@@ -126,6 +91,7 @@ class MinDistanceWidget extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD
   Widget _buildTopStatus(bool isDark) {
     return Positioned(
       left: 5,
@@ -201,6 +167,16 @@ class MinDistanceWidget extends StatelessWidget {
               const Color(0xFF397394)),
           _buildButton('최소 환승 순', const Color(0xFF397394),
               isDark ? Colors.white : Colors.black),
+=======
+  Widget _buildButtonRow() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildButton('최소 거리 순', isMinDistanceSelected),
+          _buildButton('최소 환승 순', !isMinDistanceSelected),
+>>>>>>> onyu
         ],
       ),
     );
@@ -241,6 +217,7 @@ class MinDistanceWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+<<<<<<< HEAD
           Text('소요 시간', style: _textStyle(16, const Color(0xFF979797))),
           const SizedBox(height: 10),
           Text('4 분', style: _textStyle(45, const Color(0xFF4B4B4B))),
@@ -276,6 +253,21 @@ class MinDistanceWidget extends StatelessWidget {
             top: 453,
             child: Text('103', style: _textStyle(32, const Color(0xFF4B4B4B))),
           ),
+=======
+          Text('소요 시간',
+              style: TextStyle(color: Color(0xFF979797), fontSize: 16)),
+          SizedBox(height: 10),
+          // 아래 줄들은 '4분' 텍스트, 세로선, 인디케이터를 숨기기 위해 제거되었습니다.
+          // Text('4 분', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 45)),
+          // SizedBox(height: 20),
+          // Container(width: 7, height: 145, color: Color(0xFF856869)),
+          // Positioned(left: 60, top: 308, child: _circleIndicator(Color(0xFF846868))),
+          // Positioned(left: 60, top: 444, child: _circleIndicator(Color(0xFF856869))),
+          // Positioned(left: 76, top: 318, child: Text('1', style: TextStyle(color: Colors.white, fontSize: 20))),
+          // Positioned(left: 76, top: 454, child: Text('1', style: TextStyle(color: Colors.white, fontSize: 20))),
+          // Positioned(left: 126, top: 318, child: Text('101', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 32))),
+          // Positioned(left: 126, top: 453, child: Text('103', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 32))),
+>>>>>>> onyu
         ],
       ),
     );
@@ -287,7 +279,7 @@ class MinDistanceWidget extends StatelessWidget {
       height: 44,
       decoration: ShapeDecoration(
         color: color,
-        shape: const OvalBorder(),
+        shape: OvalBorder(),
       ),
     );
   }
@@ -304,6 +296,7 @@ class MinDistanceWidget extends StatelessWidget {
     return Text.rich(
       TextSpan(
         children: [
+<<<<<<< HEAD
           TextSpan(
             text: text,
             style: _textStyle(12, const Color(0xFF979797)),
@@ -311,6 +304,15 @@ class MinDistanceWidget extends StatelessWidget {
           TextSpan(
             text: boldText,
             style: _textStyle(12, const Color(0xFF4F4F4F)),
+=======
+          Text(
+            '190 방면   |    빠른 하차 ',
+            style: TextStyle(color: Color(0xFF979797), fontSize: 12),
+          ),
+          Text(
+            '5-2, 10-4',
+            style: TextStyle(color: Color(0xFF4F4F4F), fontSize: 12),
+>>>>>>> onyu
           ),
         ],
       ),
@@ -323,7 +325,11 @@ class MinDistanceWidget extends StatelessWidget {
       top: 240,
       child: Text(
         '|   환승 없음  |  비용 200원',
+<<<<<<< HEAD
         style: _textStyle(15, const Color(0xFF979797)),
+=======
+        style: TextStyle(color: Color(0xFF979797), fontSize: 15),
+>>>>>>> onyu
       ),
     );
   }
