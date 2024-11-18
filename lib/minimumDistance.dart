@@ -12,11 +12,18 @@ class FlutterApp extends StatefulWidget {
 }
 
 class _FlutterAppState extends State<FlutterApp> {
-  bool isMinDistanceSelected = true;
+  final ValueNotifier<bool> _dark = ValueNotifier<bool>(true);
+  final ValueNotifier<double> _widthFactor = ValueNotifier<double>(1.0);
+
+  @override
+  void dispose() {
+    _dark.dispose();
+    _widthFactor.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     return ValueListenableBuilder<bool>(
       valueListenable: _dark,
       builder: (context, isDark, child) {
@@ -73,31 +80,13 @@ class _FlutterAppState extends State<FlutterApp> {
                 ),
               );
             },
-=======
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.9,
-            child: Column(
-              children: [
-                _buildTopBar(),
-                _buildButtonRow(),
-                _buildTravelDetails(),
-                _buildStationIndicators(),
-                _buildExtraInfo(),
-                _buildBottomText(),
-              ],
-            ),
->>>>>>> a4684a8f3fd9a29f61913b92486060a6e1e3ae56
           ),
-        ),
-      ),
+        );
+      },
     );
   }
+}
 
-<<<<<<< HEAD
 class MinDistanceWidget extends StatelessWidget {
   final bool isDark;
 
@@ -125,27 +114,18 @@ class MinDistanceWidget extends StatelessWidget {
         ],
       ),
       child: Stack(
-=======
-  Widget _buildTopBar() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0, left: 10.0),
-      child: Row(
->>>>>>> a4684a8f3fd9a29f61913b92486060a6e1e3ae56
         children: [
-          IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {},
-          ),
-          Text(
-            '길찾기',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
+          _buildTopStatus(isDark),
+          _buildBottomText(),
+          _buildButtons(isDark),
+          _buildTravelDetails(isDark),
+          _buildStationIndicators(isDark),
+          _buildExtraInfo(isDark),
         ],
       ),
     );
   }
 
-<<<<<<< HEAD
   Widget _buildTopStatus(bool isDark) {
     return Positioned(
       left: 5,
@@ -221,57 +201,46 @@ class MinDistanceWidget extends StatelessWidget {
               const Color(0xFF397394)),
           _buildButton('최소 환승 순', const Color(0xFF397394),
               isDark ? Colors.white : Colors.black),
-=======
-  Widget _buildButtonRow() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildButton('최소 거리 순', isMinDistanceSelected),
-          _buildButton('최소 환승 순', !isMinDistanceSelected),
->>>>>>> a4684a8f3fd9a29f61913b92486060a6e1e3ae56
         ],
       ),
     );
   }
 
-  Widget _buildButton(String text, bool isSelected) {
+  Widget _buildButton(String text, Color textColor, Color borderColor) {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          isMinDistanceSelected = (text == '최소 거리 순');
-        });
+        // 버튼 클릭 시 동작을 정의하세요
       },
       child: Container(
         width: 120,
         height: 40,
         decoration: ShapeDecoration(
-          color: isSelected ? Color(0xFF397394) : Colors.white,
+          color: textColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
-            side: BorderSide(width: 1, color: Color(0xFF397394)),
+            side: BorderSide(width: 1, color: borderColor),
           ),
         ),
         alignment: Alignment.center,
         child: Text(
           text,
           style: TextStyle(
-            color: isSelected ? Colors.white : Color(0xFF397394),
+            color: borderColor,
             fontSize: 14,
+            letterSpacing: 0.5,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildTravelDetails() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 60.0, top: 20),
+  Widget _buildTravelDetails(bool isDark) {
+    return Positioned(
+      left: 60,
+      top: 195,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-<<<<<<< HEAD
           Text('소요 시간', style: _textStyle(16, const Color(0xFF979797))),
           const SizedBox(height: 10),
           Text('4 분', style: _textStyle(45, const Color(0xFF4B4B4B))),
@@ -307,21 +276,6 @@ class MinDistanceWidget extends StatelessWidget {
             top: 453,
             child: Text('103', style: _textStyle(32, const Color(0xFF4B4B4B))),
           ),
-=======
-          Text('소요 시간',
-              style: TextStyle(color: Color(0xFF979797), fontSize: 16)),
-          SizedBox(height: 10),
-          // 아래 줄들은 '4분' 텍스트, 세로선, 인디케이터를 숨기기 위해 제거되었습니다.
-          // Text('4 분', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 45)),
-          // SizedBox(height: 20),
-          // Container(width: 7, height: 145, color: Color(0xFF856869)),
-          // Positioned(left: 60, top: 308, child: _circleIndicator(Color(0xFF846868))),
-          // Positioned(left: 60, top: 444, child: _circleIndicator(Color(0xFF856869))),
-          // Positioned(left: 76, top: 318, child: Text('1', style: TextStyle(color: Colors.white, fontSize: 20))),
-          // Positioned(left: 76, top: 454, child: Text('1', style: TextStyle(color: Colors.white, fontSize: 20))),
-          // Positioned(left: 126, top: 318, child: Text('101', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 32))),
-          // Positioned(left: 126, top: 453, child: Text('103', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 32))),
->>>>>>> a4684a8f3fd9a29f61913b92486060a6e1e3ae56
         ],
       ),
     );
@@ -338,13 +292,18 @@ class MinDistanceWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStationIndicators() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 131.0, top: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildStationIndicators(bool isDark) {
+    return Positioned(
+      left: 131,
+      top: 345,
+      child: _stationInfo('190 방면   |    빠른 하차 ', '5-2, 10-4', isDark),
+    );
+  }
+
+  Widget _stationInfo(String text, String boldText, bool isDark) {
+    return Text.rich(
+      TextSpan(
         children: [
-<<<<<<< HEAD
           TextSpan(
             text: text,
             style: _textStyle(12, const Color(0xFF979797)),
@@ -352,49 +311,29 @@ class MinDistanceWidget extends StatelessWidget {
           TextSpan(
             text: boldText,
             style: _textStyle(12, const Color(0xFF4F4F4F)),
-=======
-          Text(
-            '190 방면   |    빠른 하차 ',
-            style: TextStyle(color: Color(0xFF979797), fontSize: 12),
-          ),
-          Text(
-            '5-2, 10-4',
-            style: TextStyle(color: Color(0xFF4F4F4F), fontSize: 12),
->>>>>>> a4684a8f3fd9a29f61913b92486060a6e1e3ae56
           ),
         ],
       ),
     );
   }
 
-  Widget _buildExtraInfo() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 199.0, top: 10),
+  Widget _buildExtraInfo(bool isDark) {
+    return Positioned(
+      left: 199,
+      top: 240,
       child: Text(
         '|   환승 없음  |  비용 200원',
-<<<<<<< HEAD
         style: _textStyle(15, const Color(0xFF979797)),
-=======
-        style: TextStyle(color: Color(0xFF979797), fontSize: 15),
->>>>>>> a4684a8f3fd9a29f61913b92486060a6e1e3ae56
       ),
     );
   }
 
-  Widget _buildBottomText() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Center(
-        child: Text(
-          '스마트 환승철',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Color(0xFF387394),
-            fontSize: 14,
-            letterSpacing: 5,
-          ),
-        ),
-      ),
+  TextStyle _textStyle(double size, Color color) {
+    return TextStyle(
+      color: color,
+      fontSize: size,
+      fontFamily: 'Roboto', // Changed from 'Kode Mono' to 'Roboto'
+      letterSpacing: 0.5,
     );
   }
 }
