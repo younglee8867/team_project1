@@ -23,14 +23,13 @@ class FlutterApp extends StatelessWidget {
   }
 }
 
-class searchStaInfo extends StatefulWidget{
+class searchStaInfo extends StatefulWidget {
   @override
   _searchStaInfo createState() => _searchStaInfo();
 }
 
 class _searchStaInfo extends State<searchStaInfo> {
-
-    // 즐찾 이미지
+  // 즐찾 이미지
   String imagePath = '../assets/images/favStar.png';
 
   // Function to toggle the image
@@ -42,7 +41,7 @@ class _searchStaInfo extends State<searchStaInfo> {
     });
   }
 
-    // 스타일 속성 정의(제목)
+  // 스타일 속성 정의(제목)
   final TextStyle commonTextStyle = TextStyle(
     color: Color(0xFF676363),
     fontSize: 15,
@@ -54,11 +53,11 @@ class _searchStaInfo extends State<searchStaInfo> {
 
   // 스타일 속성 정의(상세 내용)
   final TextStyle detailTextStyle = TextStyle(
-        color: Color(0xFF676363),
-        fontSize: 15,
-        fontFamily: 'Roboto',
-        height: 0.10,
-        letterSpacing: 0.50,
+    color: Color(0xFF676363),
+    fontSize: 15,
+    fontFamily: 'Roboto',
+    height: 0.10,
+    letterSpacing: 0.50,
   );
 
   @override
@@ -83,7 +82,8 @@ class _searchStaInfo extends State<searchStaInfo> {
                   height: 188,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('../assets/images/StationMap.png'), // 이미지 경로 확인
+                      image: AssetImage(
+                          '../assets/images/StationMap.png'), // 이미지 경로 확인
                       fit: BoxFit.cover,
                       colorFilter: ColorFilter.mode(
                         Colors.black.withOpacity(0.4),
@@ -91,31 +91,30 @@ class _searchStaInfo extends State<searchStaInfo> {
                       ),
                     ),
                   ),
-                  
                 ),
               ),
               // 지도이미지
-             Positioned(
-                  left: 22,
-                  top: 40,
-                  child: Container(
-                    width: 50, // 필요에 따라 너비를 지정하세요.
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: Color(0xFF22536F),
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
+              Positioned(
+                left: 22,
+                top: 40,
+                child: Container(
+                  width: 50, // 필요에 따라 너비를 지정하세요.
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Color(0xFF22536F),
                         ),
-                      ],
-                    ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                 // 노선도(동그라미)
+              ),
+              // 노선도(동그라미)
               Positioned(
                 left: 136,
                 top: 161,
@@ -158,7 +157,6 @@ class _searchStaInfo extends State<searchStaInfo> {
               ),
               // 동그라미 밑 역 이름
               Positioned(
-          
                 left: 158,
                 top: 316,
                 child: Text(
@@ -192,7 +190,8 @@ class _searchStaInfo extends State<searchStaInfo> {
                           clipBehavior: Clip.antiAlias,
                           decoration: ShapeDecoration(
                             color: Color(0xFF686868),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
                           ),
                         ),
                       ),
@@ -200,9 +199,8 @@ class _searchStaInfo extends State<searchStaInfo> {
                       Positioned(
                         left: 18,
                         top: 13,
-                        
                         child: GestureDetector(
-                           onTap: () {
+                          onTap: () {
                             Navigator.pop(context); // 구현 : 길찾기의 출발역으로
                           },
                           child: Text(
@@ -213,9 +211,7 @@ class _searchStaInfo extends State<searchStaInfo> {
                               fontFamily: 'Inter',
                               height: 0.06,
                             ),
-          
                           ),
-                          
                         ),
                       ),
                     ],
@@ -241,7 +237,8 @@ class _searchStaInfo extends State<searchStaInfo> {
                           clipBehavior: Clip.antiAlias,
                           decoration: ShapeDecoration(
                             color: Color(0xFF686868),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
                           ),
                         ),
                       ),
@@ -250,7 +247,7 @@ class _searchStaInfo extends State<searchStaInfo> {
                         left: 18,
                         top: 13,
                         child: GestureDetector(
-                           onTap: () {
+                          onTap: () {
                             Navigator.pop(context); // 구현 : 길찾기의 도착역으로
                           },
                           child: Text(
@@ -272,7 +269,9 @@ class _searchStaInfo extends State<searchStaInfo> {
                 left: 400,
                 top: 339,
                 child: Transform(
-                  transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(-3.14),
+                  transform: Matrix4.identity()
+                    ..translate(0.0, 0.0)
+                    ..rotateZ(-3.14),
                   child: Container(
                     width: 24,
                     height: 24,
@@ -284,22 +283,27 @@ class _searchStaInfo extends State<searchStaInfo> {
                   ),
                 ),
               ),
-               Positioned(
-                  top: 250,
-                  right: 32,
-                  child: GestureDetector(
-                      onTap: toggleImage,
-                      child: SizedBox(
-                          width: imagePath == '../assets/images/favStar.png' ? 24.0 : 27.0,
-                          height: imagePath == '../assets/images/favStar.png' ? 24.0 : 27.0,
-                          child: Image.asset(
-                            imagePath,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
+              Positioned(
+                top: 250,
+                right: 32,
+                child: GestureDetector(
+                  onTap: toggleImage,
+                  child: SizedBox(
+                    width: imagePath == '../assets/images/favStar.png'
+                        ? 24.0
+                        : 27.0,
+                    height: imagePath == '../assets/images/favStar.png'
+                        ? 24.0
+                        : 27.0,
+                    child: Image.asset(
+                      imagePath,
+                      fit: BoxFit.cover,
                     ),
-              Positioned( // 구현 : 화살표 누르면 이전역, 다음역 정보 뜨게?..가능하면..?
+                  ),
+                ),
+              ),
+              Positioned(
+                // 구현 : 화살표 누르면 이전역, 다음역 정보 뜨게?..가능하면..?
                 left: 392,
                 top: 306,
                 child: Container(
@@ -307,7 +311,8 @@ class _searchStaInfo extends State<searchStaInfo> {
                   height: 24,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('../assets/images/Chevron_left_right.png'), // 이미지 경로 확인
+                      image: AssetImage(
+                          '../assets/images/Chevron_left_right.png'), // 이미지 경로 확인
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -322,9 +327,9 @@ class _searchStaInfo extends State<searchStaInfo> {
                   height: 24,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('../assets/images/Chevron_left_right.png'), // 이미지 경로 확인
+                      image: AssetImage(
+                          '../assets/images/Chevron_left_right.png'), // 이미지 경로 확인
                       fit: BoxFit.cover,
-                     
                     ),
                   ),
                 ),
@@ -332,54 +337,37 @@ class _searchStaInfo extends State<searchStaInfo> {
               Positioned(
                 left: 320,
                 top: 316,
-                child: Text(
-                  '902 역', // 구현 : 바뀌는 값(다음역)
-                  style: commonTextStyle
-                ),
+                child: Text('902 역', // 구현 : 바뀌는 값(다음역)
+                    style: commonTextStyle),
               ),
               Positioned(
                 left: 34,
                 top: 316,
-                child: Text(
-                  '900 역', // 구현 : 바뀌는 값(이전역)
-                  style: commonTextStyle
-                ),
+                child: Text('900 역', // 구현 : 바뀌는 값(이전역)
+                    style: commonTextStyle),
               ),
               Positioned(
                 left: 35,
                 top: 517,
-                child: Text(
-                  '시설 정보',
-                  textAlign: TextAlign.center,
-                  style: commonTextStyle
-                ),
+                child: Text('시설 정보',
+                    textAlign: TextAlign.center, style: commonTextStyle),
               ),
               Positioned(
                 left: 39,
                 top: 422,
-                child: Text(
-                  '역 정보',
-                  style: commonTextStyle
-                  
-                ),
+                child: Text('역 정보', style: commonTextStyle),
               ),
               // 날씨 정보
               Positioned(
                 left: 35,
                 top: 760,
-                child: Text(
-                  '날씨 정보',
-                 style: commonTextStyle
-                ),
+                child: Text('날씨 정보', style: commonTextStyle),
               ),
               Positioned(
                 left: 35,
                 top: 655,
-                child: Text(
-                  '편의 시설',
-                  textAlign: TextAlign.center,
-                  style: commonTextStyle
-                ),
+                child: Text('편의 시설',
+                    textAlign: TextAlign.center, style: commonTextStyle),
               ),
               Positioned(
                 left: 35,
@@ -435,14 +423,11 @@ class _searchStaInfo extends State<searchStaInfo> {
                 child: Text.rich(
                   TextSpan(
                     children: [
+                      TextSpan(text: '배차시간 ', style: detailTextStyle),
                       TextSpan(
-                        text: '배차시간 ',
-                        style: detailTextStyle
-                      ),
-                      TextSpan(
-                        text: '7분', // 구현 : 바뀌는 값
-                        style: detailTextStyle.copyWith(fontWeight: FontWeight.bold)
-                      ),
+                          text: '7분', // 구현 : 바뀌는 값
+                          style: detailTextStyle.copyWith(
+                              fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -453,77 +438,77 @@ class _searchStaInfo extends State<searchStaInfo> {
                 child: Text.rich(
                   TextSpan(
                     children: [
+                      TextSpan(text: '빠른하차 ', style: detailTextStyle),
                       TextSpan(
-                        text: '빠른하차 ',
-                        style: detailTextStyle
-                      ),
-                      TextSpan(
-                        text: '3-1 4-3', // 구현 : 바뀌는 값
-                        style: detailTextStyle.copyWith(fontWeight: FontWeight.bold)
-                      ),
+                          text: '3-1 4-3', // 구현 : 바뀌는 값
+                          style: detailTextStyle.copyWith(
+                              fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
               ),
-            
-             Stack(
+
+              Stack(
                 children: [
-                    Positioned(
-                      left: 40,
-                      top: 558,
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '내리는문 ',
-                              style: detailTextStyle,
-                            ),
-                            TextSpan(
-                              text: '오른쪽', // 구현 : 바뀌는 값
-                              style: detailTextStyle.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
+                  Positioned(
+                    left: 40,
+                    top: 558,
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '내리는문 ',
+                            style: detailTextStyle,
+                          ),
+                          TextSpan(
+                            text: '오른쪽', // 구현 : 바뀌는 값
+                            style: detailTextStyle.copyWith(
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
                     ),
-                    Positioned(
-                      left: 189,
-                      top: 558,
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '화장실 ',
-                              style: detailTextStyle,
-                            ),
-                            TextSpan(
-                              text: '50m ', // // 구현 : 바뀌는 값
-                              style: detailTextStyle.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
+                  ),
+                  Positioned(
+                    left: 189,
+                    top: 558,
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '화장실 ',
+                            style: detailTextStyle,
+                          ),
+                          TextSpan(
+                            text: '50m ', // // 구현 : 바뀌는 값
+                            style: detailTextStyle.copyWith(
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
                     ),
-                    Positioned(
-                      left: 40,
-                      top: 595,
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '플랫폼 ',
-                              style: detailTextStyle,
-                            ),
-                            TextSpan(
-                              text: '양쪽', // 구현 : 바뀌는 값
-                              style: detailTextStyle.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
+                  ),
+                  Positioned(
+                    left: 40,
+                    top: 595,
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '플랫폼 ',
+                            style: detailTextStyle,
+                          ),
+                          TextSpan(
+                            text: '양쪽', // 구현 : 바뀌는 값
+                            style: detailTextStyle.copyWith(
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
 
               // 구현 : 바뀌는 값(역 마다 편의시설)
               Stack(
@@ -565,8 +550,7 @@ class _searchStaInfo extends State<searchStaInfo> {
                 ],
               ),
 
-             
-            // 날씨 상세 구현 : 역마다 바뀌는 값              
+              // 날씨 상세 구현 : 역마다 바뀌는 값
               Positioned(
                 left: 40,
                 top: 792,
@@ -595,9 +579,9 @@ class _searchStaInfo extends State<searchStaInfo> {
                   height: 21,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('../assets/images/subway_small.png'), // 이미지 경로 확인
+                      image: AssetImage(
+                          '../assets/images/subway_small.png'), // 이미지 경로 확인
                       fit: BoxFit.cover,
-                     
                     ),
                   ),
                 ),
@@ -606,14 +590,14 @@ class _searchStaInfo extends State<searchStaInfo> {
                 left: 84,
                 top: 815,
                 child: Text(
-                          '901 역',
-                          style: TextStyle(
-                            color: Color(0xFF676363),
-                            fontSize: 15,
-                            fontFamily: 'Roboto',
-                            height: 0.10,
-                            letterSpacing: 0.50,
-                          ),
+                  '901 역',
+                  style: TextStyle(
+                    color: Color(0xFF676363),
+                    fontSize: 15,
+                    fontFamily: 'Roboto',
+                    height: 0.10,
+                    letterSpacing: 0.50,
+                  ),
                 ),
               ),
               Positioned(
