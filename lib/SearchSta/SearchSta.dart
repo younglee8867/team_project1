@@ -1,7 +1,6 @@
 // 역 검색 화면
 // <구현> : 변하는 값들
-// 11.17 화면은 넘어가는데 넘어간 화면에 노란 밑줄이 뜸
-//-> 요거 화면 크기가 넘어가서 뜨는거더라구요
+// 11.17 화면은 넘어가는데 넘어간 화면에 노란 밑줄이 뜸(11.18해결)
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
