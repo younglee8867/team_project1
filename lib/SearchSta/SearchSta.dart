@@ -1,6 +1,6 @@
 // 역 검색 화면
 // <구현> : 변하는 값들
-// 11.17 화면은 넘어가는데 넘어간 화면에 노란 밑줄이 뜸
+// 11.17 화면은 넘어가는데 넘어간 화면에 노란 밑줄이 뜸(11.18해결)
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
