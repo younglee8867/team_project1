@@ -10,15 +10,7 @@ class FlutterApp extends StatefulWidget {
 }
 
 class _FlutterAppState extends State<FlutterApp> {
-  final ValueNotifier<bool> _dark = ValueNotifier<bool>(true);
-  final ValueNotifier<double> _widthFactor = ValueNotifier<double>(1.0);
-
-  @override
-  void dispose() {
-    _dark.dispose();
-    _widthFactor.dispose();
-    super.dispose();
-  }
+  bool isMinDistanceSelected = true;
 
   @override
   Widget build(BuildContext context) {
@@ -39,23 +31,24 @@ class _FlutterAppState extends State<FlutterApp> {
               ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
-}
 
   Widget _buildTopBar() {
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, left: 10.0),
       child: Row(
         children: [
-          _buildTopStatus(isDark),
-          _buildBottomText(),
-          _buildButtons(isDark),
-          _buildTravelDetails(isDark),
-          _buildStationIndicators(isDark),
-          _buildExtraInfo(isDark),
+          IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {},
+          ),
+          Text(
+            '길찾기',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
         ],
       ),
     );
@@ -74,38 +67,38 @@ class _FlutterAppState extends State<FlutterApp> {
     );
   }
 
-  Widget _buildButton(String text, Color textColor, Color borderColor) {
+  Widget _buildButton(String text, bool isSelected) {
     return GestureDetector(
       onTap: () {
-        // 버튼 클릭 시 동작을 정의하세요
+        setState(() {
+          isMinDistanceSelected = (text == '최소 거리 순');
+        });
       },
       child: Container(
         width: 120,
         height: 40,
         decoration: ShapeDecoration(
-          color: textColor,
+          color: isSelected ? Color(0xFF397394) : Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
-            side: BorderSide(width: 1, color: borderColor),
+            side: BorderSide(width: 1, color: Color(0xFF397394)),
           ),
         ),
         alignment: Alignment.center,
         child: Text(
           text,
           style: TextStyle(
-            color: borderColor,
+            color: isSelected ? Colors.white : Color(0xFF397394),
             fontSize: 14,
-            letterSpacing: 0.5,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildTravelDetails(bool isDark) {
-    return Positioned(
-      left: 60,
-      top: 195,
+  Widget _buildTravelDetails() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 60.0, top: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -138,14 +131,6 @@ class _FlutterAppState extends State<FlutterApp> {
     );
   }
 
-  Widget _buildStationIndicators(bool isDark) {
-    return Positioned(
-      left: 131,
-      top: 345,
-      child: _stationInfo('190 방면   |    빠른 하차 ', '5-2, 10-4', isDark),
-    );
-  }
-
   Widget _buildStationIndicators() {
     return Padding(
       padding: const EdgeInsets.only(left: 131.0, top: 20),
@@ -165,10 +150,9 @@ class _FlutterAppState extends State<FlutterApp> {
     );
   }
 
-  Widget _buildExtraInfo(bool isDark) {
-    return Positioned(
-      left: 199,
-      top: 240,
+  Widget _buildExtraInfo() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 199.0, top: 10),
       child: Text(
         '|   환승 없음  |  비용 200원',
         style: TextStyle(color: Color(0xFF979797), fontSize: 15),
@@ -176,12 +160,20 @@ class _FlutterAppState extends State<FlutterApp> {
     );
   }
 
-  TextStyle _textStyle(double size, Color color) {
-    return TextStyle(
-      color: color,
-      fontSize: size,
-      fontFamily: 'Roboto', // Changed from 'Kode Mono' to 'Roboto'
-      letterSpacing: 0.5,
+  Widget _buildBottomText() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Center(
+        child: Text(
+          '스마트 환승철',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Color(0xFF387394),
+            fontSize: 14,
+            letterSpacing: 5,
+          ),
+        ),
+      ),
     );
   }
-
+}

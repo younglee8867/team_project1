@@ -1,27 +1,71 @@
 import 'package:flutter/material.dart';
+import 'WriteStation.dart'; // WriteStation 페이지를 import
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SearchScreen(),
+      home: StationMap(),
     );
   }
 }
 
-class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
-
+class StationMap extends StatefulWidget {
   @override
-  _SearchScreenState createState() => _SearchScreenState();
+  _StationMapState createState() => _StationMapState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _StationMapState extends State<StationMap> {
+  String _startStation = ''; // 출발역
+  String _endStation = ''; // 도착역
+  List<Map<String, dynamic>> _searchHistory = []; // 검색 기록 리스트
   String? _selectedLine = '전체'; // 드롭다운의 초기 선택값 설정
+
+  // 출발역과 도착역을 교환하는 메서드
+  void _swapStations() {
+    setState(() {
+      final temp = _startStation;
+      _startStation = _endStation;
+      _endStation = temp;
+    });
+  }
+
+  void _addToSearchHistory(String station) {
+    setState(() {
+      _searchHistory.add({'station': station, 'timestamp': DateTime.now()});
+    });
+  }
+
+  // 역 검색 페이지로 이동하는 메서드
+  Future<void> _navigateToSearch(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WriteStationPage(
+          initialStartStation: _startStation,
+          initialEndStation: _endStation,
+          searchHistory: _searchHistory, // 검색 기록 전달
+        ),
+      ),
+    );
+
+    // WriteStation에서 돌아오면 출발역, 도착역, 검색 기록 값을 업데이트
+    if (result != null) {
+      setState(() {
+        if (result['startStation'] != null) {
+          _startStation = result['startStation'];
+        }
+        if (result['endStation'] != null) {
+          _endStation = result['endStation'];
+        }
+        if (result['searchHistory'] != null) {
+          _searchHistory = result['searchHistory'];
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +75,8 @@ class _SearchScreenState extends State<SearchScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {},
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {}, // 뒤로가기 비활성화
         ),
       ),
       body: Padding(
@@ -44,42 +88,48 @@ class _SearchScreenState extends State<SearchScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.swap_vert, color: Colors.black),
-                  onPressed: () {},
+                  icon: Icon(Icons.swap_vert, color: Colors.black),
+                  onPressed: _swapStations, // 교환 메서드 호출
                 ),
                 Expanded(
                   child: Column(
                     children: [
                       TextField(
+                        controller: TextEditingController(text: _startStation),
                         decoration: InputDecoration(
                           hintText: '출발역 입력',
-                          prefixIcon: const Icon(Icons.search),
+                          prefixIcon: Icon(Icons.search),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
+                        onTap: () => _navigateToSearch(context),
+                        readOnly: true, // 클릭 시에만 검색 페이지로 이동
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       TextField(
+                        controller: TextEditingController(text: _endStation),
                         decoration: InputDecoration(
                           hintText: '도착역 입력',
-                          prefixIcon: const Icon(Icons.search),
+                          prefixIcon: Icon(Icons.search),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
+                        onTap: () => _navigateToSearch(context),
+                        readOnly: true, // 클릭 시에만 검색 페이지로 이동
                       ),
                     ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Expanded(
               child: Stack(
                 children: [
                   InteractiveViewer(
-                    boundaryMargin: const EdgeInsets.all(20.0),
+                    boundaryMargin: EdgeInsets.all(20.0),
                     minScale: 1.0,
                     maxScale: 4.0,
                     child: Container(
@@ -92,19 +142,19 @@ class _SearchScreenState extends State<SearchScreen> {
                     top: 16,
                     right: 16,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 0, horizontal: 16),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 0, horizontal: 16),
                       decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 58, 103, 148),
+                        color: Color.fromARGB(255, 58, 103, 148),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: DropdownButton<String>(
                         value: _selectedLine,
-                        icon: const Icon(Icons.arrow_drop_down,
+                        icon: Icon(Icons.arrow_drop_down,
                             color: Colors.white, size: 18),
-                        dropdownColor: const Color(0xFF4F92D5),
-                        style: const TextStyle(color: Colors.white),
-                        underline: const SizedBox(),
+                        dropdownColor: Color(0xFF4F92D5),
+                        style: TextStyle(color: Colors.white),
+                        underline: SizedBox(),
                         onChanged: (String? newValue) {
                           setState(() {
                             _selectedLine = newValue;
