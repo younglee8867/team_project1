@@ -23,14 +23,13 @@ class FlutterApp extends StatelessWidget {
   }
 }
 
-class searchStaInfo extends StatefulWidget{
+class searchStaInfo extends StatefulWidget {
   @override
   _searchStaInfo createState() => _searchStaInfo();
 }
 
 class _searchStaInfo extends State<searchStaInfo> {
-
-    // 즐찾 이미지
+  // 즐찾 이미지
   String imagePath = '../assets/images/favStar.png';
 
   // Function to toggle the image
@@ -42,7 +41,7 @@ class _searchStaInfo extends State<searchStaInfo> {
     });
   }
 
-    // 스타일 속성 정의(제목)
+  // 스타일 속성 정의(제목)
   final TextStyle commonTextStyle = TextStyle(
     color: Color(0xFF676363),
     fontSize: 15,
@@ -63,11 +62,11 @@ class _searchStaInfo extends State<searchStaInfo> {
 
   // 스타일 속성 정의(상세 내용)
   final TextStyle detailTextStyle = TextStyle(
-        color: Color(0xFF676363),
-        fontSize: 15,
-        fontFamily: 'Roboto',
-        height: 0.10,
-        letterSpacing: 0.50,
+    color: Color(0xFF676363),
+    fontSize: 15,
+    fontFamily: 'Roboto',
+    height: 0.10,
+    letterSpacing: 0.50,
   );
 
   @override
@@ -92,7 +91,8 @@ class _searchStaInfo extends State<searchStaInfo> {
                   height: 188,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('../assets/images/StationMap.png'), // 이미지 경로 확인
+                      image: AssetImage(
+                          '../assets/images/StationMap.png'), // 이미지 경로 확인
                       fit: BoxFit.cover,
                       colorFilter: ColorFilter.mode(
                         Colors.black.withOpacity(0.4),
@@ -100,31 +100,30 @@ class _searchStaInfo extends State<searchStaInfo> {
                       ),
                     ),
                   ),
-                  
                 ),
               ),
               // 지도이미지
-             Positioned(
-                  left: 22,
-                  top: 40,
-                  child: Container(
-                    width: 50, // 필요에 따라 너비를 지정하세요.
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: Color(0xFF22536F),
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
+              Positioned(
+                left: 22,
+                top: 40,
+                child: Container(
+                  width: 50, // 필요에 따라 너비를 지정하세요.
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Color(0xFF22536F),
                         ),
-                      ],
-                    ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                 // 노선도(동그라미)
+              ),
+              // 노선도(동그라미)
               Positioned(
                 left: 136,
                 top: 161,
@@ -201,7 +200,8 @@ class _searchStaInfo extends State<searchStaInfo> {
                           clipBehavior: Clip.antiAlias,
                           decoration: ShapeDecoration(
                             color: Color(0xFF686868),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
                           ),
                         ),
                       ),
@@ -210,7 +210,7 @@ class _searchStaInfo extends State<searchStaInfo> {
                         left: 18,
                         top: 13,
                         child: GestureDetector(
-                           onTap: () {
+                          onTap: () {
                             Navigator.pop(context); // 구현 : 길찾기의 출발역으로
                           },
                           child: DefaultTextStyle(
@@ -222,7 +222,6 @@ class _searchStaInfo extends State<searchStaInfo> {
                             ),
                             child: Text('출발역')
                           ),
-                          
                         ),
                       ),
                     ],
@@ -248,7 +247,8 @@ class _searchStaInfo extends State<searchStaInfo> {
                           clipBehavior: Clip.antiAlias,
                           decoration: ShapeDecoration(
                             color: Color(0xFF686868),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
                           ),
                         ),
                       ),
@@ -257,7 +257,7 @@ class _searchStaInfo extends State<searchStaInfo> {
                         left: 18,
                         top: 13,
                         child: GestureDetector(
-                           onTap: () {
+                          onTap: () {
                             Navigator.pop(context); // 구현 : 길찾기의 도착역으로
                           },
                           child: DefaultTextStyle(
@@ -280,7 +280,9 @@ class _searchStaInfo extends State<searchStaInfo> {
                 left: 400,
                 top: 339,
                 child: Transform(
-                  transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(-3.14),
+                  transform: Matrix4.identity()
+                    ..translate(0.0, 0.0)
+                    ..rotateZ(-3.14),
                   child: Container(
                     width: 24,
                     height: 24,
@@ -292,22 +294,27 @@ class _searchStaInfo extends State<searchStaInfo> {
                   ),
                 ),
               ),
-               Positioned(
-                  top: 250,
-                  right: 32,
-                  child: GestureDetector(
-                      onTap: toggleImage,
-                      child: SizedBox(
-                          width: imagePath == '../assets/images/favStar.png' ? 24.0 : 27.0,
-                          height: imagePath == '../assets/images/favStar.png' ? 24.0 : 27.0,
-                          child: Image.asset(
-                            imagePath,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
+              Positioned(
+                top: 250,
+                right: 32,
+                child: GestureDetector(
+                  onTap: toggleImage,
+                  child: SizedBox(
+                    width: imagePath == '../assets/images/favStar.png'
+                        ? 24.0
+                        : 27.0,
+                    height: imagePath == '../assets/images/favStar.png'
+                        ? 24.0
+                        : 27.0,
+                    child: Image.asset(
+                      imagePath,
+                      fit: BoxFit.cover,
                     ),
-              Positioned( // 구현 : 화살표 누르면 이전역, 다음역 정보 뜨게?..가능하면..?
+                  ),
+                ),
+              ),
+              Positioned(
+                // 구현 : 화살표 누르면 이전역, 다음역 정보 뜨게?..가능하면..?
                 left: 392,
                 top: 306,
                 child: Container(
@@ -315,7 +322,8 @@ class _searchStaInfo extends State<searchStaInfo> {
                   height: 24,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('../assets/images/Chevron_left_right.png'), // 이미지 경로 확인
+                      image: AssetImage(
+                          '../assets/images/Chevron_left_right.png'), // 이미지 경로 확인
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -330,9 +338,9 @@ class _searchStaInfo extends State<searchStaInfo> {
                   height: 24,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('../assets/images/Chevron_left_right.png'), // 이미지 경로 확인
+                      image: AssetImage(
+                          '../assets/images/Chevron_left_right.png'), // 이미지 경로 확인
                       fit: BoxFit.cover,
-                     
                     ),
                   ),
                 ),
@@ -486,8 +494,8 @@ class _searchStaInfo extends State<searchStaInfo> {
                   ),
                 ),
               ),
-            
-             Stack(
+
+              Stack(
                 children: [
                 
                     Positioned(
@@ -599,8 +607,7 @@ class _searchStaInfo extends State<searchStaInfo> {
                 ],
               ),
 
-             
-            // 날씨 상세 구현 : 역마다 바뀌는 값              
+              // 날씨 상세 구현 : 역마다 바뀌는 값
               Positioned(
                 left: 40,
                 top: 792,
@@ -629,9 +636,9 @@ class _searchStaInfo extends State<searchStaInfo> {
                   height: 21,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('../assets/images/subway_small.png'), // 이미지 경로 확인
+                      image: AssetImage(
+                          '../assets/images/subway_small.png'), // 이미지 경로 확인
                       fit: BoxFit.cover,
-                     
                     ),
                   ),
                 ),

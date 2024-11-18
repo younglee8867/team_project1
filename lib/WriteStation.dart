@@ -1,28 +1,43 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+class WriteStationPage extends StatefulWidget {
+  final String? initialStartStation;
+  final String? initialEndStation;
+  final List<Map<String, dynamic>> searchHistory; // 검색 기록 전달받기
 
-class MyApp extends StatelessWidget {
+  WriteStationPage({
+    this.initialStartStation,
+    this.initialEndStation,
+    required this.searchHistory,
+  });
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SearchScreen(),
-    );
-  }
+  _WriteStationPageState createState() => _WriteStationPageState();
 }
 
-class SearchScreen extends StatefulWidget {
-  @override
-  _SearchScreenState createState() => _SearchScreenState();
-}
-
-class _SearchScreenState extends State<SearchScreen> {
-  final List<Map<String, dynamic>> _searchHistory = [];
+class _WriteStationPageState extends State<WriteStationPage> {
   final TextEditingController _startStationController = TextEditingController();
   final TextEditingController _endStationController = TextEditingController();
 
+  late List<Map<String, dynamic>> _searchHistory;
+
+  @override
+  void initState() {
+    super.initState();
+    // 초기 값 설정
+    _searchHistory = List.from(widget.searchHistory);
+    if (widget.initialStartStation != null) {
+      _startStationController.text = widget.initialStartStation!;
+    }
+    if (widget.initialEndStation != null) {
+      _endStationController.text = widget.initialEndStation!;
+    }
+  }
+
   void _addSearchRecord(String stationName) {
     setState(() {
+      // 중복된 기록 제거 후 추가
+      _searchHistory.removeWhere((record) => record['name'] == stationName);
       _searchHistory.insert(0, {'name': stationName, 'isFavorite': false});
     });
   }
@@ -43,61 +58,68 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("역 검색"),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            // 검색 기록과 입력 값을 반환
+            Navigator.pop(context, {
+              'startStation': _startStationController.text,
+              'endStation': _endStationController.text,
+              'searchHistory': _searchHistory,
+            });
+          },
+        ),
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 40), // 상단 여백 추가
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-            SizedBox(height: 20), // 검색창과 뒤로 가기 버튼 사이의 여백 추가
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
                   icon: Icon(Icons.swap_vert, color: Colors.black),
-                  onPressed: () {},
+                  onPressed: () {
+                    String temp = _startStationController.text;
+                    _startStationController.text = _endStationController.text;
+                    _endStationController.text = temp;
+                  },
                 ),
                 Expanded(
-                  child: Column(
-                    children: [
-                      TextField(
-                        controller: _startStationController,
-                        decoration: InputDecoration(
-                          hintText: '출발역 입력',
-                          prefixIcon: Icon(Icons.search),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        onSubmitted: (value) {
-                          if (value.isNotEmpty) _addSearchRecord(value);
-                        },
+                    child: Column(children: [
+                  TextField(
+                    controller: _startStationController,
+                    decoration: InputDecoration(
+                      hintText: '출발역 입력',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      SizedBox(height: 8),
-                      TextField(
-                        controller: _endStationController,
-                        decoration: InputDecoration(
-                          hintText: '도착역 입력',
-                          prefixIcon: Icon(Icons.search),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        onSubmitted: (value) {
-                          if (value.isNotEmpty) _addSearchRecord(value);
-                        },
-                      ),
-                    ],
+                    ),
+                    onSubmitted: (value) {
+                      if (value.isNotEmpty) _addSearchRecord(value);
+                    },
                   ),
-                ),
+                  SizedBox(height: 8),
+                  TextField(
+                    controller: _endStationController,
+                    decoration: InputDecoration(
+                      hintText: '도착역 입력',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    onSubmitted: (value) {
+                      if (value.isNotEmpty) _addSearchRecord(value);
+                    },
+                  ),
+                ])),
               ],
             ),
             SizedBox(height: 20),
