@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -12,6 +14,8 @@ class MyApp extends StatelessWidget {
 }
 
 class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
+
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
@@ -27,7 +31,7 @@ class _SearchScreenState extends State<SearchScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {},
         ),
       ),
@@ -40,7 +44,7 @@ class _SearchScreenState extends State<SearchScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: Icon(Icons.swap_vert, color: Colors.black),
+                  icon: const Icon(Icons.swap_vert, color: Colors.black),
                   onPressed: () {},
                 ),
                 Expanded(
@@ -49,17 +53,17 @@ class _SearchScreenState extends State<SearchScreen> {
                       TextField(
                         decoration: InputDecoration(
                           hintText: '출발역 입력',
-                          prefixIcon: Icon(Icons.search),
+                          prefixIcon: const Icon(Icons.search),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       TextField(
                         decoration: InputDecoration(
                           hintText: '도착역 입력',
-                          prefixIcon: Icon(Icons.search),
+                          prefixIcon: const Icon(Icons.search),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
@@ -70,12 +74,12 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Expanded(
               child: Stack(
                 children: [
                   InteractiveViewer(
-                    boundaryMargin: EdgeInsets.all(20.0),
+                    boundaryMargin: const EdgeInsets.all(20.0),
                     minScale: 1.0,
                     maxScale: 4.0,
                     child: Container(
@@ -88,19 +92,19 @@ class _SearchScreenState extends State<SearchScreen> {
                     top: 16,
                     right: 16,
                     child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 16),
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 58, 103, 148),
+                        color: const Color.fromARGB(255, 58, 103, 148),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: DropdownButton<String>(
                         value: _selectedLine,
-                        icon: Icon(Icons.arrow_drop_down,
+                        icon: const Icon(Icons.arrow_drop_down,
                             color: Colors.white, size: 18),
-                        dropdownColor: Color(0xFF4F92D5),
-                        style: TextStyle(color: Colors.white),
-                        underline: SizedBox(),
+                        dropdownColor: const Color(0xFF4F92D5),
+                        style: const TextStyle(color: Colors.white),
+                        underline: const SizedBox(),
                         onChanged: (String? newValue) {
                           setState(() {
                             _selectedLine = newValue;

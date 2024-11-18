@@ -5,6 +5,8 @@ void main() {
 }
 
 class FlutterApp extends StatefulWidget {
+  const FlutterApp({super.key});
+
   @override
   _FlutterAppState createState() => _FlutterAppState();
 }
@@ -35,18 +37,18 @@ class _FlutterAppState extends State<FlutterApp> {
                     ? Colors.black
                     : const Color.fromARGB(255, 255, 225, 225),
                 appBar: AppBar(
-                  title: Text('Flutter App'),
+                  title: const Text('Flutter App'),
                   actions: [
                     Row(
                       children: [
-                        Icon(Icons.dark_mode),
+                        const Icon(Icons.dark_mode),
                         Switch(
                           value: isDark,
                           onChanged: (value) => _dark.value = value,
                         ),
                       ],
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     DropdownButton<double>(
                       value: factor,
                       onChanged: (value) {
@@ -54,19 +56,19 @@ class _FlutterAppState extends State<FlutterApp> {
                           _widthFactor.value = value;
                         }
                       },
-                      items: [
+                      items: const [
                         DropdownMenuItem(value: 0.5, child: Text('Size: 50%')),
                         DropdownMenuItem(value: 0.75, child: Text('Size: 75%')),
                         DropdownMenuItem(value: 1.0, child: Text('Size: 100%')),
                       ],
                       underline: Container(),
-                      icon: Icon(Icons.arrow_drop_down),
+                      icon: const Icon(Icons.arrow_drop_down),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                   ],
                 ),
                 body: Center(
-                  child: Container(
+                  child: SizedBox(
                     width: MediaQuery.of(context).size.width * factor,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -88,7 +90,7 @@ class _FlutterAppState extends State<FlutterApp> {
 class MinDistanceWidget extends StatelessWidget {
   final bool isDark;
 
-  MinDistanceWidget({required this.isDark});
+  const MinDistanceWidget({super.key, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +109,7 @@ class MinDistanceWidget extends StatelessWidget {
             color: isDark ? Colors.black54 : Colors.grey.withOpacity(0.5),
             spreadRadius: 2,
             blurRadius: 5,
-            offset: Offset(0, 3), // changes position of shadow
+            offset: const Offset(0, 3), // changes position of shadow
           ),
         ],
       ),
@@ -143,7 +145,7 @@ class MinDistanceWidget extends StatelessWidget {
                 style: _textStyle(17, isDark ? Colors.white : Colors.black),
               ),
             ),
-            Container(width: 124, height: 10), // Spacer
+            SizedBox(width: 124, height: 10), // Spacer
             Container(
               width: 27.33,
               height: 13,
@@ -168,7 +170,7 @@ class MinDistanceWidget extends StatelessWidget {
   }
 
   Widget _buildBottomText() {
-    return Positioned(
+    return const Positioned(
       left: 0,
       right: 0,
       bottom: 20,
@@ -196,8 +198,8 @@ class MinDistanceWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildButton('최소 거리 순', isDark ? Colors.white : Colors.black,
-              Color(0xFF397394)),
-          _buildButton('최소 환승 순', Color(0xFF397394),
+              const Color(0xFF397394)),
+          _buildButton('최소 환승 순', const Color(0xFF397394),
               isDark ? Colors.white : Colors.black),
         ],
       ),
@@ -239,20 +241,20 @@ class MinDistanceWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('소요 시간', style: _textStyle(16, Color(0xFF979797))),
-          SizedBox(height: 10),
-          Text('4 분', style: _textStyle(45, Color(0xFF4B4B4B))),
-          SizedBox(height: 20),
-          Container(width: 7, height: 145, color: Color(0xFF856869)),
+          Text('소요 시간', style: _textStyle(16, const Color(0xFF979797))),
+          const SizedBox(height: 10),
+          Text('4 분', style: _textStyle(45, const Color(0xFF4B4B4B))),
+          const SizedBox(height: 20),
+          Container(width: 7, height: 145, color: const Color(0xFF856869)),
           Positioned(
             left: 60,
             top: 308,
-            child: _circleIndicator(Color(0xFF846868)),
+            child: _circleIndicator(const Color(0xFF846868)),
           ),
           Positioned(
             left: 60,
             top: 444,
-            child: _circleIndicator(Color(0xFF856869)),
+            child: _circleIndicator(const Color(0xFF856869)),
           ),
           Positioned(
             left: 76,
@@ -267,12 +269,12 @@ class MinDistanceWidget extends StatelessWidget {
           Positioned(
             left: 126,
             top: 318,
-            child: Text('101', style: _textStyle(32, Color(0xFF4B4B4B))),
+            child: Text('101', style: _textStyle(32, const Color(0xFF4B4B4B))),
           ),
           Positioned(
             left: 126,
             top: 453,
-            child: Text('103', style: _textStyle(32, Color(0xFF4B4B4B))),
+            child: Text('103', style: _textStyle(32, const Color(0xFF4B4B4B))),
           ),
         ],
       ),
@@ -285,7 +287,7 @@ class MinDistanceWidget extends StatelessWidget {
       height: 44,
       decoration: ShapeDecoration(
         color: color,
-        shape: OvalBorder(),
+        shape: const OvalBorder(),
       ),
     );
   }
@@ -304,11 +306,11 @@ class MinDistanceWidget extends StatelessWidget {
         children: [
           TextSpan(
             text: text,
-            style: _textStyle(12, Color(0xFF979797)),
+            style: _textStyle(12, const Color(0xFF979797)),
           ),
           TextSpan(
             text: boldText,
-            style: _textStyle(12, Color(0xFF4F4F4F)),
+            style: _textStyle(12, const Color(0xFF4F4F4F)),
           ),
         ],
       ),
@@ -321,7 +323,7 @@ class MinDistanceWidget extends StatelessWidget {
       top: 240,
       child: Text(
         '|   환승 없음  |  비용 200원',
-        style: _textStyle(15, Color(0xFF979797)),
+        style: _textStyle(15, const Color(0xFF979797)),
       ),
     );
   }

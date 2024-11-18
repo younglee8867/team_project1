@@ -8,6 +8,8 @@ class FlutterApp extends StatelessWidget {
   final ValueNotifier<bool> _dark = ValueNotifier<bool>(true);
   final ValueNotifier<double> _widthFactor = ValueNotifier<double>(1.0);
 
+  FlutterApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,7 +35,7 @@ class FlutterApp extends StatelessWidget {
                             onChanged: (value) {
                               _widthFactor.value = value!;
                             },
-                            items: [
+                            items: const [
                               DropdownMenuItem(
                                   value: 0.5, child: Text('Size: 50%')),
                               DropdownMenuItem(
@@ -45,7 +47,7 @@ class FlutterApp extends StatelessWidget {
                         ],
                       ),
                       body: Center(
-                        child: Container(
+                        child: SizedBox(
                           width: MediaQuery.of(context).size.width *
                               _widthFactor.value,
                           child: Column(
@@ -63,12 +65,14 @@ class FlutterApp extends StatelessWidget {
 }
 
 class StationInfoContainer extends StatelessWidget {
+  const StationInfoContainer({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 412,
       height: 800,
-      decoration: BoxDecoration(color: Colors.white),
+      decoration: const BoxDecoration(color: Colors.white),
       child: Stack(
         children: [
           buildTitleSection(),
@@ -77,13 +81,13 @@ class StationInfoContainer extends StatelessWidget {
           buildStationDivider(top: 399.53),
           buildStationDivider(top: 496.53),
           buildStationInfo(
-              left: 48.28, top: 158, stationName: '101 역' + " " * 34),
+              left: 48.28, top: 158, stationName: '101 역${" " * 34}'),
           buildStationInfo(
-              left: 48.28, top: 250.50, stationName: '202 역' + " " * 34),
+              left: 48.28, top: 250.50, stationName: '202 역${" " * 34}'),
           buildStationInfo(
-              left: 48, top: 347.30, stationName: '612 역' + " " * 34),
+              left: 48, top: 347.30, stationName: '612 역${" " * 34}'),
           buildStationInfo(
-              left: 48.13, top: 444.10, stationName: '511 역' + " " * 34),
+              left: 48.13, top: 444.10, stationName: '511 역${" " * 34}'),
           buildFooterText(),
         ],
       ),
@@ -102,8 +106,8 @@ class StationInfoContainer extends StatelessWidget {
             width: 24, // 이미지의 가로 크기
             height: 24, // 이미지의 세로 크기
           ),
-          SizedBox(width: 18), // 텍스트와 이미지 간의 간격
-          Text(
+          const SizedBox(width: 18), // 텍스트와 이미지 간의 간격
+          const Text(
             '즐겨찾기',
             style: TextStyle(
               color: Color(0xFF22536F),
@@ -122,7 +126,7 @@ class StationInfoContainer extends StatelessWidget {
       top: top,
       child: Container(
         width: 367,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           border: Border(
             bottom: BorderSide(width: 1, color: Color(0xFFD5D5D5)),
           ),
@@ -142,10 +146,10 @@ class StationInfoContainer extends StatelessWidget {
       child: Row(
         children: [
           buildSquareIcon(),
-          SizedBox(width: 23),
+          const SizedBox(width: 23),
           Text(
             stationName,
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF676363),
               fontSize: 20,
               fontFamily: 'Roboto',
@@ -162,7 +166,7 @@ class StationInfoContainer extends StatelessWidget {
   }
 
   Positioned buildFooterText() {
-    return Positioned(
+    return const Positioned(
       left: 141,
       top: 750,
       child: Text(
@@ -183,7 +187,7 @@ class StationInfoContainer extends StatelessWidget {
       width: 27.39,
       height: 32.15,
       decoration: BoxDecoration(
-        color: Color(0xFF387394),
+        color: const Color(0xFF387394),
         borderRadius: BorderRadius.circular(5),
       ),
       child: Stack(

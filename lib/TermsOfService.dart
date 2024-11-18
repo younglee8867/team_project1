@@ -5,6 +5,8 @@ void main() {
 }
 
 class FlutterApp extends StatelessWidget {
+  const FlutterApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -13,7 +15,7 @@ class FlutterApp extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Five_five(),
+              TermsOfServicePage(),
             ],
           ),
         ),
@@ -22,7 +24,9 @@ class FlutterApp extends StatelessWidget {
   }
 }
 
-class Five_five extends StatelessWidget {
+class TermsOfServicePage extends StatelessWidget {
+  const TermsOfServicePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -31,32 +35,33 @@ class Five_five extends StatelessWidget {
           width: 412,
           height: 787,
           clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(color: Colors.white),
+          decoration: const BoxDecoration(color: Colors.white),
           child: Stack(
             children: [
               // Title Text
               Positioned(
                 left: 20,
                 top: 10,
-                child: Container(
+                child: SizedBox(
                   width: 150,
                   height: 100,
                   child: Row(
                     children: [
                       IconButton(
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.arrow_back,
                           color: Color(0xFF22536F), // 아이콘 색상
                         ),
                         onPressed: () {
                           // 여기에 클릭 시 수행할 동작을 추가하세요.
                           // 예시: Navigator.pop(context); // 뒤로가기
+                          Navigator.pop(context); // 뒤로가기
                         },
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 15,
                       ),
-                      Text(
+                      const Text(
                         '이용약관',
                         style: TextStyle(
                           color: Color(0xFF22536F),
@@ -69,7 +74,7 @@ class Five_five extends StatelessWidget {
                 ),
               ),
               // Footer: App Version and App Name
-              Positioned(
+              const Positioned(
                 left: 1,
                 top: 760,
                 child: SizedBox(
@@ -86,7 +91,7 @@ class Five_five extends StatelessWidget {
                   ),
                 ),
               ),
-              Positioned(
+              const Positioned(
                 left: 141,
                 top: 760,
                 child: SizedBox(
@@ -107,7 +112,7 @@ class Five_five extends StatelessWidget {
               ),
 
               // Terms Text Section
-              Positioned(
+              const Positioned(
                 left: 33,
                 top: 100,
                 child: SizedBox(

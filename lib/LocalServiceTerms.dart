@@ -5,19 +5,23 @@ void main() {
 }
 
 class FlutterApp extends StatelessWidget {
+  const FlutterApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         body: Center(
-          child: Five_three(),
+          child: LocalServiceTermsPage(),
         ),
       ),
     );
   }
 }
 
-class Five_three extends StatelessWidget {
+class LocalServiceTermsPage extends StatelessWidget {
+  const LocalServiceTermsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -38,17 +42,18 @@ class Five_three extends StatelessWidget {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.arrow_back,
                         color: Color(0xFF22536F), // 아이콘 색상
                       ),
                       onPressed: () {
                         // 여기에 클릭 시 수행할 동작을 추가하세요.
                         // 예시: Navigator.pop(context); // 뒤로가기
+                        Navigator.pop(context); // 뒤로가기
                       },
                     ),
-                    SizedBox(width: 10),
-                    Text(
+                    const SizedBox(width: 10),
+                    const Text(
                       '위치기반 서비스 이용 약관',
                       style: TextStyle(
                         color: Color(0xFF22536F),
@@ -59,7 +64,7 @@ class Five_three extends StatelessWidget {
                   ],
                 ),
               ),
-              Positioned(
+              const Positioned(
                 left: 20,
                 top: 740,
                 child: Text(
@@ -73,7 +78,7 @@ class Five_three extends StatelessWidget {
                   ),
                 ),
               ),
-              Positioned(
+              const Positioned(
                 left: 141,
                 top: 740,
                 child: Text(
@@ -87,7 +92,7 @@ class Five_three extends StatelessWidget {
                   ),
                 ),
               ),
-              Positioned(
+              const Positioned(
                 left: 33,
                 top: 130,
                 child: SizedBox(

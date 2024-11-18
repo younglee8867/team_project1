@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -12,6 +14,8 @@ class MyApp extends StatelessWidget {
 }
 
 class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
+
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
@@ -47,22 +51,22 @@ class _SearchScreenState extends State<SearchScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            SizedBox(height: 40), // 상단 여백 추가
+            const SizedBox(height: 40), // 상단 여백 추가
             Row(
               children: [
                 IconButton(
-                  icon: Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: () {},
                 ),
               ],
             ),
-            SizedBox(height: 20), // 검색창과 뒤로 가기 버튼 사이의 여백 추가
+            const SizedBox(height: 20), // 검색창과 뒤로 가기 버튼 사이의 여백 추가
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: Icon(Icons.swap_vert, color: Colors.black),
+                  icon: const Icon(Icons.swap_vert, color: Colors.black),
                   onPressed: () {},
                 ),
                 Expanded(
@@ -72,7 +76,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         controller: _startStationController,
                         decoration: InputDecoration(
                           hintText: '출발역 입력',
-                          prefixIcon: Icon(Icons.search),
+                          prefixIcon: const Icon(Icons.search),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
@@ -81,12 +85,12 @@ class _SearchScreenState extends State<SearchScreen> {
                           if (value.isNotEmpty) _addSearchRecord(value);
                         },
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       TextField(
                         controller: _endStationController,
                         decoration: InputDecoration(
                           hintText: '도착역 입력',
-                          prefixIcon: Icon(Icons.search),
+                          prefixIcon: const Icon(Icons.search),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
@@ -100,14 +104,14 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Flexible(
               child: ListView.builder(
                 itemCount: _searchHistory.length,
                 itemBuilder: (context, index) {
                   final record = _searchHistory[index];
                   return ListTile(
-                    leading: Icon(Icons.train),
+                    leading: const Icon(Icons.train),
                     title: Text(record['name']),
                     trailing: IconButton(
                       icon: Icon(
@@ -123,7 +127,7 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             TextButton(
               onPressed: _clearSearchHistory,
-              child: Text('검색기록 삭제'),
+              child: const Text('검색기록 삭제'),
             ),
           ],
         ),

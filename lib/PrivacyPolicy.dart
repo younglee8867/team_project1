@@ -5,6 +5,8 @@ void main() {
 }
 
 class FlutterApp extends StatelessWidget {
+  const FlutterApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,7 +16,7 @@ class FlutterApp extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Five_four(),
+              PrivacyPolicyPage(),
             ],
           ),
         ),
@@ -23,12 +25,14 @@ class FlutterApp extends StatelessWidget {
   }
 }
 
-class Five_four extends StatelessWidget {
+class PrivacyPolicyPage extends StatelessWidget {
+  const PrivacyPolicyPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(color: Colors.white),
+      decoration: const BoxDecoration(color: Colors.white),
       width: 412,
       height: 787,
       child: Stack(
@@ -36,24 +40,25 @@ class Five_four extends StatelessWidget {
           Positioned(
             left: 13,
             top: 12,
-            child: Container(
+            child: SizedBox(
               width: 231,
               height: 40,
               child: Row(
                 children: [
                   IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.arrow_back,
                       color: Color(0xFF22536F), // 아이콘 색상
                     ),
                     onPressed: () {
                       // 여기에 클릭 시 수행할 동작을 추가하세요.
                       // 예시: Navigator.pop(context); // 뒤로가기
+                      Navigator.pop(context); // 뒤로가기
                     },
                   ),
-                  SizedBox(width: 10), // 아이콘 대신 공간 확보
-                  SizedBox(width: 5), // 텍스트와의 간격
-                  Text(
+                  const SizedBox(width: 10), // 아이콘 대신 공간 확보
+                  const SizedBox(width: 5), // 텍스트와의 간격
+                  const Text(
                     '개인정보 처리 방침',
                     style: TextStyle(
                       color: Color(0xFF22536F),
@@ -65,7 +70,7 @@ class Five_four extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
+          const Positioned(
             left: 33,
             top: 270,
             child: Text(
@@ -77,7 +82,7 @@ class Five_four extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
+          const Positioned(
             left: 1,
             top: 750,
             child: SizedBox(
@@ -94,7 +99,7 @@ class Five_four extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
+          const Positioned(
             left: 141,
             top: 750,
             child: SizedBox(
@@ -112,7 +117,7 @@ class Five_four extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
+          const Positioned(
             left: 33,
             top: 70,
             child: SizedBox(
@@ -133,12 +138,12 @@ class Five_four extends StatelessWidget {
           Positioned(
             left: 59,
             top: 300,
-            child: Container(
+            child: SizedBox(
               width: 295,
               height: 400,
               child: Stack(
                 children: [
-                  Positioned(
+                  const Positioned(
                     left: 0,
                     top: 100,
                     child: Text.rich(
@@ -156,7 +161,7 @@ class Five_four extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Positioned(
+                  const Positioned(
                     left: 6,
                     top: 240,
                     child: Text.rich(
@@ -175,7 +180,7 @@ class Five_four extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Positioned(
+                  const Positioned(
                     left: 14,
                     top: 380,
                     child: Text.rich(
@@ -194,7 +199,7 @@ class Five_four extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Positioned(
+                  const Positioned(
                     left: 186,
                     top: 380,
                     child: Text.rich(
@@ -213,7 +218,7 @@ class Five_four extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Positioned(
+                  const Positioned(
                     left: 172,
                     top: 240,
                     child: Text.rich(
@@ -232,7 +237,7 @@ class Five_four extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Positioned(
+                  const Positioned(
                     left: 193,
                     top: 100,
                     child: Text(
@@ -248,7 +253,7 @@ class Five_four extends StatelessWidget {
                   Positioned(
                     left: -10,
                     top: 20,
-                    child: Container(
+                    child: SizedBox(
                         width: 300, // 이미지 너비 설정
                         height: 350, // 이미지 높이 설정
                         child: Image.asset(

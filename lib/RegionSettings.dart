@@ -5,6 +5,8 @@ void main() {
 }
 
 class FlutterApp extends StatelessWidget {
+  const FlutterApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,7 +21,7 @@ class FlutterApp extends StatelessWidget {
               left: 0,
               top: 0,
               bottom: 0,
-              child: Sidebar(),
+              child: RegionSettingsPage(),
             ),
           ],
         ),
@@ -28,24 +30,26 @@ class FlutterApp extends StatelessWidget {
   }
 }
 
-class Sidebar extends StatelessWidget {
+class RegionSettingsPage extends StatelessWidget {
+  const RegionSettingsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 250,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(30),
           bottomRight: Radius.circular(30),
         ),
       ),
-      padding: EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 상단 여백 추가
-          SizedBox(height: 50),
+          const SizedBox(height: 50),
 
           // 메뉴 항목들
           MenuItem(text: '수도권', onPressed: () {}),
@@ -54,11 +58,11 @@ class Sidebar extends StatelessWidget {
           MenuItem(text: '광주', onPressed: () {}),
           MenuItem(text: '대전', onPressed: () {}),
 
-          Spacer(),
+          const Spacer(),
 
           // 설정 아이콘 및 언어 표시
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0, bottom: 20),
+          const Padding(
+            padding: EdgeInsets.only(left: 20.0, bottom: 20),
             child: Row(
               children: [
                 Icon(Icons.settings, size: 24, color: Color(0xFF22536F)),
@@ -78,7 +82,7 @@ class MenuItem extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
 
-  const MenuItem({required this.text, required this.onPressed});
+  const MenuItem({super.key, required this.text, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -87,19 +91,19 @@ class MenuItem extends StatelessWidget {
       child: TextButton(
         onPressed: onPressed,
         style: TextButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               text,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
                 color: Color(0xFF22536F),
               ),
             ),
-            Divider(color: Color(0xFFD5D5D5), thickness: 1),
+            const Divider(color: Color(0xFFD5D5D5), thickness: 1),
           ],
         ),
       ),
