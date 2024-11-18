@@ -8,18 +8,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_application_1/RegionSettings.dart';
+import 'package:flutter_application_1/Setting/RegionSettings.dart';
 import 'package:flutter_application_1/StationMap.dart';
 import 'package:flutter_application_1/WriteStation.dart';
 import 'package:flutter_application_1/minimumTransfer.dart';
 import 'package:flutter_application_1/minimumDistance.dart';
-import 'package:flutter_application_1/TermsOfService.dart';
-import 'package:flutter_application_1/PrivacyPolicy.dart';
-import 'package:flutter_application_1/DisplayMode.dart';
+import 'package:flutter_application_1/Setting/TermsOfService.dart';
+import 'package:flutter_application_1/Setting/PrivacyPolicy.dart';
 import 'package:flutter_application_1/favoriteSta.dart';
-import 'package:flutter_application_1/LocalServiceTerms.dart';
-
-
+import 'package:flutter_application_1/Setting/DisplayMode.dart';
+import 'package:flutter_application_1/Setting/Settings.dart';
+import 'package:flutter_application_1/Setting/LocalServiceTerms.dart';
+import 'package:flutter_application_1/SearchSta/SearchSta.dart';
+import 'package:flutter_application_1/SearchSta/SearchStanlnfo.dart';
 /* void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
