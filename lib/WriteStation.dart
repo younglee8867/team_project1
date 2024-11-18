@@ -11,29 +11,11 @@ class WriteStationPage extends StatefulWidget {
     required this.searchHistory,
   });
 
-<<<<<<< HEAD
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-=======
->>>>>>> a4684a8f3fd9a29f61913b92486060a6e1e3ae56
   @override
   _WriteStationPageState createState() => _WriteStationPageState();
 }
 
-<<<<<<< HEAD
-class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
-
-  @override
-  _SearchScreenState createState() => _SearchScreenState();
-}
-
-class _SearchScreenState extends State<SearchScreen> {
-  final List<Map<String, dynamic>> _searchHistory = [];
-=======
 class _WriteStationPageState extends State<WriteStationPage> {
->>>>>>> a4684a8f3fd9a29f61913b92486060a6e1e3ae56
   final TextEditingController _startStationController = TextEditingController();
   final TextEditingController _endStationController = TextEditingController();
 
@@ -97,59 +79,10 @@ class _WriteStationPageState extends State<WriteStationPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-<<<<<<< HEAD
-            const SizedBox(height: 40), // 상단 여백 추가
-            Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-            const SizedBox(height: 20), // 검색창과 뒤로 가기 버튼 사이의 여백 추가
-=======
->>>>>>> a4684a8f3fd9a29f61913b92486060a6e1e3ae56
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
-<<<<<<< HEAD
-                  icon: const Icon(Icons.swap_vert, color: Colors.black),
-                  onPressed: () {},
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      TextField(
-                        controller: _startStationController,
-                        decoration: InputDecoration(
-                          hintText: '출발역 입력',
-                          prefixIcon: const Icon(Icons.search),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        onSubmitted: (value) {
-                          if (value.isNotEmpty) _addSearchRecord(value);
-                        },
-                      ),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: _endStationController,
-                        decoration: InputDecoration(
-                          hintText: '도착역 입력',
-                          prefixIcon: const Icon(Icons.search),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        onSubmitted: (value) {
-                          if (value.isNotEmpty) _addSearchRecord(value);
-                        },
-                      ),
-                    ],
-=======
                   icon: Icon(Icons.swap_vert, color: Colors.black),
                   onPressed: () {
                     String temp = _startStationController.text;
@@ -171,7 +104,6 @@ class _WriteStationPageState extends State<WriteStationPage> {
                     onSubmitted: (value) {
                       if (value.isNotEmpty) _addSearchRecord(value);
                     },
->>>>>>> a4684a8f3fd9a29f61913b92486060a6e1e3ae56
                   ),
                   SizedBox(height: 8),
                   TextField(

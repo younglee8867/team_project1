@@ -14,13 +14,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-<<<<<<< HEAD
-class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
-
-=======
 class StationMap extends StatefulWidget {
->>>>>>> a4684a8f3fd9a29f61913b92486060a6e1e3ae56
   @override
   _StationMapState createState() => _StationMapState();
 }
@@ -83,13 +77,8 @@ class _StationMapState extends State<StationMap> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-<<<<<<< HEAD
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {},
-=======
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {}, // 뒤로가기 비활성화
->>>>>>> a4684a8f3fd9a29f61913b92486060a6e1e3ae56
         ),
       ),
       body: Padding(
@@ -101,13 +90,8 @@ class _StationMapState extends State<StationMap> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
-<<<<<<< HEAD
-                  icon: const Icon(Icons.swap_vert, color: Colors.black),
-                  onPressed: () {},
-=======
                   icon: Icon(Icons.swap_vert, color: Colors.black),
                   onPressed: _swapStations, // 교환 메서드 호출
->>>>>>> a4684a8f3fd9a29f61913b92486060a6e1e3ae56
                 ),
                 Expanded(
                   child: Column(

@@ -50,7 +50,12 @@ class RegionSettingsPage extends StatelessWidget {
         children: [
           // 상단 여백 추가
           const SizedBox(height: 50),
-
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context); // 뒤로가기
+            },
+          ),
           // 메뉴 항목들
           MenuItem(text: '수도권', onPressed: () {}),
           MenuItem(text: '부산', onPressed: () {}),

@@ -57,7 +57,6 @@ class _searchStaInfo extends State<searchStaInfo> {
     fontFamily: 'Roboto',
     height: 0.10,
     letterSpacing: 0.50,
-
   );
 
   // 스타일 속성 정의(상세 내용)
@@ -153,33 +152,31 @@ class _searchStaInfo extends State<searchStaInfo> {
                 left: 178,
                 top: 175,
                 child: DefaultTextStyle(
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 100,
-                    fontFamily: 'Roboto',
-                    height: 0,
-                    letterSpacing: 0.50,
-                  ),
-                  child: Text('9')
-                ),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 100,
+                      fontFamily: 'Roboto',
+                      height: 0,
+                      letterSpacing: 0.50,
+                    ),
+                    child: Text('9')),
               ),
               // 동그라미 밑 역 이름
               Positioned(
                 left: 158,
                 top: 316,
                 child: DefaultTextStyle(
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Roboto',
-                    height: 0.5,
-                    letterSpacing: 0.50,
-                  ),
-                  child: Text('901 역')
-                ),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Roboto',
+                      height: 0.5,
+                      letterSpacing: 0.50,
+                    ),
+                    child: Text('901 역')),
               ),
               // 도착역 박스
               Positioned(
@@ -214,14 +211,13 @@ class _searchStaInfo extends State<searchStaInfo> {
                             Navigator.pop(context); // 구현 : 길찾기의 출발역으로
                           },
                           child: DefaultTextStyle(
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontFamily: 'Inter',
-                              height: 0.5,
-                            ),
-                            child: Text('출발역')
-                          ),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontFamily: 'Inter',
+                                height: 0.5,
+                              ),
+                              child: Text('출발역')),
                         ),
                       ),
                     ],
@@ -349,20 +345,17 @@ class _searchStaInfo extends State<searchStaInfo> {
                 left: 320,
                 top: 316,
                 child: DefaultTextStyle(
-                     // 구현 : 바뀌는 값(다음역)
-                  style: commonTextStyle,
-                  child: Text('902 역')
-                ),
-                
+                    // 구현 : 바뀌는 값(다음역)
+                    style: commonTextStyle,
+                    child: Text('902 역')),
               ),
               Positioned(
                 left: 34,
                 top: 316,
                 child: DefaultTextStyle(
-                  //'900 역', // 구현 : 바뀌는 값(이전역)
-                  style: commonTextStyle,
-                  child: Text('900 역')
-                ),
+                    //'900 역', // 구현 : 바뀌는 값(이전역)
+                    style: commonTextStyle,
+                    child: Text('900 역')),
               ),
               Positioned(
                 left: 35,
@@ -378,31 +371,27 @@ class _searchStaInfo extends State<searchStaInfo> {
                 left: 39,
                 top: 422,
                 child: DefaultTextStyle(
-                  //'역 정보',
-                  style: commonTextStyle,
-                  child: Text('역 정보')
-                  
-                ),
+                    //'역 정보',
+                    style: commonTextStyle,
+                    child: Text('역 정보')),
               ),
               // 날씨 정보
               Positioned(
                 left: 35,
                 top: 760,
                 child: DefaultTextStyle(
-                  //'날씨 정보',
-                 style: commonTextStyle,
-                 child: Text('날씨 정보')
-                ),
+                    //'날씨 정보',
+                    style: commonTextStyle,
+                    child: Text('날씨 정보')),
               ),
               Positioned(
                 left: 35,
                 top: 655,
                 child: DefaultTextStyle(
-                  //'편의 시설',
-                  textAlign: TextAlign.center,
-                  style: commonTextStyle,
-                  child: Text('편의 시설')
-                ),
+                    //'편의 시설',
+                    textAlign: TextAlign.center,
+                    style: commonTextStyle,
+                    child: Text('편의 시설')),
               ),
               Positioned(
                 left: 35,
@@ -466,7 +455,8 @@ class _searchStaInfo extends State<searchStaInfo> {
                         ),
                         TextSpan(
                           text: '7분', // 바뀌는 값
-                          style: detailTextStyle.copyWith(fontWeight: FontWeight.bold), // 덮어쓰기
+                          style: detailTextStyle.copyWith(
+                              fontWeight: FontWeight.bold), // 덮어쓰기
                         ),
                       ],
                     ),
@@ -487,7 +477,8 @@ class _searchStaInfo extends State<searchStaInfo> {
                         ),
                         TextSpan(
                           text: '3-1  4-3', // 바뀌는 값
-                          style: detailTextStyle.copyWith(fontWeight: FontWeight.bold), // 덮어쓰기
+                          style: detailTextStyle.copyWith(
+                              fontWeight: FontWeight.bold), // 덮어쓰기
                         ),
                       ],
                     ),
@@ -497,103 +488,100 @@ class _searchStaInfo extends State<searchStaInfo> {
 
               Stack(
                 children: [
-                
-                    Positioned(
-                      left: 40,
-                      top: 558,
-                      child: DefaultTextStyle(
-                        style: detailTextStyleTitle, // DefaultTextStyle 적용
-                        child: Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: '내리는문 ',
-                              ),
-                              TextSpan(
-                                text: '오른쪽', // 바뀌는 값
-                                style: detailTextStyle.copyWith(fontWeight: FontWeight.bold), // 덮어쓰기
-                              ),
-                            ],
-                          ),
+                  Positioned(
+                    left: 40,
+                    top: 558,
+                    child: DefaultTextStyle(
+                      style: detailTextStyleTitle, // DefaultTextStyle 적용
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: '내리는문 ',
+                            ),
+                            TextSpan(
+                              text: '오른쪽', // 바뀌는 값
+                              style: detailTextStyle.copyWith(
+                                  fontWeight: FontWeight.bold), // 덮어쓰기
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                     Positioned(
-                      left: 189,
-                      top: 558,
-                      child: DefaultTextStyle(
-                        style: detailTextStyleTitle, // DefaultTextStyle 적용
-                        child: Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: '화장실 ',
-                              ),
-                              TextSpan(
-                                text: '50m', // 바뀌는 값
-                                style: detailTextStyle.copyWith(fontWeight: FontWeight.bold), // 덮어쓰기
-                              ),
-                            ],
-                          ),
+                  ),
+                  Positioned(
+                    left: 189,
+                    top: 558,
+                    child: DefaultTextStyle(
+                      style: detailTextStyleTitle, // DefaultTextStyle 적용
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: '화장실 ',
+                            ),
+                            TextSpan(
+                              text: '50m', // 바뀌는 값
+                              style: detailTextStyle.copyWith(
+                                  fontWeight: FontWeight.bold), // 덮어쓰기
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    Positioned(
-                      left: 40,
-                      top: 595,
-                      child: DefaultTextStyle(
-                        style: detailTextStyleTitle, // DefaultTextStyle 적용
-                        child: Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: '플랫폼 ',
-                              ),
-                              TextSpan(
-                                text: '양쪽', // 바뀌는 값
-                                style: detailTextStyle.copyWith(fontWeight: FontWeight.bold), // 덮어쓰기
-                              ),
-                            ],
-                          ),
+                  ),
+                  Positioned(
+                    left: 40,
+                    top: 595,
+                    child: DefaultTextStyle(
+                      style: detailTextStyleTitle, // DefaultTextStyle 적용
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: '플랫폼 ',
+                            ),
+                            TextSpan(
+                              text: '양쪽', // 바뀌는 값
+                              style: detailTextStyle.copyWith(
+                                  fontWeight: FontWeight.bold), // 덮어쓰기
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
 
               // 구현 : 바뀌는 값(역 마다 편의시설)
               Stack(
-                
                 children: [
                   // 첫 번째 텍스트 묶음
                   Positioned(
                     left: 40,
                     top: 691,
                     child: DefaultTextStyle(
-                      //'편의점 / 카페',
-                      style: detailTextStyle,
-                      child: Text('편의점 / 카페')
-                    ),
-                    
+                        //'편의점 / 카페',
+                        style: detailTextStyle,
+                        child: Text('편의점 / 카페')),
                   ),
                   Positioned(
                     left: 40,
                     top: 721,
                     child: DefaultTextStyle(
-                      //'물품보관소',
-                      style: detailTextStyle,
-                      child: Text('물품보관소')
-                    ),
+                        //'물품보관소',
+                        style: detailTextStyle,
+                        child: Text('물품보관소')),
                   ),
                   // 두 번째 텍스트 묶음
                   Positioned(
                     left: 189,
                     top: 691,
                     child: DefaultTextStyle(
-                      //'유실물센터',
-                      style: detailTextStyle,
-                      child: Text('유실물센터')
-                    ),
+                        //'유실물센터',
+                        style: detailTextStyle,
+                        child: Text('유실물센터')),
                   ),
                   Positioned(
                     left: 189,
@@ -647,15 +635,15 @@ class _searchStaInfo extends State<searchStaInfo> {
                 left: 84,
                 top: 815,
                 child: DefaultTextStyle(
-                          //'901 역',
-                          style: TextStyle(
-                            color: Color(0xFF676363),
-                            fontSize: 15,
-                            fontFamily: 'Roboto',
-                            height: 0.5,
-                            letterSpacing: 0.50,
-                          ),
-                          child: Text('901 역'),
+                  //'901 역',
+                  style: TextStyle(
+                    color: Color(0xFF676363),
+                    fontSize: 15,
+                    fontFamily: 'Roboto',
+                    height: 0.5,
+                    letterSpacing: 0.50,
+                  ),
+                  child: Text('901 역'),
                 ),
               ),
               Positioned(
