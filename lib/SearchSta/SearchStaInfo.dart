@@ -67,6 +67,8 @@ class _searchStaInfo extends State<searchStaInfo> {
     height: 0.10,
     letterSpacing: 0.50,
   );
+  
+  //String get stationName => null;
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +108,7 @@ class _searchStaInfo extends State<searchStaInfo> {
                 left: 22,
                 top: 40,
                 child: Container(
-                  width: 50, // 필요에 따라 너비를 지정하세요.
+                  width: 50, 
                   child: Row(
                     children: [
                       IconButton(
@@ -176,7 +178,8 @@ class _searchStaInfo extends State<searchStaInfo> {
                       height: 0.5,
                       letterSpacing: 0.50,
                     ),
-                    child: Text('901 역')),
+                    child: Text('901 역')
+                    ),
               ),
               // 도착역 박스
               Positioned(

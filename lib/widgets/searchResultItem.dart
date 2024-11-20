@@ -1,0 +1,65 @@
+import 'package:flutter/material.dart';
+
+// 역 검색 : 검색 시 검색기록에 저장되는 애들
+class SearchResultItem extends StatelessWidget {
+  final String stationName;
+  final String favImagePath;
+  final VoidCallback onToggleFav;
+
+
+  const SearchResultItem({
+    required this.stationName,
+    required this.favImagePath,
+    required this.onToggleFav,
+
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 25,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('../assets/images/subway_small.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Text(
+                    stationName,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Color(0xFF676363),
+                    ),
+                  ),
+                  Spacer(),
+                  GestureDetector(
+                    onTap: onToggleFav,
+                    child: Image.asset(
+                      favImagePath,
+                      width: 24,
+                      height: 24,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8),
+              Divider(color: Colors.grey),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
