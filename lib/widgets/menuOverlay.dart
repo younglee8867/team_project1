@@ -71,7 +71,7 @@ class MenuOverlay extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    top: 780,
+                    top: 700,
                     left: 20,
                     child: GestureDetector(
                       onTap: onSettingsTap,
@@ -82,7 +82,7 @@ class MenuOverlay extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    top: 788,
+                    top: 708,
                     left: 70,
                     child: Image.asset(
                       '../assets/images/menuBar/en_button.png',

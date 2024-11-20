@@ -10,6 +10,7 @@ import '../SearchSta/SearchStaInfo.dart';
 import '../StationMap.dart';
 import '../Setting/Settings.dart';
 import '../util/util.dart';
+import '../favoriteSta.dart';
 
 void main() {
   runApp(FlutterApp());
@@ -35,7 +36,6 @@ class _SearchStationPageState extends State<SearchStationPage> {
   late String _favImagePath;
   late bool isFavorite;
   bool _isMenuVisible = false; // 메뉴바 표시 여부
-  String _currentImage = '../assets/images/menu.png';
 
   // 초기값
   @override
@@ -43,27 +43,31 @@ class _SearchStationPageState extends State<SearchStationPage> {
     super.initState();
     isFavorite = false;
     _favImagePath = '../assets/images/favStar.png';
-    _searchHistory = []; // 검색 기록 초기화
+    _searchHistory = []; 
   }
 
+  // 메뉴 표시/숨기기 토글
   void _toggleMenuVisibility() {
     setState(() {
-      _isMenuVisible = !_isMenuVisible; // 메뉴 표시/숨기기 토글
+      _isMenuVisible = !_isMenuVisible; 
     });
   }
 
+  // 즐겨찾기 표시 토글
   void _toggleFavImage(int index) {
     setState(() {
       _searchHistory[index]['isFavorite'] = !_searchHistory[index]['isFavorite'];
     });
   }
 
+  // 검색 기록 추가
   void _addSearchHistory(String stationName) {
     setState(() {
         addSearchHistory(_searchHistory, stationName);
     });
   }
 
+  // 검색 기록 삭제
   void _deleteSearchHistory() {
     setState(() {
       clearHistory(_searchHistory);
@@ -80,27 +84,27 @@ Widget build(BuildContext context) {
           onTap: () {
             if (_isMenuVisible) {
               setState(() {
-                _isMenuVisible = false; // 메뉴 닫기
+                _isMenuVisible = false;
               });
             }
           },
           child: Column(
             children: [
-              SearchTopBar(
+              SearchTopBar( // 상단 - 검색바
                 controller: _searchController,
                 onSearch: (value) {
                   if (value.isNotEmpty) {
                     _addSearchHistory(value);
-                    Navigator.push(
+                    /*Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => searchStaInfo()),
-                    );
+                    );*/
                   }
                 },
                 onMenuTap: _toggleMenuVisibility,
                 onDelete: _deleteSearchHistory,
               ),
-              Expanded(
+              Expanded( // 가운데 - 검색기록 내역
                 child: ListView.builder(
                   itemCount: _searchHistory.length,
                   itemBuilder: (context, index) {
@@ -118,7 +122,7 @@ Widget build(BuildContext context) {
             ],
           ),
         ),
-        if (_isMenuVisible)
+        if (_isMenuVisible) // 좌측 - 메뉴바 카테고리별 이동
             MenuOverlay(
               onClose: _toggleMenuVisibility,
               onSearchTap: () {
@@ -128,10 +132,10 @@ Widget build(BuildContext context) {
                 );
               },
               onFavoritesTap: () {
-                /*Navigator.push(
+                Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Settings()),
-                );*/
+                  MaterialPageRoute(builder: (context) => FavoriteSta(favoriteStations: _searchHistory)),
+                );
               },
               onGameTap: () {
                 // Navigate to the game page (to be implemented)
