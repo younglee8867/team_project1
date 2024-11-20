@@ -10,7 +10,7 @@ class SearchResultItem extends StatelessWidget {
   const SearchResultItem({
     required this.stationName,
     required this.favImagePath,
-    required this.onToggleFav,
+    required this.onToggleFav, 
 
   });
 
