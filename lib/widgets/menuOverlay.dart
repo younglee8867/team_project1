@@ -84,10 +84,18 @@ class MenuOverlay extends StatelessWidget {
                   Positioned(
                     top: 708,
                     left: 70,
-                    child: Image.asset(
-                      '../assets/images/menuBar/en_button.png',
-                      width: 30,
+                    child: GestureDetector(
+                      onTap: (){
+
+                      },
+                        child: Image.asset(
+                          '../assets/images/menuBar/en_button.png',
+                          width: 30,
+                        ),
                     ),
+                    
+
+                    
                   ),
                 ],
               ),

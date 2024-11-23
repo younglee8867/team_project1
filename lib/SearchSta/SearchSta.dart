@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/killingTime/killingTime.dart';
 
 // 위젯
 import '../widgets/searchBar.dart';
@@ -56,7 +57,7 @@ class _SearchStationPageState extends State<SearchStationPage> {
   // 즐겨찾기 표시 토글
   void _toggleFavImage(int index) {
     setState(() {
-      _searchHistory[index]['isFavorite'] = !_searchHistory[index]['isFavorite'];
+       toggleFavorite(_searchHistory, index);
     });
   }
 
@@ -95,10 +96,10 @@ Widget build(BuildContext context) {
                 onSearch: (value) {
                   if (value.isNotEmpty) {
                     _addSearchHistory(value);
-                    /*Navigator.push(
+                    Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => searchStaInfo()),
-                    );*/
+                      MaterialPageRoute(builder: (context) => searchStaInfo(searchHistory: _searchHistory)),
+                    );
                   }
                 },
                 onMenuTap: _toggleMenuVisibility,
@@ -138,7 +139,10 @@ Widget build(BuildContext context) {
                 );
               },
               onGameTap: () {
-                // Navigate to the game page (to be implemented)
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => KillingTimeGame()),
+                );
               },
               onSettingsTap: () {
                 Navigator.push(

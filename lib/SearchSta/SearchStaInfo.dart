@@ -5,25 +5,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-void main() {
-  debugPaintSizeEnabled = false;
-  runApp(FlutterApp());
-}
-
-class FlutterApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: searchStaInfo(),
-        ),
-      ),
-    );
-  }
-}
-
 class searchStaInfo extends StatefulWidget {
+    final List<Map<String, dynamic>> searchHistory;
+
+    const searchStaInfo({
+    required this.searchHistory,
+  });
+
   @override
   _searchStaInfo createState() => _searchStaInfo();
 }
@@ -72,10 +60,12 @@ class _searchStaInfo extends State<searchStaInfo> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    return Column(
-      children: [
+    //double screenWidth = MediaQuery.of(context).size.width;
+    //double screenHeight = MediaQuery.of(context).size.height;
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
         Container(
           //width: screenWidth *0.3,
           //height: screenHeight *0.5,
@@ -859,6 +849,9 @@ class _searchStaInfo extends State<searchStaInfo> {
           ),
         ),
       ],
+
+      ),
+
     );
   }
 }
