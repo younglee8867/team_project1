@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/killingTime/bonFire.dart';
+import 'package:flutter_application_1/killingTime/miniGame.dart';
 
 class KillingTimeGame extends StatefulWidget{
   @override
@@ -38,11 +39,11 @@ body: Center(
     children: [
       SizedBox(height: 80),
       GestureDetector(
-      /*onTap: (){
+      onTap: (){
         Navigator.push(context,
-        MaterialPageRoute(builder: (context) => ());,
+        MaterialPageRoute(builder: (context) => AppleGame()),
         );
-      },*/
+      },
       child: Image.asset(
         'assets/images/miniGame/miniGame.png',
         fit: BoxFit.contain,
