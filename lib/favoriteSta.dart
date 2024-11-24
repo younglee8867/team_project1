@@ -1,6 +1,4 @@
-// 11.20 즐겨찾기를 추가하고 다시 즐겨찾기 항목으로 갔을 때 뒤로가기 버튼이 안 먹힘(11.21 해결)
-// 11.21 즐겨찾기 화면 내에서 별 클릭 이벤트 추가할 것(11.21 해결)
-
+// 즐겨찾기 화면
 import 'package:flutter/material.dart';
 import './util/util.dart';
 import './widgets//searchResultItem.dart';
@@ -11,6 +9,7 @@ class FavoriteSta extends StatefulWidget {
   const FavoriteSta({
     required this.favoriteStations,
   });
+  
 
   @override
   _FavoriteStaState createState() => _FavoriteStaState();

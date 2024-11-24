@@ -1,3 +1,4 @@
+// 11.24 게임 디테일 수정(잘못 클릭하면 아예 다음것도 안됨)
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
