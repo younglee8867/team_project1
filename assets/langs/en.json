@@ -10,7 +10,9 @@
     "역 검색" : "Search Sta",
 
     "출발역 입력" : "Enter Departure Station",
-    "도착역 압력" : "Enter Arrival Station",
+    "도착역 입력" : "Enter Arrival Station",
+    "전체" : "Entire",
+    "호선" : "line",
 
     "검색기록 삭제" : "Clear Search History",
     "역" : "Sta",

@@ -1,6 +1,7 @@
 // 스플래시 화면
-// firebase와 연동은 하긴함.. (11.24)
-// 
+
+// 이거 제가 그냥 페이지 확인하려고 역검색화면을 시작으로 했는데
+// 나중에 스플래시로 바꿔주세요
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -37,22 +38,7 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      home: SearchStationPage(),
+      home: SearchStationPage(), // 이부분 바꾸면 됩니다
     );
   }
 }
-
-
-/*class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('title'), // 번역된 타이틀
-      ),
-      body: const Center(child: Text('hello')),
-    );
-  }
-}*/

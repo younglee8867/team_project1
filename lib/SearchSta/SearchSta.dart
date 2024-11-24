@@ -8,7 +8,7 @@ import '../widgets/menuOverlay.dart';
 
 // 다른 화면 파일 or util
 import '../SearchSta/SearchStaInfo.dart';
-import '../StationMap.dart';
+import '../FIndWay/StationMap.dart';
 import '../Setting/Settings.dart';
 import '../util/util.dart';
 import '../favoriteSta.dart';
@@ -157,12 +157,3 @@ Widget build(BuildContext context) {
 }
 
 }
-
-
-
-
-
-
-
-
-

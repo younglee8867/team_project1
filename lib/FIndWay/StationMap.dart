@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'WriteStation.dart'; // WriteStation 페이지를 import
+// 한영변환
+import 'package:easy_localization/easy_localization.dart';
 
 void main() => runApp(MyApp());
 
@@ -76,7 +78,9 @@ class _StationMapState extends State<StationMap> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {}, // 뒤로가기 비활성화
+          onPressed: () {
+            Navigator.pop(context);
+          }, // 뒤로가기 비활성화
         ),
       ),
       body: Padding(
@@ -97,7 +101,7 @@ class _StationMapState extends State<StationMap> {
                       TextField(
                         controller: TextEditingController(text: _startStation),
                         decoration: InputDecoration(
-                          hintText: '출발역 입력',
+                          hintText: '출발역 입력'.tr(),
                           prefixIcon: Icon(Icons.search),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
@@ -110,7 +114,7 @@ class _StationMapState extends State<StationMap> {
                       TextField(
                         controller: TextEditingController(text: _endStation),
                         decoration: InputDecoration(
-                          hintText: '도착역 입력',
+                          hintText: '도착역 입력'.tr(),
                           prefixIcon: Icon(Icons.search),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
@@ -161,7 +165,7 @@ class _StationMapState extends State<StationMap> {
                           });
                         },
                         items: <String>[
-                          '전체',
+                          '전체'.tr(),
                           '1호선',
                           '2호선',
                           '3호선',
