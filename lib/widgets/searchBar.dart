@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// 한/영 변환
+import 'package:easy_localization/easy_localization.dart';
+
 // 역검색 : 상단에 있는 역 검색바
 class SearchTopBar extends StatelessWidget {
   final TextEditingController controller;
@@ -35,11 +38,11 @@ class SearchTopBar extends StatelessWidget {
             child: Row(
               children: [
                 GestureDetector(
-                  onTap: onMenuTap, // 수정된 콜백
+                  onTap: onMenuTap,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Image.asset(
-                      'assets/images/menu.png', // 경로 수정
+                      'assets/images/menu.png',
                       width: 40,
                       height: 40,
                     ),
@@ -52,8 +55,8 @@ class SearchTopBar extends StatelessWidget {
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                     ],
-                    decoration: const InputDecoration(
-                      hintText: '역 검색',
+                    decoration: InputDecoration(
+                      hintText: '역 검색'.tr(),
                       hintStyle: TextStyle(color: Color(0xFFABABAB)),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(horizontal: 8),
@@ -61,8 +64,10 @@ class SearchTopBar extends StatelessWidget {
                     onSubmitted: onSearch,
                     onChanged: (value) {
                       if (value.length == 3) {
+                        // "역"만 번역해서 문자열 조합
+                        String translatedSuffix = '역'.tr();
                         controller.value = TextEditingValue(
-                          text: "$value 역",
+                          text: "$value $translatedSuffix",
                         );
                       }
                     },
@@ -87,7 +92,7 @@ class SearchTopBar extends StatelessWidget {
                     fontSize: 12,
                     color: Color(0xFFACACAC),
                   ),
-                ),
+                ).tr(),
               ),
             ],
           ),

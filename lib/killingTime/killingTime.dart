@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/killingTime/bonFire.dart';
 import 'package:flutter_application_1/killingTime/miniGame.dart';
+// 한영변환
+import 'package:easy_localization/easy_localization.dart';
 
 class KillingTimeGame extends StatefulWidget{
   @override
@@ -28,67 +30,64 @@ class _KillingTimeGame extends State<KillingTimeGame>{
             fontWeight: FontWeight.bold,
             color: Color(0xff22536F),
           ),
-        ),
+        ).tr(),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
 
-body: Center(
-  child: Column(
-    mainAxisAlignment: MainAxisAlignment.start, // 위에서 시작
-    children: [
-      SizedBox(height: 80),
-      GestureDetector(
-      onTap: (){
-        Navigator.push(context,
-        MaterialPageRoute(builder: (context) => AppleGame()),
-        );
-      },
-      child: Image.asset(
-        'assets/images/miniGame/miniGame.png',
-        fit: BoxFit.contain,
-        width: 300,
-        height: 200,
-      ),
-    ),
-      SizedBox(height: 20),
-      Text(
-        '10을 만들어요!',
-        style: TextStyle(
-          fontSize: 20, // 텍스트 크기
-          fontWeight: FontWeight.bold, // 굵기
-          color: Color(0xff978080), // 색상
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start, // 위에서 시작
+          children: [
+            SizedBox(height: 80),
+            GestureDetector(
+            onTap: (){
+              Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AppleGame()),
+              );
+            },
+            child: Image.asset(
+              'assets/images/miniGame/miniGame.png',
+              fit: BoxFit.contain,
+              width: 300,
+              height: 200,
+            ),
+          ),
+            SizedBox(height: 20),
+            Text(
+              '10을 만들어요!',
+              style: TextStyle(
+                fontSize: 20, 
+                fontWeight: FontWeight.bold,
+                color: Color(0xff978080), 
+              ),
+            ).tr(),
+            SizedBox(height: 100),
+            GestureDetector(
+            onTap: (){
+              Navigator.push(context,
+              MaterialPageRoute(builder: (context) => BonFire()),
+              );
+            },
+            child: Image.asset(
+              'assets/images/miniGame/bonFire.png',
+              fit: BoxFit.contain,
+              width: 300,
+              height: 200,
+            ),
+          ),
+            SizedBox(height: 10),
+            Text(
+              '불멍 타임!',
+              style: TextStyle(
+                fontSize: 20, 
+                fontWeight: FontWeight.bold,
+                color: Color(0xff978080),
+              ),
+            ).tr(),
+          ],
         ),
       ),
-      SizedBox(height: 100),
-      GestureDetector(
-      onTap: (){
-        Navigator.push(context,
-        MaterialPageRoute(builder: (context) => BonFire()),
-        );
-      },
-      child: Image.asset(
-        'assets/images/miniGame/bonFire.png',
-        fit: BoxFit.contain,
-        width: 300,
-        height: 200,
-      ),
-    ),
-      SizedBox(height: 10),
-      Text(
-        '불멍 타임!',
-        style: TextStyle(
-          fontSize: 20, // 텍스트 크기
-          fontWeight: FontWeight.bold, // 굵기
-          color: Color(0xff978080), // 색상
-        ),
-      ),
-    ],
-  ),
-),
-
-
-
     );
   }
 }

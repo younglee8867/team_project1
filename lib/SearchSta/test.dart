@@ -1,3 +1,6 @@
+ /* 
+  SearchStaInfo.dart 파일 복붙한거라 무시해주세요
+ */
  /*@override
   Widget build(BuildContext context) {
     return Scaffold(

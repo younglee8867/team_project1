@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import './util/util.dart';
 import './widgets//searchResultItem.dart';
+// 한/영 변환
+import 'package:easy_localization/easy_localization.dart';
 
 class FavoriteSta extends StatefulWidget {
   final List<Map<String, dynamic>> favoriteStations;
@@ -55,7 +57,7 @@ class _FavoriteStaState extends State<FavoriteSta> {
             fontWeight: FontWeight.bold,
             color: Color(0xff22536F),
           ),
-        ),
+        ).tr(),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
@@ -64,7 +66,7 @@ class _FavoriteStaState extends State<FavoriteSta> {
               child: Text(
                 '즐겨찾기 항목이 없습니다.',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
+              ).tr(),
             )
           : ListView.builder( // 리스트에 항목이 있을 때
               padding: const EdgeInsets.all(8.0),
