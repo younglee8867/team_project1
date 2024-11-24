@@ -165,7 +165,7 @@ class _StationMapState extends State<StationMap> {
                           });
                         },
                         items: <String>[
-                          '전체'.tr(),
+                          '전체',
                           '1호선',
                           '2호선',
                           '3호선',
