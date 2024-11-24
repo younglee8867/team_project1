@@ -4,6 +4,8 @@ import '../main.dart';
 // 한영변환
 import 'package:easy_localization/easy_localization.dart';
 
+//11.25 ../ 파일경로 없앰
+
 class MenuOverlay extends StatelessWidget {
   final VoidCallback onClose;
   final VoidCallback onSearchTap;
@@ -22,7 +24,7 @@ class MenuOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onClose, 
+      onTap: onClose,
       child: Stack(
         children: [
           Positioned(
@@ -36,7 +38,7 @@ class MenuOverlay extends StatelessWidget {
               child: Stack(
                 children: [
                   Image.asset(
-                    '../assets/images/menuBar/menuBar.png',
+                    'assets/images/menuBar/menuBar.png',
                     fit: BoxFit.contain,
                   ),
                   SizedBox(height: 100),
@@ -51,52 +53,52 @@ class MenuOverlay extends StatelessWidget {
                               GestureDetector(
                                 onTap: onSearchTap,
                                 child: Text(
-                                '길찾기',
-                                style: TextStyle(
-                                  color: Color(0xff22536F),
-                                  fontSize: 16,
-                                ),
-                              ).tr(),
+                                  '길찾기',
+                                  style: TextStyle(
+                                    color: Color(0xff22536F),
+                                    fontSize: 16,
+                                  ),
+                                ).tr(),
                               ),
-                              SizedBox(height: 10), 
+                              SizedBox(height: 10),
                               Container(
-                                width: 200, 
+                                width: 200,
                                 height: 1,
-                                color: Color(0xffD6D6D6), 
+                                color: Color(0xffD6D6D6),
                               ),
                               SizedBox(height: 50),
                               GestureDetector(
                                 onTap: onFavoritesTap,
-                                child:Text(
-                                '즐겨찾기',
-                                style: TextStyle(
-                                  color: Color(0xff22536F),
-                                  fontSize: 16,
-                                ),
-                              ).tr(),
+                                child: Text(
+                                  '즐겨찾기',
+                                  style: TextStyle(
+                                    color: Color(0xff22536F),
+                                    fontSize: 16,
+                                  ),
+                                ).tr(),
                               ),
                               SizedBox(height: 10),
                               Container(
-                                width: 200, 
-                                height: 1, 
-                                color: Color(0xffD6D6D6), 
+                                width: 200,
+                                height: 1,
+                                color: Color(0xffD6D6D6),
                               ),
                               SizedBox(height: 50),
                               GestureDetector(
                                 onTap: onGameTap,
                                 child: Text(
-                                '킬링타임',
-                                style: TextStyle(
-                                  color: Color(0xff22536F),
-                                  fontSize: 16,
-                                ),
-                              ).tr(),
+                                  '킬링타임',
+                                  style: TextStyle(
+                                    color: Color(0xff22536F),
+                                    fontSize: 16,
+                                  ),
+                                ).tr(),
                               ),
-                              SizedBox(height: 10), 
+                              SizedBox(height: 10),
                               Container(
-                                width: 200, 
-                                height: 1, 
-                                color: Color(0xffD6D6D6), 
+                                width: 200,
+                                height: 1,
+                                color: Color(0xffD6D6D6),
                               ),
                             ],
                           ),
@@ -106,35 +108,37 @@ class MenuOverlay extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10, left: 30),
-                    child:Column(
-                    mainAxisAlignment: MainAxisAlignment.end, // 아래쪽 정렬
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: onSettingsTap,
-                            child: Image.asset(
-                              '../assets/images/menuBar/settings_button.png',
-                              width: 38,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end, // 아래쪽 정렬
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: onSettingsTap,
+                              child: Image.asset(
+                                'assets/images/menuBar/settings_button.png',
+                                width: 38,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 20),
-                          GestureDetector(
-                            onTap: () {
-                              context.setLocale(
-                                context.locale.languageCode == 'ko' ? Locale('en') : Locale('ko'),
-                              );
-                            },
-                            child: Image.asset(
-                              '../assets/images/menuBar/en_button.png',
-                              width: 30,
+                            SizedBox(width: 20),
+                            GestureDetector(
+                              onTap: () {
+                                context.setLocale(
+                                  context.locale.languageCode == 'ko'
+                                      ? Locale('en')
+                                      : Locale('ko'),
+                                );
+                              },
+                              child: Image.asset(
+                                'assets/images/menuBar/en_button.png',
+                                width: 30,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                          ],
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),

@@ -88,6 +88,7 @@ class Settings extends StatelessWidget {
                       color: Color(0xFF22536F), // 아이콘 색상
                     ),
                     onPressed: () {
+                      Navigator.pop(context);
                       // 뒤로가기 동작 추가 가능
                     },
                   ),
