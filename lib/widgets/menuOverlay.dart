@@ -1,7 +1,9 @@
-
-import 'package:flutter/material.dart';
-
 // 역 검색 : 검색창 왼쪽에 메뉴바 클릭시 왼쪽에서 메뉴 창 나타남(홈화면에서도 이용 가능할듯)
+import 'package:flutter/material.dart';
+import '../main.dart';
+// 한영변환
+import 'package:easy_localization/easy_localization.dart';
+
 class MenuOverlay extends StatelessWidget {
   final VoidCallback onClose;
   final VoidCallback onSearchTap;
@@ -20,7 +22,7 @@ class MenuOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onClose, // 메뉴 닫기 동작
+      onTap: onClose, 
       child: Stack(
         children: [
           Positioned(
@@ -37,58 +39,103 @@ class MenuOverlay extends StatelessWidget {
                     '../assets/images/menuBar/menuBar.png',
                     fit: BoxFit.contain,
                   ),
-                  Positioned(
-                    top: 120,
-                    left: 20,
-                    child: GestureDetector(
-                      onTap: onSearchTap,
-                      child: Image.asset(
-                        '../assets/images/menuBar/menuBar_search.png',
-                        width: 247,
+                  SizedBox(height: 100),
+                  Column(
+                    children: [
+                      GestureDetector(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 160, left: 50),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: onSearchTap,
+                                child: Text(
+                                '길찾기',
+                                style: TextStyle(
+                                  color: Color(0xff22536F),
+                                  fontSize: 16,
+                                ),
+                              ).tr(),
+                              ),
+                              SizedBox(height: 10), 
+                              Container(
+                                width: 200, 
+                                height: 1,
+                                color: Color(0xffD6D6D6), 
+                              ),
+                              SizedBox(height: 50),
+                              GestureDetector(
+                                onTap: onFavoritesTap,
+                                child:Text(
+                                '즐겨찾기',
+                                style: TextStyle(
+                                  color: Color(0xff22536F),
+                                  fontSize: 16,
+                                ),
+                              ).tr(),
+                              ),
+                              SizedBox(height: 10),
+                              Container(
+                                width: 200, 
+                                height: 1, 
+                                color: Color(0xffD6D6D6), 
+                              ),
+                              SizedBox(height: 50),
+                              GestureDetector(
+                                onTap: onGameTap,
+                                child: Text(
+                                '킬링타임',
+                                style: TextStyle(
+                                  color: Color(0xff22536F),
+                                  fontSize: 16,
+                                ),
+                              ).tr(),
+                              ),
+                              SizedBox(height: 10), 
+                              Container(
+                                width: 200, 
+                                height: 1, 
+                                color: Color(0xffD6D6D6), 
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                  Positioned(
-                    top: 200,
-                    left: 20,
-                    child: GestureDetector(
-                      onTap: onFavoritesTap,
-                      child: Image.asset(
-                        '../assets/images/menuBar/menuBar_Fav.png',
-                        width: 247,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10, left: 30),
+                    child:Column(
+                    mainAxisAlignment: MainAxisAlignment.end, // 아래쪽 정렬
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: onSettingsTap,
+                            child: Image.asset(
+                              '../assets/images/menuBar/settings_button.png',
+                              width: 38,
+                            ),
+                          ),
+                          SizedBox(width: 20),
+                          GestureDetector(
+                            onTap: () {
+                              context.setLocale(
+                                context.locale.languageCode == 'ko' ? Locale('en') : Locale('ko'),
+                              );
+                            },
+                            child: Image.asset(
+                              '../assets/images/menuBar/en_button.png',
+                              width: 30,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+                    ],
                   ),
-                  Positioned(
-                    top: 280,
-                    left: 20,
-                    child: GestureDetector(
-                      onTap: onGameTap,
-                      child: Image.asset(
-                        '../assets/images/menuBar/menuBar_game.png',
-                        width: 247,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 700,
-                    left: 20,
-                    child: GestureDetector(
-                      onTap: onSettingsTap,
-                      child: Image.asset(
-                        '../assets/images/menuBar/settings_button.png',
-                        width: 38,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 708,
-                    left: 70,
-                    child: Image.asset(
-                      '../assets/images/menuBar/en_button.png',
-                      width: 30,
-                    ),
-                  ),
+                  )
                 ],
               ),
             ),

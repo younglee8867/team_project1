@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// 한/영 변환
+import 'package:easy_localization/easy_localization.dart';
 
 // 역 검색 : 검색 시 검색기록에 저장되는 애들
 class SearchResultItem extends StatelessWidget {
@@ -37,7 +39,7 @@ class SearchResultItem extends StatelessWidget {
                   ),
                   SizedBox(width: 12),
                   Text(
-                    stationName,
+                    stationName.tr(),
                     style: TextStyle(
                       fontSize: 20,
                       color: Color(0xFF676363),

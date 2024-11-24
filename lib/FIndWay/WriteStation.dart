@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// 한영변환
+import 'package:easy_localization/easy_localization.dart';
 
 class WriteStationPage extends StatefulWidget {
   final String? initialStartStation;
@@ -59,7 +61,7 @@ class _WriteStationPageState extends State<WriteStationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("역 검색"),
+        title: Text("역 검색").tr(),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
@@ -95,7 +97,7 @@ class _WriteStationPageState extends State<WriteStationPage> {
                   TextField(
                     controller: _startStationController,
                     decoration: InputDecoration(
-                      hintText: '출발역 입력',
+                      hintText: '출발역 입력'.tr(),
                       prefixIcon: Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -109,7 +111,7 @@ class _WriteStationPageState extends State<WriteStationPage> {
                   TextField(
                     controller: _endStationController,
                     decoration: InputDecoration(
-                      hintText: '도착역 입력',
+                      hintText: '도착역 입력'.tr(),
                       prefixIcon: Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -145,7 +147,7 @@ class _WriteStationPageState extends State<WriteStationPage> {
             ),
             TextButton(
               onPressed: _clearSearchHistory,
-              child: Text('검색기록 삭제'),
+              child: Text('검색기록 삭제').tr(),
             ),
           ],
         ),

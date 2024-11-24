@@ -1,68 +1,88 @@
-// 11.20 즐겨찾기를 추가하고 다시 즐겨찾기 항목으로 갔을 때 뒤로가기 버튼이 안 먹힘(11.21 해결)
-// 11.21 즐겨찾기 화면 내에서 별 클릭 이벤트 추가할 것
-
+// 즐겨찾기 화면
 import 'package:flutter/material.dart';
+import './util/util.dart';
 import './widgets//searchResultItem.dart';
+// 한/영 변환
+import 'package:easy_localization/easy_localization.dart';
 
-class FavoriteSta extends StatelessWidget {
+class FavoriteSta extends StatefulWidget {
   final List<Map<String, dynamic>> favoriteStations;
 
   const FavoriteSta({
     required this.favoriteStations,
   });
+  
+
+  @override
+  _FavoriteStaState createState() => _FavoriteStaState();
+}
+
+class _FavoriteStaState extends State<FavoriteSta> {
+  late List<Map<String, dynamic>> favoriteOnly;
+
+  @override
+  void initState() {
+    super.initState();
+    // 즐겨찾기 항목만 필터링
+    favoriteOnly = widget.favoriteStations
+        .where((station) => station['isFavorite'] == true)
+        .toList();
+  }
+
+  void _toggleFavorite(int index) {
+    setState(() {
+      toggleFavorite(favoriteOnly, index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // 즐겨찾기 항목만 필터링
-    final favoriteOnly = favoriteStations.where((station) => station['isFavorite'] == true).toList();
-
     return Scaffold(
       backgroundColor: Colors.white,
-        appBar: AppBar(
-          leading: GestureDetector(
-            onTap: () {
-              if (Navigator.canPop(context)) {
-                Navigator.pop(context);
-              } else {
-                print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음');
-              }
-            },
-            child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
+      appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음');
+            }
+          },
+          child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
+        ),
+        title: Text(
+          '즐겨찾기',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xff22536F),
           ),
-            title: Text(
-              '즐겨찾기',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xff22536F),
-              ),
+        ).tr(),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: favoriteOnly.isEmpty
+          ? Center( // 리스트에 항목이 없을 때
+              child: Text(
+                '즐겨찾기 항목이 없습니다.',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ).tr(),
+            )
+          : ListView.builder( // 리스트에 항목이 있을 때
+              padding: const EdgeInsets.all(8.0),
+              itemCount: favoriteOnly.length,
+              itemBuilder: (context, index) {
+                final record = favoriteOnly[index];
+                return SearchResultItem(
+                  stationName: record['name'],
+                  favImagePath: record['isFavorite']
+                      ? 'assets/images/favStarFill.png'
+                      : 'assets/images/favStar.png',
+                  onToggleFav: () => _toggleFavorite(index), // 상태 변경
+                );
+              },
             ),
-            backgroundColor: Colors.white,
-            elevation: 0,
-          ),
-          body: favoriteOnly.isEmpty
-            ? Center(
-                child: Text(
-                  '즐겨찾기 항목이 없습니다.',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-              )
-            : ListView.builder(
-                padding: const EdgeInsets.all(8.0),
-                itemCount: favoriteOnly.length,
-                itemBuilder: (context, index) {
-                  final record = favoriteOnly[index];
-                  return SearchResultItem(
-                    stationName: record['name'],
-                    favImagePath: record['isFavorite']
-                        ? 'assets/images/favStarFill.png'
-                        : 'assets/images/favStar.png',
-                    onToggleFav: () {
-                      // 즐겨찾기 상태를 토글하는 로직
-                    },
-                  );
-                },
-              ),
-      );
+    );
   }
 }
+
