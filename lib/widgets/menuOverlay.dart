@@ -36,7 +36,7 @@ class MenuOverlay extends StatelessWidget {
               child: Stack(
                 children: [
                   Image.asset(
-                    '../assets/images/menuBar/menuBar.png',
+                    'assets/images/menuBar/menuBar.png',
                     fit: BoxFit.contain,
                   ),
                   SizedBox(height: 100),
@@ -115,8 +115,8 @@ class MenuOverlay extends StatelessWidget {
                           GestureDetector(
                             onTap: onSettingsTap,
                             child: Image.asset(
-                              '../assets/images/menuBar/settings_button.png',
-                              width: 38,
+                              'assets/images/menuBar/settings_button.png',
+                              width: 28,
                             ),
                           ),
                           SizedBox(width: 20),
@@ -127,8 +127,8 @@ class MenuOverlay extends StatelessWidget {
                               );
                             },
                             child: Image.asset(
-                              '../assets/images/menuBar/en_button.png',
-                              width: 30,
+                              'assets/images/menuBar/en_button.png',
+                              width: 20,
                             ),
                           ),
                         ],

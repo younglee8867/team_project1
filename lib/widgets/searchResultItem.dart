@@ -32,7 +32,7 @@ class SearchResultItem extends StatelessWidget {
                     height: 28,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('../assets/images/subway_small.png'),
+                        image: AssetImage('assets/images/subway_small.png'),
                         fit: BoxFit.cover,
                       ),
                     ),

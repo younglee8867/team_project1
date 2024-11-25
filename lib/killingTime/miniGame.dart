@@ -109,7 +109,7 @@ class _AppleGameState extends State<AppleGame> {
         height: 62,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('../assets/images/miniGame/apple.png'), // 사과 이미지 경로
+            image: AssetImage('assets/images/miniGame/apple.png'), // 사과 이미지 경로
             fit: BoxFit.cover,
           ),
         ),
