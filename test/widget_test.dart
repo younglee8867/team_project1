@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_application_1/Setting/RegionSettings.dart';
-import 'package:flutter_application_1/FIndWay/StationMap.dart';
-import 'package:flutter_application_1/FIndWay/WriteStation.dart';
+import 'package:flutter_application_1/FindWay/StationMap.dart';
+import 'package:flutter_application_1/FindWay/WriteStation.dart';
 import 'package:flutter_application_1/minimumTransfer.dart';
 import 'package:flutter_application_1/minimumDistance.dart';
 import 'package:flutter_application_1/Setting/TermsOfService.dart';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/killingTime/killingTime.dart';
 
 // 위젯
 import '../widgets/searchBar.dart';
@@ -7,7 +8,7 @@ import '../widgets/menuOverlay.dart';
 
 // 다른 화면 파일 or util
 import '../SearchSta/SearchStaInfo.dart';
-import '../FIndWay/StationMap.dart';
+import '../FindWay/StationMap.dart';
 import '../Setting/Settings.dart';
 import '../util/util.dart';
 import '../favoriteSta.dart';
@@ -56,8 +57,7 @@ class _SearchStationPageState extends State<SearchStationPage> {
   // 즐겨찾기 표시 토글
   void _toggleFavImage(int index) {
     setState(() {
-      _searchHistory[index]['isFavorite'] =
-          !_searchHistory[index]['isFavorite'];
+      toggleFavorite(_searchHistory, index);
     });
   }
 
@@ -97,10 +97,12 @@ class _SearchStationPageState extends State<SearchStationPage> {
                   onSearch: (value) {
                     if (value.isNotEmpty) {
                       _addSearchHistory(value);
-                      /*Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => searchStaInfo()),
-                    );*/
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                searchStaInfo(searchHistory: _searchHistory)),
+                      );
                     }
                   },
                   onMenuTap: _toggleMenuVisibility,
@@ -143,7 +145,10 @@ class _SearchStationPageState extends State<SearchStationPage> {
                 );
               },
               onGameTap: () {
-                // Navigate to the game page (to be implemented)
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => KillingTimeGame()),
+                );
               },
               onSettingsTap: () {
                 Navigator.push(
