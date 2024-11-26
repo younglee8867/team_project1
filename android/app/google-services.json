@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:561653222807:android:e4bb5ce4ea1e6e649248d2",
         "android_client_info": {
-          "package_name": "smartSubway.app"
+          "package_name": "com.example.flutter_application_1"
         }
       },
       "oauth_client": [],

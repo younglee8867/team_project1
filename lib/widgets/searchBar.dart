@@ -1,10 +1,8 @@
+// 역 검색바 위젯
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-// 한/영 변환
 import 'package:easy_localization/easy_localization.dart';
 
-// 역검색 : 상단에 있는 역 검색바
 class SearchTopBar extends StatelessWidget {
   final TextEditingController controller;
   final Function(String) onSearch;

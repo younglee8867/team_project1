@@ -1,3 +1,4 @@
+// 최소거리화면
 import 'package:flutter/material.dart';
 
 void main() {

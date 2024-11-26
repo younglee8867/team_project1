@@ -1,7 +1,6 @@
-// 역 검색 : 검색창 왼쪽에 메뉴바 클릭시 왼쪽에서 메뉴 창 나타남(홈화면에서도 이용 가능할듯)
+// 메뉴바 위젯
 import 'package:flutter/material.dart';
 import '../main.dart';
-// 한영변환
 import 'package:easy_localization/easy_localization.dart';
 
 class MenuOverlay extends StatelessWidget {
@@ -22,7 +21,7 @@ class MenuOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onClose, 
+      onTap: onClose,
       child: Stack(
         children: [
           Positioned(
@@ -51,52 +50,52 @@ class MenuOverlay extends StatelessWidget {
                               GestureDetector(
                                 onTap: onSearchTap,
                                 child: Text(
-                                '길찾기',
-                                style: TextStyle(
-                                  color: Color(0xff22536F),
-                                  fontSize: 16,
-                                ),
-                              ).tr(),
+                                  '길찾기',
+                                  style: TextStyle(
+                                    color: Color(0xff22536F),
+                                    fontSize: 16,
+                                  ),
+                                ).tr(),
                               ),
-                              SizedBox(height: 10), 
+                              SizedBox(height: 10),
                               Container(
-                                width: 200, 
+                                width: 200,
                                 height: 1,
-                                color: Color(0xffD6D6D6), 
+                                color: Color(0xffD6D6D6),
                               ),
                               SizedBox(height: 50),
                               GestureDetector(
                                 onTap: onFavoritesTap,
-                                child:Text(
-                                '즐겨찾기',
-                                style: TextStyle(
-                                  color: Color(0xff22536F),
-                                  fontSize: 16,
-                                ),
-                              ).tr(),
+                                child: Text(
+                                  '즐겨찾기',
+                                  style: TextStyle(
+                                    color: Color(0xff22536F),
+                                    fontSize: 16,
+                                  ),
+                                ).tr(),
                               ),
                               SizedBox(height: 10),
                               Container(
-                                width: 200, 
-                                height: 1, 
-                                color: Color(0xffD6D6D6), 
+                                width: 200,
+                                height: 1,
+                                color: Color(0xffD6D6D6),
                               ),
                               SizedBox(height: 50),
                               GestureDetector(
                                 onTap: onGameTap,
                                 child: Text(
-                                '킬링타임',
-                                style: TextStyle(
-                                  color: Color(0xff22536F),
-                                  fontSize: 16,
-                                ),
-                              ).tr(),
+                                  '킬링타임',
+                                  style: TextStyle(
+                                    color: Color(0xff22536F),
+                                    fontSize: 16,
+                                  ),
+                                ).tr(),
                               ),
-                              SizedBox(height: 10), 
+                              SizedBox(height: 10),
                               Container(
-                                width: 200, 
-                                height: 1, 
-                                color: Color(0xffD6D6D6), 
+                                width: 200,
+                                height: 1,
+                                color: Color(0xffD6D6D6),
                               ),
                             ],
                           ),

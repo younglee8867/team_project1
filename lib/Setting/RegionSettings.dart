@@ -1,112 +1,83 @@
+// 지역설정 화면
+//11.25 사이드 바 없애고 페이지 구성으로 바꿈
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(FlutterApp());
+  runApp(const MyApp());
 }
 
-class FlutterApp extends StatelessWidget {
-  const FlutterApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: Stack(
-          children: [
-            // 회색 배경
-            Container(color: Colors.grey[200]),
-
-            // 둥근 모서리를 가진 사이드바
-            Positioned(
-              left: 0,
-              top: 0,
-              bottom: 0,
-              child: RegionSettingsPage(),
-            ),
-          ],
-        ),
-      ),
+      home: RegionSettingsPage(),
     );
   }
 }
 
 class RegionSettingsPage extends StatelessWidget {
-  const RegionSettingsPage({super.key});
+  const RegionSettingsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 250,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(30),
-          bottomRight: Radius.circular(30),
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF22536F)),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
         ),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 상단 여백 추가
-          const SizedBox(height: 50),
-
-          // 메뉴 항목들
-          MenuItem(text: '수도권', onPressed: () {}),
-          MenuItem(text: '부산', onPressed: () {}),
-          MenuItem(text: '대구', onPressed: () {}),
-          MenuItem(text: '광주', onPressed: () {}),
-          MenuItem(text: '대전', onPressed: () {}),
-
-          const Spacer(),
-
-          // 설정 아이콘 및 언어 표시
-          const Padding(
-            padding: EdgeInsets.only(left: 20.0, bottom: 20),
-            child: Row(
-              children: [
-                Icon(Icons.settings, size: 24, color: Color(0xFF22536F)),
-                SizedBox(width: 5),
-                Text('En',
-                    style: TextStyle(fontSize: 20, color: Color(0xFF22536F))),
-              ],
-            ),
+        title: const Text(
+          '지역 설정',
+          style: TextStyle(
+            color: Color(0xFF22536F),
+            fontFamily: 'Roboto',
           ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      ),
+      body: ListView(
+        children: const [
+          RegionButton(region: '수도권'),
+          Divider(thickness: 1, height: 1),
+          RegionButton(region: '부산'),
+          Divider(thickness: 1, height: 1),
+          RegionButton(region: '대구'),
+          Divider(thickness: 1, height: 1),
+          RegionButton(region: '광주'),
+          Divider(thickness: 1, height: 1),
+          RegionButton(region: '대전'),
+          Divider(thickness: 1, height: 1),
         ],
       ),
     );
   }
 }
 
-class MenuItem extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
+class RegionButton extends StatelessWidget {
+  final String region;
 
-  const MenuItem({super.key, required this.text, required this.onPressed});
+  const RegionButton({Key? key, required this.region}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: TextButton(
-        onPressed: onPressed,
-        style: TextButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              text,
-              style: const TextStyle(
-                fontSize: 18,
-                color: Color(0xFF22536F),
-              ),
-            ),
-            const Divider(color: Color(0xFFD5D5D5), thickness: 1),
-          ],
+    return ListTile(
+      title: Text(
+        region,
+        style: const TextStyle(
+          fontSize: 16,
+          color: Color(0xFF22536F),
+          fontFamily: 'Roboto', // 텍스트 컬러 설정
         ),
       ),
+      onTap: () {
+        // 버튼 눌렀을 때 별다른 동작 없음
+      },
     );
   }
 }

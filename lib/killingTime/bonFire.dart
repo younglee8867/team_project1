@@ -1,6 +1,5 @@
-// 불멍 페이지
+// 불멍 화면
 // 11.24 모닥불 gif가 너무 빠름
-
 import 'package:flutter/material.dart';
 
 class BonFire extends StatefulWidget {

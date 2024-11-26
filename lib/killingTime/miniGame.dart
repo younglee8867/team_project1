@@ -1,3 +1,4 @@
+// 사과게임
 // 11.24 게임 디테일 수정(잘못 클릭하면 아예 다음것도 안됨)
 import 'dart:async';
 import 'dart:math';
@@ -96,49 +97,48 @@ class _AppleGameState extends State<AppleGame> {
 
   // 사과 위젯 만들기
   Widget _buildApple(Apple apple) {
-  return Positioned(
-    left: apple.x,
-    top: apple.y,
-    child: GestureDetector(
-      onTap: () {
-        _onAppleSelected(apple);
-      },
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 300),
-        width: 50,
-        height: 62,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/miniGame/apple.png'), // 사과 이미지 경로
-            fit: BoxFit.cover,
+    return Positioned(
+      left: apple.x,
+      top: apple.y,
+      child: GestureDetector(
+        onTap: () {
+          _onAppleSelected(apple);
+        },
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          width: 50,
+          height: 62,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image:
+                  AssetImage('assets/images/miniGame/apple.png'), // 사과 이미지 경로
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        child: Stack(
-          children: [
-            // 이미지 위에 텍스트 표시
-            Positioned(
-              top: 20, // 텍스트를 10만큼 아래로 이동
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Text(
-                  apple.number.toString(),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+          child: Stack(
+            children: [
+              // 이미지 위에 텍스트 표시
+              Positioned(
+                top: 20, // 텍스트를 10만큼 아래로 이동
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Text(
+                    apple.number.toString(),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-),
-
-    ),
-  );
-}
-
+      ),
+    );
+  }
 
   // 사과를 선택하는 기능
   void _onAppleSelected(Apple apple) {
@@ -156,7 +156,7 @@ class _AppleGameState extends State<AppleGame> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
-          onTap: (){
+          onTap: () {
             if (Navigator.canPop(context)) {
               Navigator.pop(context);
             }
@@ -193,60 +193,59 @@ class _AppleGameState extends State<AppleGame> {
             // 사과들 그리기
             for (Apple apple in _apples) _buildApple(apple),
 
-          // 점수 표시
-          Positioned(
-            top: 80,
-            right: 20,
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 300),
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 120, 158, 225), // 배경 색상
-                borderRadius: BorderRadius.circular(12), // 둥근 모서리
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Score: $_score',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+            // 점수 표시
+            Positioned(
+              top: 80,
+              right: 20,
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 120, 158, 225), // 배경 색상
+                  borderRadius: BorderRadius.circular(12), // 둥근 모서리
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Score: $_score',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
 
-
-          // 남은 시간 표시
-          Positioned(
-            top: 20,
-            right: 20,
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 300),
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 225, 152, 92), // 배경 색상
-                borderRadius: BorderRadius.circular(12), // 둥근 모서리
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Time: $_timeLeft',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+            // 남은 시간 표시
+            Positioned(
+              top: 20,
+              right: 20,
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 225, 152, 92), // 배경 색상
+                  borderRadius: BorderRadius.circular(12), // 둥근 모서리
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Time: $_timeLeft',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
 
             // 게임 종료 메시지
             if (_isGameOver)
@@ -276,7 +275,6 @@ class _AppleGameState extends State<AppleGame> {
     );
   }
 }
-
 
 // 사과 클래스 정의
 class Apple {
