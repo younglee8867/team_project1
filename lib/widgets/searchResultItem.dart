@@ -7,12 +7,10 @@ class SearchResultItem extends StatelessWidget {
   final String favImagePath;
   final VoidCallback onToggleFav;
 
-
   const SearchResultItem({
     required this.stationName,
     required this.favImagePath,
-    required this.onToggleFav, 
-
+    required this.onToggleFav,
   });
 
   @override

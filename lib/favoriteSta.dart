@@ -10,7 +10,6 @@ class FavoriteSta extends StatefulWidget {
   const FavoriteSta({
     required this.favoriteStations,
   });
-  
 
   @override
   _FavoriteStaState createState() => _FavoriteStaState();
@@ -61,13 +60,15 @@ class _FavoriteStaState extends State<FavoriteSta> {
         elevation: 0,
       ),
       body: favoriteOnly.isEmpty
-          ? Center( // 리스트에 항목이 없을 때
+          ? Center(
+              // 리스트에 항목이 없을 때
               child: Text(
                 '즐겨찾기 항목이 없습니다.',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ).tr(),
             )
-          : ListView.builder( // 리스트에 항목이 있을 때
+          : ListView.builder(
+              // 리스트에 항목이 있을 때
               padding: const EdgeInsets.all(8.0),
               itemCount: favoriteOnly.length,
               itemBuilder: (context, index) {
@@ -84,4 +85,3 @@ class _FavoriteStaState extends State<FavoriteSta> {
     );
   }
 }
-

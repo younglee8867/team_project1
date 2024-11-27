@@ -1,7 +1,9 @@
 // 길찾기 화면(출발역,도착역 검색)
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+
 import '../widgets/searchResultItem.dart';
+import '../favoriteSta.dart';
 
 class WriteStationPage extends StatefulWidget {
   final String? initialStartStation;
@@ -58,6 +60,15 @@ class _WriteStationPageState extends State<WriteStationPage> {
     });
   }
 
+  // 출발역과 도착역 교환
+  void _swapStations() {
+    setState(() {
+      String temp = _startStationController.text;
+      _startStationController.text = _endStationController.text;
+      _endStationController.text = temp;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,70 +106,89 @@ class _WriteStationPageState extends State<WriteStationPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: Icon(Icons.swap_vert, color: Color(0xff386B88)),
-                  onPressed: () {
-                    String temp = _startStationController.text;
-                    _startStationController.text = _endStationController.text;
-                    _endStationController.text = temp;
-                  },
+                  icon: Icon(Icons.swap_vert, color: Colors.black),
+                  onPressed: _swapStations,
                 ),
                 Expanded(
-                    child: Column(children: [
-                  TextField(
-                    controller: _startStationController,
-                    decoration: InputDecoration(
-                      hintText: '출발역 입력'.tr(),
-                      hintStyle: TextStyle(
-                        color: Color(0xFFABABAB)
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _startStationController,
+                        decoration: InputDecoration(
+                          hintText: '출발역 입력'.tr(),
+                          hintStyle: TextStyle(color: Color(0xFFABABAB)),
+                          prefixIcon: Icon(Icons.search),
+                          prefixIconColor: Color(0xff386B88),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        onSubmitted: (value) {
+                          if (value.isNotEmpty) _addSearchRecord(value);
+                        },
+                        onChanged: (value) {
+                          // 사용자가 입력할 때 자동으로 '역' 추가
+                          if (value.length >= 3) {
+                            String translatedSuffix = '역'.tr();
+                            _startStationController.value = TextEditingValue(
+                              text: "$value $translatedSuffix",
+                              selection: TextSelection.collapsed(
+                                offset: "$value $translatedSuffix".length,
+                              ),
+                            );
+                          }
+                        },
                       ),
-                      prefixIcon: Icon(Icons.search),
-                      prefixIconColor: Color(0xff386B88),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
+                      SizedBox(height: 8),
+                      TextField(
+                        controller: _endStationController,
+                        decoration: InputDecoration(
+                          hintText: '도착역 입력'.tr(),
+                          hintStyle: TextStyle(color: Color(0xFFABABAB)),
+                          prefixIcon: Icon(Icons.search),
+                          prefixIconColor: Color(0xff386B88),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        onSubmitted: (value) {
+                          if (value.isNotEmpty) _addSearchRecord(value);
+                        },
+                        onChanged: (value) {
+                          // 사용자가 입력할 때 자동으로 '역' 추가
+                          if (value.length >= 3) {
+                            String translatedSuffix = '역'.tr();
+                            _endStationController.value = TextEditingValue(
+                              text: "$value $translatedSuffix",
+                              selection: TextSelection.collapsed(
+                                offset: "$value $translatedSuffix".length,
+                              ),
+                            );
+                          }
+                        },
                       ),
-                    ),
-                    onSubmitted: (value) {
-                      if (value.isNotEmpty) _addSearchRecord(value);
-                    },
+                    ],
                   ),
-                  SizedBox(height: 8),
-                  TextField(
-                    controller: _endStationController,
-                    decoration: InputDecoration(
-                      hintText: '도착역 입력'.tr(),
-                      hintStyle: TextStyle(
-                        color: Color(0xFFABABAB)
-                      ),                      
-                      prefixIcon: Icon(Icons.search),
-                      prefixIconColor: Color(0xff386B88),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    onSubmitted: (value) {
-                      if (value.isNotEmpty) _addSearchRecord(value);
-                    },
-                  ),
-                ])),
+                ),
               ],
             ),
 
             // 검색기록
             SizedBox(height: 20),
             Flexible(
-                  child: ListView.builder(
-                    itemCount: _searchHistory.length,
-                    itemBuilder: (context, index) {
-                      final record = _searchHistory[index];
-                      return SearchResultItem(
-                        stationName: record['name'],
-                        favImagePath: record['isFavorite']
-                            ? 'assets/images/favStarFill.png'
-                            : 'assets/images/favStar.png', // 상태에 따라 이미지 선택
-                        onToggleFav: () => _toggleFavorite(index), // 인덱스를 전달
-                      );
-                    },
-                  ),
+              child: ListView.builder(
+                itemCount: _searchHistory.length,
+                itemBuilder: (context, index) {
+                  final record = _searchHistory[index];
+                  return SearchResultItem(
+                    stationName: record['name'],
+                    favImagePath: record['isFavorite']
+                        ? 'assets/images/favStarFill.png'
+                        : 'assets/images/favStar.png', // 상태에 따라 이미지 선택
+                    onToggleFav: () => _toggleFavorite(index), // 인덱스를 전달
+                  );
+                },
+              ),
             ),
             TextButton(
               onPressed: _clearSearchHistory,
