@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+// 지역설정 화면
 //11.25 사이드 바 없애고 페이지 구성으로 바꿈
+import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +33,7 @@ class RegionSettingsPage extends StatelessWidget {
           },
         ),
         title: const Text(
-          '지역 선택',
+          '지역 설정',
           style: TextStyle(
             color: Color(0xFF22536F),
             fontFamily: 'Roboto',

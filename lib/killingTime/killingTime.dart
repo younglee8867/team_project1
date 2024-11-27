@@ -1,10 +1,8 @@
+// 킬링타임 (게임,불멍 선택 화면)
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/killingTime/bonFire.dart';
 import 'package:flutter_application_1/killingTime/miniGame.dart';
-// 한영변환
 import 'package:easy_localization/easy_localization.dart';
-
-//11.25 이미지 파일에서 ../ 제거!
 
 class KillingTimeGame extends StatefulWidget {
   @override

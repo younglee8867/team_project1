@@ -1,10 +1,7 @@
-// 역 검색 : 검색창 왼쪽에 메뉴바 클릭시 왼쪽에서 메뉴 창 나타남(홈화면에서도 이용 가능할듯)
+// 메뉴바 위젯
 import 'package:flutter/material.dart';
 import '../main.dart';
-// 한영변환
 import 'package:easy_localization/easy_localization.dart';
-
-//11.25 ../ 파일경로 없앰
 
 class MenuOverlay extends StatelessWidget {
   final VoidCallback onClose;
@@ -108,37 +105,48 @@ class MenuOverlay extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10, left: 30),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end, // 아래쪽 정렬
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            GestureDetector(
-                              onTap: onSettingsTap,
-                              child: Image.asset(
-                                'assets/images/menuBar/settings_button.png',
-                                width: 38,
-                              ),
+                    child:Column(
+                    mainAxisAlignment: MainAxisAlignment.end, // 아래쪽 정렬
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Home()),
+                              );
+                            },
+                            child: Image.asset(
+                              'assets/images/menuBar/homeButton.png',
+                              width: 28,
                             ),
-                            SizedBox(width: 20),
-                            GestureDetector(
-                              onTap: () {
-                                context.setLocale(
-                                  context.locale.languageCode == 'ko'
-                                      ? Locale('en')
-                                      : Locale('ko'),
-                                );
-                              },
-                              child: Image.asset(
-                                'assets/images/menuBar/en_button.png',
-                                width: 30,
-                              ),
+                          ),
+                          SizedBox(width: 20),                         
+                          GestureDetector(
+                            onTap: onSettingsTap,
+                            child: Image.asset(
+                              'assets/images/menuBar/settings_button.png',
+                              width: 28,
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                          SizedBox(width: 20),
+                          GestureDetector(
+                            onTap: () {
+                              context.setLocale(
+                                context.locale.languageCode == 'ko' ? Locale('en') : Locale('ko'),
+                              );
+                            },
+                            child: Image.asset(
+                              'assets/images/menuBar/en_button.png',
+                              width: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                   )
                 ],
               ),

@@ -1,6 +1,6 @@
+// 길찾기 화면(노선도)
 import 'package:flutter/material.dart';
 import 'WriteStation.dart'; // WriteStation 페이지를 import
-// 한영변환
 import 'package:easy_localization/easy_localization.dart';
 
 void main() => runApp(MyApp());
@@ -68,7 +68,7 @@ class _StationMapState extends State<StationMap> {
       });
     }
   }
-
+// 검색바 색깔 const Color.fromRGBO(0, 57, 115, 148)
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,10 +77,10 @@ class _StationMapState extends State<StationMap> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Color(0xff22536F)),
           onPressed: () {
             Navigator.pop(context);
-          }, // 뒤로가기 비활성화
+          },
         ),
       ),
       body: Padding(
@@ -92,7 +92,7 @@ class _StationMapState extends State<StationMap> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: Icon(Icons.swap_vert, color: Colors.black),
+                  icon: Icon(Icons.swap_vert, color: Color(0xff386B88)),
                   onPressed: _swapStations, // 교환 메서드 호출
                 ),
                 Expanded(
@@ -103,9 +103,14 @@ class _StationMapState extends State<StationMap> {
                         decoration: InputDecoration(
                           hintText: '출발역 입력'.tr(),
                           prefixIcon: Icon(Icons.search),
+                          prefixIconColor: Color(0xff386B88),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
+                            //borderSide: BorderSide(color: Color.fromRGBO(0, 57, 115, 148) )
                           ),
+                          hintStyle: TextStyle(
+                            color: Color(0xFFABABAB),
+                          ) 
                         ),
                         onTap: () => _navigateToSearch(context),
                         readOnly: true, // 클릭 시에만 검색 페이지로 이동
@@ -116,9 +121,14 @@ class _StationMapState extends State<StationMap> {
                         decoration: InputDecoration(
                           hintText: '도착역 입력'.tr(),
                           prefixIcon: Icon(Icons.search),
+                          prefixIconColor: Color(0xff386B88),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
+                            
                           ),
+                          hintStyle: TextStyle(
+                            color: Color(0xFFABABAB)
+                          )
                         ),
                         onTap: () => _navigateToSearch(context),
                         readOnly: true, // 클릭 시에만 검색 페이지로 이동
@@ -132,31 +142,33 @@ class _StationMapState extends State<StationMap> {
             Expanded(
               child: Stack(
                 children: [
+                  // 노선도 이미지
                   InteractiveViewer(
                     boundaryMargin: EdgeInsets.all(20.0),
                     minScale: 1.0,
                     maxScale: 4.0,
                     child: Container(
                       child: Center(
-                        child: Image.asset('assets/images/StationMap.png'),
+                        child: Image.asset('assets/images/StationMap.jpg'),
                       ),
                     ),
                   ),
+                  // 호선별 드롭박스
                   Positioned(
                     top: 16,
                     right: 16,
                     child: Container(
                       padding:
-                          EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                      EdgeInsets.symmetric(vertical: 0, horizontal: 16),
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 58, 103, 148),
+                        color: Color(0xff397394),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: DropdownButton<String>(
                         value: _selectedLine,
                         icon: Icon(Icons.arrow_drop_down,
                             color: Colors.white, size: 18),
-                        dropdownColor: Color(0xFF4F92D5),
+                        dropdownColor: Color.fromARGB(255, 128, 180, 210),
                         style: TextStyle(color: Colors.white),
                         underline: SizedBox(),
                         onChanged: (String? newValue) {
@@ -165,7 +177,7 @@ class _StationMapState extends State<StationMap> {
                           });
                         },
                         items: <String>[
-                          '전체'.tr(),
+                          '전체',
                           '1호선',
                           '2호선',
                           '3호선',
@@ -173,7 +185,8 @@ class _StationMapState extends State<StationMap> {
                           '5호선',
                           '6호선',
                           '7호선',
-                          '8호선'
+                          '8호선',
+                          '9호선'
                         ].map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,

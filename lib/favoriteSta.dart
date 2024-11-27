@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import './util/util.dart';
 import './widgets//searchResultItem.dart';
-// 한/영 변환
 import 'package:easy_localization/easy_localization.dart';
 
 class FavoriteSta extends StatefulWidget {

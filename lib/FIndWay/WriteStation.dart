@@ -1,6 +1,7 @@
+// 길찾기 화면(출발역,도착역 검색)
 import 'package:flutter/material.dart';
-// 한영변환
 import 'package:easy_localization/easy_localization.dart';
+import '../widgets/searchResultItem.dart';
 
 class WriteStationPage extends StatefulWidget {
   final String? initialStartStation;
@@ -60,13 +61,10 @@ class _WriteStationPageState extends State<WriteStationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("역 검색").tr(),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
+        leading: GestureDetector(
+          onTap: () {
             // 검색 기록과 입력 값을 반환
             Navigator.pop(context, {
               'startStation': _startStationController.text,
@@ -74,18 +72,30 @@ class _WriteStationPageState extends State<WriteStationPage> {
               'searchHistory': _searchHistory,
             });
           },
+          child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
         ),
+        title: Text(
+          '경로검색',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xff22536F),
+          ),
+        ).tr(),
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      body: Center(
+        //padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // 출발역 및 도착역 입력바
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: Icon(Icons.swap_vert, color: Colors.black),
+                  icon: Icon(Icons.swap_vert, color: Color(0xff386B88)),
                   onPressed: () {
                     String temp = _startStationController.text;
                     _startStationController.text = _endStationController.text;
@@ -98,7 +108,11 @@ class _WriteStationPageState extends State<WriteStationPage> {
                     controller: _startStationController,
                     decoration: InputDecoration(
                       hintText: '출발역 입력'.tr(),
+                      hintStyle: TextStyle(
+                        color: Color(0xFFABABAB)
+                      ),
                       prefixIcon: Icon(Icons.search),
+                      prefixIconColor: Color(0xff386B88),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
@@ -112,7 +126,11 @@ class _WriteStationPageState extends State<WriteStationPage> {
                     controller: _endStationController,
                     decoration: InputDecoration(
                       hintText: '도착역 입력'.tr(),
+                      hintStyle: TextStyle(
+                        color: Color(0xFFABABAB)
+                      ),                      
                       prefixIcon: Icon(Icons.search),
+                      prefixIconColor: Color(0xff386B88),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
@@ -124,26 +142,23 @@ class _WriteStationPageState extends State<WriteStationPage> {
                 ])),
               ],
             ),
+
+            // 검색기록
             SizedBox(height: 20),
             Flexible(
-              child: ListView.builder(
-                itemCount: _searchHistory.length,
-                itemBuilder: (context, index) {
-                  final record = _searchHistory[index];
-                  return ListTile(
-                    leading: Icon(Icons.train),
-                    title: Text(record['name']),
-                    trailing: IconButton(
-                      icon: Icon(
-                        record['isFavorite'] ? Icons.star : Icons.star_border,
-                        color:
-                            record['isFavorite'] ? Colors.amber : Colors.grey,
-                      ),
-                      onPressed: () => _toggleFavorite(index),
-                    ),
-                  );
-                },
-              ),
+                  child: ListView.builder(
+                    itemCount: _searchHistory.length,
+                    itemBuilder: (context, index) {
+                      final record = _searchHistory[index];
+                      return SearchResultItem(
+                        stationName: record['name'],
+                        favImagePath: record['isFavorite']
+                            ? 'assets/images/favStarFill.png'
+                            : 'assets/images/favStar.png', // 상태에 따라 이미지 선택
+                        onToggleFav: () => _toggleFavorite(index), // 인덱스를 전달
+                      );
+                    },
+                  ),
             ),
             TextButton(
               onPressed: _clearSearchHistory,
