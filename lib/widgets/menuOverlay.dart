@@ -112,6 +112,19 @@ class MenuOverlay extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Home()),
+                              );
+                            },
+                            child: Image.asset(
+                              'assets/images/menuBar/homeButton.png',
+                              width: 28,
+                            ),
+                          ),
+                          SizedBox(width: 20),                         
+                          GestureDetector(
                             onTap: onSettingsTap,
                             child: Image.asset(
                               'assets/images/menuBar/settings_button.png',

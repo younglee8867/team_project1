@@ -149,7 +149,7 @@ class _StationMapState extends State<StationMap> {
                     maxScale: 4.0,
                     child: Container(
                       child: Center(
-                        child: Image.asset('assets/images/StationMap.png'),
+                        child: Image.asset('assets/images/StationMap.jpg'),
                       ),
                     ),
                   ),
