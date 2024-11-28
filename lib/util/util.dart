@@ -20,4 +20,3 @@ void toggleFavorite(List<Map<String, dynamic>> history, int index) {
     history[index]['isFavorite'] = !history[index]['isFavorite'];
   }
 }
-
