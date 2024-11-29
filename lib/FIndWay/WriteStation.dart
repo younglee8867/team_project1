@@ -1,86 +1,32 @@
-// 길찾기 화면(출발역,도착역 검색)
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-
+import 'package:provider/provider.dart';
 import '../widgets/searchResultItem.dart';
-import '../favoriteSta.dart';
+import '../util/util.dart';
 
-class WriteStationPage extends StatefulWidget {
-  final String? initialStartStation;
-  final String? initialEndStation;
-  final List<Map<String, dynamic>> searchHistory; // 검색 기록 전달받기
-
-  WriteStationPage({
-    this.initialStartStation,
-    this.initialEndStation,
-    required this.searchHistory,
-  });
-
-  @override
-  _WriteStationPageState createState() => _WriteStationPageState();
-}
-
-class _WriteStationPageState extends State<WriteStationPage> {
+class WriteStationPage extends StatelessWidget {
   final TextEditingController _startStationController = TextEditingController();
   final TextEditingController _endStationController = TextEditingController();
 
-  late List<Map<String, dynamic>> _searchHistory;
-
-  @override
-  void initState() {
-    super.initState();
-    // 초기 값 설정
-    _searchHistory = List.from(widget.searchHistory);
-    if (widget.initialStartStation != null) {
-      _startStationController.text = widget.initialStartStation!;
-    }
-    if (widget.initialEndStation != null) {
-      _endStationController.text = widget.initialEndStation!;
-    }
-  }
-
-  void _addSearchRecord(String stationName) {
-    setState(() {
-      // 중복된 기록 제거 후 추가
-      _searchHistory.removeWhere((record) => record['name'] == stationName);
-      _searchHistory.insert(0, {'name': stationName, 'isFavorite': false});
-    });
-  }
-
-  void _toggleFavorite(int index) {
-    setState(() {
-      _searchHistory[index]['isFavorite'] =
-          !_searchHistory[index]['isFavorite'];
-    });
-  }
-
-  void _clearSearchHistory() {
-    setState(() {
-      _searchHistory.clear();
-    });
-  }
-
   // 출발역과 도착역 교환
   void _swapStations() {
-    setState(() {
-      String temp = _startStationController.text;
-      _startStationController.text = _endStationController.text;
-      _endStationController.text = temp;
-    });
+    String temp = _startStationController.text;
+    _startStationController.text = _endStationController.text;
+    _endStationController.text = temp;
   }
 
   @override
   Widget build(BuildContext context) {
+    final searchHistoryProvider = Provider.of<SearchHistoryProvider>(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
-            // 검색 기록과 입력 값을 반환
             Navigator.pop(context, {
               'startStation': _startStationController.text,
               'endStation': _endStationController.text,
-              'searchHistory': _searchHistory,
             });
           },
           child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
@@ -96,8 +42,8 @@ class _WriteStationPageState extends State<WriteStationPage> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: Center(
-        //padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -124,18 +70,8 @@ class _WriteStationPageState extends State<WriteStationPage> {
                           ),
                         ),
                         onSubmitted: (value) {
-                          if (value.isNotEmpty) _addSearchRecord(value);
-                        },
-                        onChanged: (value) {
-                          // 사용자가 입력할 때 자동으로 '역' 추가
-                          if (value.length >= 3) {
-                            String translatedSuffix = '역'.tr();
-                            _startStationController.value = TextEditingValue(
-                              text: "$value $translatedSuffix",
-                              selection: TextSelection.collapsed(
-                                offset: "$value $translatedSuffix".length,
-                              ),
-                            );
+                          if (value.isNotEmpty) {
+                            searchHistoryProvider.addSearchHistory(value);
                           }
                         },
                       ),
@@ -152,18 +88,8 @@ class _WriteStationPageState extends State<WriteStationPage> {
                           ),
                         ),
                         onSubmitted: (value) {
-                          if (value.isNotEmpty) _addSearchRecord(value);
-                        },
-                        onChanged: (value) {
-                          // 사용자가 입력할 때 자동으로 '역' 추가
-                          if (value.length >= 3) {
-                            String translatedSuffix = '역'.tr();
-                            _endStationController.value = TextEditingValue(
-                              text: "$value $translatedSuffix",
-                              selection: TextSelection.collapsed(
-                                offset: "$value $translatedSuffix".length,
-                              ),
-                            );
+                          if (value.isNotEmpty) {
+                            searchHistoryProvider.addSearchHistory(value);
                           }
                         },
                       ),
@@ -175,23 +101,23 @@ class _WriteStationPageState extends State<WriteStationPage> {
 
             // 검색기록
             SizedBox(height: 20),
-            Flexible(
+            Expanded(
               child: ListView.builder(
-                itemCount: _searchHistory.length,
+                itemCount: searchHistoryProvider.searchHistory.length,
                 itemBuilder: (context, index) {
-                  final record = _searchHistory[index];
+                  final record = searchHistoryProvider.searchHistory[index];
                   return SearchResultItem(
                     stationName: record['name'],
                     favImagePath: record['isFavorite']
                         ? 'assets/images/favStarFill.png'
-                        : 'assets/images/favStar.png', // 상태에 따라 이미지 선택
-                    onToggleFav: () => _toggleFavorite(index), // 인덱스를 전달
+                        : 'assets/images/favStar.png',
+                    onToggleFav: () => searchHistoryProvider.toggleFavorite(index),
                   );
                 },
               ),
             ),
             TextButton(
-              onPressed: _clearSearchHistory,
+              onPressed: searchHistoryProvider.clearHistory,
               child: Text('검색기록 삭제').tr(),
             ),
           ],

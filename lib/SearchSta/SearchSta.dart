@@ -1,6 +1,7 @@
 // 역검색
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/killingTime/killingTime.dart';
+import 'package:provider/provider.dart';
 
 // 위젯
 import '../widgets/searchBar.dart';
@@ -27,100 +28,58 @@ class FlutterApp extends StatelessWidget {
   }
 }
 
-class SearchStationPage extends StatefulWidget {
-  @override
-  _SearchStationPageState createState() => _SearchStationPageState();
-}
-
-class _SearchStationPageState extends State<SearchStationPage> {
-  final TextEditingController _searchController = TextEditingController();
-  late List<Map<String, dynamic>> _searchHistory; // 검색 기록 리스트
-  late String _favImagePath;
-  late bool isFavorite;
-  bool _isMenuVisible = false; // 메뉴바 표시 여부
-
-  // 초기값
-  @override
-  void initState() {
-    super.initState();
-    isFavorite = false;
-    _favImagePath = '../assets/images/favStar.png';
-    _searchHistory = [];
-  }
-
-  // 메뉴 표시/숨기기 토글
-  void _toggleMenuVisibility() {
-    setState(() {
-      _isMenuVisible = !_isMenuVisible;
-    });
-  }
-
-  // 즐겨찾기 표시 토글
-  void _toggleFavImage(int index) {
-    setState(() {
-      toggleFavorite(_searchHistory, index);
-    });
-  }
-
-  // 검색 기록 추가
-  void _addSearchHistory(String stationName) {
-    setState(() {
-      addSearchHistory(_searchHistory, stationName);
-    });
-  }
-
-  // 검색 기록 삭제
-  void _deleteSearchHistory() {
-    setState(() {
-      clearHistory(_searchHistory);
-    });
-  }
-
+class SearchStationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final searchHistoryProvider = Provider.of<SearchHistoryProvider>(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
         children: [
           GestureDetector(
             onTap: () {
-              if (_isMenuVisible) {
-                setState(() {
-                  _isMenuVisible = false;
-                });
+              // 메뉴 닫기
+              if (searchHistoryProvider.isMenuVisible) {
+                searchHistoryProvider.toggleMenuVisibility();
               }
             },
             child: Column(
               children: [
+                // 상단 검색바
                 SearchTopBar(
-                  // 상단 - 검색바
-                  controller: _searchController,
+                  controller: TextEditingController(),
                   onSearch: (value) {
                     if (value.isNotEmpty) {
-                      _addSearchHistory(value);
-                      Navigator.push(
+                      searchHistoryProvider.addSearchHistory(value);
+                      /*Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                searchStaInfo(searchHistory: _searchHistory)),
-                      );
+                          builder: (context) => searchStaInfo(
+                            searchHistory: searchHistoryProvider.searchHistory,
+                          ),
+                        ),
+                      );*/
                     }
                   },
-                  onMenuTap: _toggleMenuVisibility,
-                  onDelete: _deleteSearchHistory,
+                  onMenuTap: searchHistoryProvider.toggleMenuVisibility,
+                  onDelete: searchHistoryProvider.clearHistory,
                 ),
+
+                // 검색 기록 표시
                 Expanded(
-                  // 가운데 - 검색기록 내역
                   child: ListView.builder(
-                    itemCount: _searchHistory.length,
+                    itemCount: searchHistoryProvider.searchHistory.length,
                     itemBuilder: (context, index) {
-                      final record = _searchHistory[index];
+                      final record =
+                          searchHistoryProvider.searchHistory[index];
                       return SearchResultItem(
                         stationName: record['name'],
                         favImagePath: record['isFavorite']
                             ? 'assets/images/favStarFill.png'
-                            : 'assets/images/favStar.png', // 상태에 따라 이미지 선택
-                        onToggleFav: () => _toggleFavImage(index), // 인덱스를 전달
+                            : 'assets/images/favStar.png',
+                        onToggleFav: () =>
+                            searchHistoryProvider.toggleFavorite(index),
                       );
                     },
                   ),
@@ -128,9 +87,11 @@ class _SearchStationPageState extends State<SearchStationPage> {
               ],
             ),
           ),
-          if (_isMenuVisible) // 좌측 - 메뉴바 카테고리별 이동
+
+          // 메뉴 오버레이 표시
+          if (searchHistoryProvider.isMenuVisible)
             MenuOverlay(
-              onClose: _toggleMenuVisibility,
+              onClose: searchHistoryProvider.toggleMenuVisibility,
               onSearchTap: () {
                 Navigator.push(
                   context,
@@ -141,8 +102,10 @@ class _SearchStationPageState extends State<SearchStationPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          FavoriteSta(favoriteStations: _searchHistory)),
+                    builder: (context) => FavoriteSta(
+                      //favoriteStations: searchHistoryProvider.searchHistory,
+                    ),
+                  ),
                 );
               },
               onGameTap: () {

@@ -1,38 +1,11 @@
 // 즐겨찾기 화면
 import 'package:flutter/material.dart';
 import './util/util.dart';
+import 'package:provider/provider.dart';
 import './widgets//searchResultItem.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-class FavoriteSta extends StatefulWidget {
-  final List<Map<String, dynamic>> favoriteStations;
-
-  const FavoriteSta({
-    required this.favoriteStations,
-  });
-
-  @override
-  _FavoriteStaState createState() => _FavoriteStaState();
-}
-
-class _FavoriteStaState extends State<FavoriteSta> {
-  late List<Map<String, dynamic>> favoriteOnly;
-
-  @override
-  void initState() {
-    super.initState();
-    // 즐겨찾기 항목만 필터링
-    favoriteOnly = widget.favoriteStations
-        .where((station) => station['isFavorite'] == true)
-        .toList();
-  }
-
-  void _toggleFavorite(int index) {
-    setState(() {
-      toggleFavorite(favoriteOnly, index);
-    });
-  }
-
+class FavoriteSta extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,29 +32,40 @@ class _FavoriteStaState extends State<FavoriteSta> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: favoriteOnly.isEmpty
-          ? Center(
-              // 리스트에 항목이 없을 때
+      body: Consumer<SearchHistoryProvider>(
+        builder: (context, provider, child) {
+          // 즐겨찾기된 항목만 필터링
+          final favList = provider.searchHistory
+              .where((item) => item['isFavorite'] == true)
+              .toList();
+
+          if (favList.isEmpty) {
+            // 즐겨찾기가 없을 때
+            return Center(
               child: Text(
                 '즐겨찾기 항목이 없습니다.',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ).tr(),
-            )
-          : ListView.builder(
-              // 리스트에 항목이 있을 때
+            );
+          } else {
+            // 즐겨찾기 리스트 출력
+            return ListView.builder(
               padding: const EdgeInsets.all(8.0),
-              itemCount: favoriteOnly.length,
+              itemCount: favList.length,
               itemBuilder: (context, index) {
-                final record = favoriteOnly[index];
+                final record = favList[index];
                 return SearchResultItem(
                   stationName: record['name'],
-                  favImagePath: record['isFavorite']
-                      ? 'assets/images/favStarFill.png'
-                      : 'assets/images/favStar.png',
-                  onToggleFav: () => _toggleFavorite(index), // 상태 변경
+                  favImagePath: 'assets/images/favStarFill.png',
+                  onToggleFav: () => provider.toggleFavorite(
+                    provider.searchHistory.indexOf(record),
+                  ), // 원래 리스트의 인덱스를 전달
                 );
               },
-            ),
+            );
+          }
+        },
+      ),
     );
   }
 }

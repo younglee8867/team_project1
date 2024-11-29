@@ -4,7 +4,7 @@
 // 11.24 즐겨찾기 기능 구현
 // 11.24 데이터 불러오고 수정하겠습니다.......
 
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import '../util/util.dart';
 
 class searchStaInfo extends StatefulWidget {
@@ -414,4 +414,4 @@ Widget _buildWeatherInfo() {
       ),
     );
   }
-}
+}*/
