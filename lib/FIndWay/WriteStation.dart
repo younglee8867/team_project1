@@ -19,6 +19,7 @@ class WriteStationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final searchHistoryProvider = Provider.of<SearchHistoryProvider>(context);
 
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -32,7 +33,7 @@ class WriteStationPage extends StatelessWidget {
           child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
         ),
         title: Text(
-          '경로검색',
+          '길찾기',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -52,7 +53,7 @@ class WriteStationPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: Icon(Icons.swap_vert, color: Colors.black),
+                  icon: Icon(Icons.swap_vert, color: Color(0xff386B88)),
                   onPressed: _swapStations,
                 ),
                 Expanded(
@@ -74,6 +75,15 @@ class WriteStationPage extends StatelessWidget {
                             searchHistoryProvider.addSearchHistory(value);
                           }
                         },
+                        onChanged: (value) {
+                          if (value.length == 3) {
+                            // "역"만 번역해서 문자열 조합
+                            String translatedSuffix = '역'.tr();
+                            _startStationController.value = TextEditingValue(
+                              text: "$value $translatedSuffix",
+                            );
+                          }
+                        },                           
                       ),
                       SizedBox(height: 8),
                       TextField(
@@ -92,6 +102,23 @@ class WriteStationPage extends StatelessWidget {
                             searchHistoryProvider.addSearchHistory(value);
                           }
                         },
+                        onChanged: (value) {
+                          if (value.length == 3) {
+                            // "역"만 번역해서 문자열 조합
+                            String translatedSuffix = '역'.tr();
+                            _endStationController.value = TextEditingValue(
+                              text: "$value $translatedSuffix",
+                            );
+                          }
+                        },                        
+                      ),
+                      SizedBox(height: 10),
+                       TextButton(
+                        onPressed: searchHistoryProvider.clearHistory,
+                        style: TextButton.styleFrom(
+                          foregroundColor: Color(0xFFACACAC), // 텍스트 색상
+                        ),
+                        child: Text('검색기록 삭제').tr(),
                       ),
                     ],
                   ),
@@ -115,10 +142,6 @@ class WriteStationPage extends StatelessWidget {
                   );
                 },
               ),
-            ),
-            TextButton(
-              onPressed: searchHistoryProvider.clearHistory,
-              child: Text('검색기록 삭제').tr(),
             ),
           ],
         ),

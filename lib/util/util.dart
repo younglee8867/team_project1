@@ -10,7 +10,7 @@ class SearchHistoryProvider extends ChangeNotifier {
   String _selectedLine = '전체';
   // 메뉴 표시 상태
   bool _isMenuVisible = false;
-
+  
   // 검색 기록 Getter
   List<Map<String, dynamic>> get searchHistory => _searchHistory;
 

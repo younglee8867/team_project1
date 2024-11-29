@@ -5,6 +5,7 @@ import '../util/util.dart'; // SearchHistoryProvider 정의된 파일
 import 'WriteStation.dart'; // WriteStation 페이지를 import
 
 class StationMap extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     final searchHistoryProvider = Provider.of<SearchHistoryProvider>(context);
