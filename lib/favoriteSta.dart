@@ -1,4 +1,5 @@
 // 즐겨찾기 화면
+//11.29 SharedStationData를 통해 favoriteOnly를 관리
 import 'package:flutter/material.dart';
 import './util/util.dart';
 import './widgets//searchResultItem.dart';
@@ -21,15 +22,13 @@ class _FavoriteStaState extends State<FavoriteSta> {
   @override
   void initState() {
     super.initState();
-    // 즐겨찾기 항목만 필터링
-    favoriteOnly = widget.favoriteStations
-        .where((station) => station['isFavorite'] == true)
-        .toList();
+    // SharedStationData의 즐겨찾기 항목으로 초기화
+    favoriteOnly = SharedStationData.favoriteStations;
   }
 
   void _toggleFavorite(int index) {
     setState(() {
-      toggleFavorite(favoriteOnly, index);
+      SharedStationData.toggleFavoriteStatus(favoriteOnly[index]['name']);
     });
   }
 
@@ -43,7 +42,7 @@ class _FavoriteStaState extends State<FavoriteSta> {
             if (Navigator.canPop(context)) {
               Navigator.pop(context);
             } else {
-              print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음');
+              print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음'); // 디버깅용 로그
             }
           },
           child: Icon(Icons.arrow_back, color: Color(0xff22536F)),

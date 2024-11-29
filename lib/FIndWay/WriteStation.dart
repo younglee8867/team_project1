@@ -1,9 +1,12 @@
 // 길찾기 화면(출발역,도착역 검색)
+//11.29 SharedStationData 사용
+
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import '../widgets/searchResultItem.dart';
 import '../favoriteSta.dart';
+import '../util/util.dart';
 
 class WriteStationPage extends StatefulWidget {
   final String? initialStartStation;
@@ -30,7 +33,7 @@ class _WriteStationPageState extends State<WriteStationPage> {
   void initState() {
     super.initState();
     // 초기 값 설정
-    _searchHistory = List.from(widget.searchHistory);
+    _searchHistory = SharedStationData.searchHistory; // SharedStationData 사용
     if (widget.initialStartStation != null) {
       _startStationController.text = widget.initialStartStation!;
     }
@@ -41,16 +44,16 @@ class _WriteStationPageState extends State<WriteStationPage> {
 
   void _addSearchRecord(String stationName) {
     setState(() {
-      // 중복된 기록 제거 후 추가
-      _searchHistory.removeWhere((record) => record['name'] == stationName);
-      _searchHistory.insert(0, {'name': stationName, 'isFavorite': false});
+      SharedStationData.addSearchHistory({
+        "name": stationName,
+        "isFavorite": false,
+      }); // 검색 기록 추가
     });
   }
 
   void _toggleFavorite(int index) {
     setState(() {
-      _searchHistory[index]['isFavorite'] =
-          !_searchHistory[index]['isFavorite'];
+      SharedStationData.toggleFavoriteStatus(_searchHistory[index]['name']);
     });
   }
 
@@ -132,9 +135,6 @@ class _WriteStationPageState extends State<WriteStationPage> {
                             String translatedSuffix = '역'.tr();
                             _startStationController.value = TextEditingValue(
                               text: "$value $translatedSuffix",
-                              selection: TextSelection.collapsed(
-                                offset: "$value $translatedSuffix".length,
-                              ),
                             );
                           }
                         },

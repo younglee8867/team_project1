@@ -1,4 +1,5 @@
 // 역검색
+//11.29 검색 기록을 SharedStationData에서 가져옴
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/killingTime/killingTime.dart';
 
@@ -45,7 +46,7 @@ class _SearchStationPageState extends State<SearchStationPage> {
     super.initState();
     isFavorite = false;
     _favImagePath = '../assets/images/favStar.png';
-    _searchHistory = [];
+    _searchHistory = SharedStationData.searchHistory; // SharedStationData 사용
   }
 
   // 메뉴 표시/숨기기 토글
@@ -58,21 +59,24 @@ class _SearchStationPageState extends State<SearchStationPage> {
   // 즐겨찾기 표시 토글
   void _toggleFavImage(int index) {
     setState(() {
-      toggleFavorite(_searchHistory, index);
+      SharedStationData.toggleFavoriteStatus(_searchHistory[index]['name']);
     });
   }
 
   // 검색 기록 추가
   void _addSearchHistory(String stationName) {
     setState(() {
-      addSearchHistory(_searchHistory, stationName);
+      SharedStationData.addSearchHistory({
+        "name": stationName,
+        "isFavorite": false,
+      });
     });
   }
 
   // 검색 기록 삭제
   void _deleteSearchHistory() {
     setState(() {
-      clearHistory(_searchHistory);
+      _searchHistory.clear();
     });
   }
 
