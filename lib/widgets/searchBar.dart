@@ -59,11 +59,52 @@ class SearchTopBar extends StatelessWidget {
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(horizontal: 8),
                     ),
-                    onSubmitted: onSearch,
-                    onChanged: (value) {
+                    onSubmitted: (value) {
                       if (value.length == 3) {
-                        controller.value = TextEditingValue(
-                          text: "$value ",
+                        final number = int.tryParse(value) ?? 0;
+
+                        // 유효한 범위인지 확인
+                        if ((101 <= number && number <= 123) || // 1호선
+                            (201 <= number && number <= 217) || // 2호선
+                            (301 <= number && number <= 308) || // 3호선
+                            (401 <= number && number <= 417) || // 4호선
+                            (501 <= number && number <= 507) || // 5호선
+                            (601 <= number && number <= 622) || // 6호선
+                            (701 <= number && number <= 707) || // 7호선
+                            (801 <= number && number <= 806) || // 8호선
+                            (901 <= number && number <= 904)) { // 9호선
+                          onSearch?.call("$value");
+                        } else {
+                          // 잘못된 값일 경우 초기화 및 경고 메시지 표시
+                          controller.clear();
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text("오류"),
+                              content: Text("유효하지 않은 역 번호입니다."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: Text("확인"),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      } else {
+                        // 입력이 3자리가 아닐 경우 경고 메시지 표시
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text("오류"),
+                            content: Text("숫자 세 자리를 입력해주세요."),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: Text("확인"),
+                              ),
+                            ],
+                          ),
                         );
                       }
                     },

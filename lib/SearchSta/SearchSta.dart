@@ -121,7 +121,7 @@ class _SearchStationPageState extends State<SearchStationPage> {
                     itemBuilder: (context, index) {
                       final record = _searchHistory[index];
                       return SearchResultItem(
-                        stationName: record['name'] + "역".tr(),
+                        stationName: record['name'] + " " +"역".tr(),
                         favImagePath: record['isFavorite']
                             ? 'assets/images/favStarFill.png'
                             : 'assets/images/favStar.png', // 상태에 따라 이미지 선택

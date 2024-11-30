@@ -128,7 +128,7 @@ body: ListView(
             Expanded(
               child: Text(
                 searchHistory.isNotEmpty
-                    ? searchHistory[0]['name'] + "역".tr()
+                    ? searchHistory[0]['name'] + " "+"역".tr()
                     : '알 수 없음',
                 style: const TextStyle(
                   color: Colors.black,
