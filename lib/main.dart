@@ -34,11 +34,10 @@ class SmartSubway extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-      home: const SplashScreen()
-    );
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
+        home: const SplashScreen());
   }
 }
 
@@ -81,21 +80,32 @@ class _Home extends State<Home> {
   late List<Map<String, dynamic>> _searchHistory;
   bool _isMenuVisible = false;
   String? _selectedLine = '전체';
+  String _currentMapPath = 'assets/images/station/StationMap.jpg'; // 초기 노선도 경로
 
-    void _toggleMenuVisibility() {
+  void _toggleMenuVisibility() {
     setState(() {
       _isMenuVisible = !_isMenuVisible;
     });
   }
 
-        // 검색 기록 삭제
+  // 검색 기록 삭제
   void _deleteSearchHistory() {
     setState(() {
       clearHistory(_searchHistory);
     });
   }
 
- @override
+  // 드롭박스 값 변경 시 노선도 업데이트
+  void _updateMap(String line) {
+    final stationMap = getStationMap();
+    setState(() {
+      _currentMapPath =
+          stationMap[line] ?? 'assets/images/station/StationMap.jpg';
+      _selectedLine = line;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -111,81 +121,82 @@ class _Home extends State<Home> {
             },
             child: Column(
               children: [
-                  SearchTopBar(
-                    // 상단 - 검색바
-                    controller: _searchController,
-                    onSearch: (_) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SearchStationPage(), // 페이지를 SearchStaInfoPage로 이동
-                        ),
-                      );
-                    },
-                    onMenuTap: _toggleMenuVisibility, // 메뉴 탭 기능 유지
-                    onDelete: _deleteSearchHistory,
-                  ),
+                SearchTopBar(
+                  // 상단 - 검색바
+                  controller: _searchController,
+                  onSearch: (_) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            SearchStationPage(), // 페이지를 SearchStaInfoPage로 이동
+                      ),
+                    );
+                  },
+                  onMenuTap: _toggleMenuVisibility, // 메뉴 탭 기능 유지
+                  onDelete: _deleteSearchHistory,
+                ),
                 // 노선도 이미지 추가
-              Expanded(
-              child: Stack(
-                children: [
-                  // 노선도 이미지
-                  InteractiveViewer(
-                    boundaryMargin: EdgeInsets.all(20.0),
-                    minScale: 1.0,
-                    maxScale: 4.0,
-                    child: Container(
-                      child: Center(
-                        child: Image.asset('assets/images/StationMap.jpg'),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      // 노선도 이미지
+                      InteractiveViewer(
+                        boundaryMargin: EdgeInsets.all(20.0),
+                        minScale: 1.0,
+                        maxScale: 4.0,
+                        child: Container(
+                          child: Center(
+                            child: Image.asset(_currentMapPath),
+                          ),
+                        ),
                       ),
-                    ),
+                      // 호선별 드롭박스
+                      Positioned(
+                        top: 16,
+                        right: 16,
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Color(0xff397394),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: DropdownButton<String>(
+                            value: _selectedLine,
+                            icon: Icon(Icons.arrow_drop_down,
+                                color: Colors.white, size: 18),
+                            dropdownColor: Color.fromARGB(255, 128, 180, 210),
+                            style: TextStyle(color: Colors.white),
+                            underline: SizedBox(),
+                            onChanged: (String? newValue) {
+                              if (newValue != null) {
+                                _updateMap(newValue);
+                              }
+                            },
+                            items: <String>[
+                              '전체',
+                              '1호선',
+                              '2호선',
+                              '3호선',
+                              '4호선',
+                              '5호선',
+                              '6호선',
+                              '7호선',
+                              '8호선',
+                              '9호선'
+                            ].map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  // 호선별 드롭박스
-                  Positioned(
-                    top: 16,
-                    right: 16,
-                    child: Container(
-                      padding:
-                      EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: Color(0xff397394),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: DropdownButton<String>(
-                        value: _selectedLine,
-                        icon: Icon(Icons.arrow_drop_down,
-                            color: Colors.white, size: 18),
-                        dropdownColor: Color.fromARGB(255, 128, 180, 210),
-                        style: TextStyle(color: Colors.white),
-                        underline: SizedBox(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _selectedLine = newValue;
-                          });
-                        },
-                        items: <String>[
-                          '전체',
-                          '1호선',
-                          '2호선',
-                          '3호선',
-                          '4호선',
-                          '5호선',
-                          '6호선',
-                          '7호선',
-                          '8호선',
-                          '9호선'
-                        ].map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                ),
               ],
             ),
           ),
@@ -202,8 +213,7 @@ class _Home extends State<Home> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          FavoriteSta(favoriteStations: [])),
+                      builder: (context) => FavoriteSta(favoriteStations: [])),
                 );
               },
               onGameTap: () {

@@ -22,7 +22,8 @@ class _searchStaInfo extends State<searchStaInfo> {
   @override
   void initState() {
     super.initState();
-    resultOfStations = widget.searchHistory.isNotEmpty ? widget.searchHistory : [];
+    resultOfStations =
+        widget.searchHistory.isNotEmpty ? widget.searchHistory : [];
   }
 
   String imagePath = '../assets/images/favStar.png';
@@ -85,14 +86,13 @@ class _searchStaInfo extends State<searchStaInfo> {
 
               // 동그라미와 텍스트를 지도 아래쪽으로 배치
               //Positioned(
-                //top: 900, // 동그라미를 지도 아래로 조정
-                //left: MediaQuery.of(context).size.width / 2 - 62.5, // 동그라미를 화면 중앙에 배치
-                 _buildCircleWithText(),
+              //top: 900, // 동그라미를 지도 아래로 조정
+              //left: MediaQuery.of(context).size.width / 2 - 62.5, // 동그라미를 화면 중앙에 배치
+              _buildCircleWithText(),
               //),
             ],
           ),
           SizedBox(height: 20),
-
 
           // 출발역, 도착역 버튼
           _buildStationButtons(),
@@ -141,63 +141,66 @@ class _searchStaInfo extends State<searchStaInfo> {
 
   // 동그라미와 텍스트
   Widget _buildCircleWithText() {
-  bool isFavorite = false;
-  VoidCallback _toggleFavorite;
-  return Positioned(
-    top: 500, // 지도 아래로 내려오도록 설정 (지도 높이 + 동그라미 위치 조정)
-    child: Column(
-      children: [
-        // 흰 동그라미
-        Container(
-          width: 125,
-          height: 125,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.brown, width: 10),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            resultOfStations.isNotEmpty ? resultOfStations[0]['name'][0] : '0',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 50,
-              fontWeight: FontWeight.bold,
+    bool isFavorite = false;
+    VoidCallback _toggleFavorite;
+    return Positioned(
+      top: 500, // 지도 아래로 내려오도록 설정 (지도 높이 + 동그라미 위치 조정)
+      child: Column(
+        children: [
+          // 흰 동그라미
+          Container(
+            width: 125,
+            height: 125,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.brown, width: 10),
             ),
-            textAlign: TextAlign.center,
+            alignment: Alignment.center,
+            child: Text(
+              resultOfStations.isNotEmpty
+                  ? resultOfStations[0]['name'][0]
+                  : '0',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 50,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                resultOfStations.isNotEmpty ? resultOfStations[0]['name'] : '알 수 없음',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Roboto',
-                  height: 1.5,
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  resultOfStations.isNotEmpty
+                      ? resultOfStations[0]['name']
+                      : '알 수 없음',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Roboto',
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
               ),
-            ),
-            IconButton(
-              icon: Icon(
-                isFavorite ? Icons.star : Icons.star_border,
-                color: isFavorite ? Colors.yellow : Colors.grey,
+              IconButton(
+                icon: Icon(
+                  isFavorite ? Icons.star : Icons.star_border,
+                  color: isFavorite ? Colors.yellow : Colors.grey,
+                ),
+                onPressed: () {
+                  // Toggle favorite logic
+                },
               ),
-              onPressed: () {
-                // Toggle favorite logic
-              },
-            ),
-          ],
-        )
-      ],
-    ),
-  );
-}
-
+            ],
+          )
+        ],
+      ),
+    );
+  }
 
   // 출발역, 도착역 버튼
   Widget _buildStationButtons() {
@@ -305,31 +308,28 @@ class _searchStaInfo extends State<searchStaInfo> {
     );
   }
 
-
   // 시설 정보
-Widget _buildFacilityInfo() {
-  return _buildSection(
-    title: '시설 정보',
-    content: Column(
-      crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
-      children: [
-        SizedBox(height: 20), // 제목과 내용 사이 간격
-        Row(
-          children: [
-            _buildDetailText('내리는문 ', '오른쪽'),
-            SizedBox(width: 70), // 두 정보 사이 간격
-            _buildDetailText('화장실 ', '50m'),
-          ],
-        ),
-        SizedBox(height: 20), // 행과 행 사이 간격
-        _buildDetailText('플랫폼 ', '양쪽'),
-        SizedBox(height: 20),
-      ],
-      
-    ),
-  );
-}
-
+  Widget _buildFacilityInfo() {
+    return _buildSection(
+      title: '시설 정보',
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
+        children: [
+          SizedBox(height: 20), // 제목과 내용 사이 간격
+          Row(
+            children: [
+              _buildDetailText('내리는문 ', '오른쪽'),
+              SizedBox(width: 70), // 두 정보 사이 간격
+              _buildDetailText('화장실 ', '50m'),
+            ],
+          ),
+          SizedBox(height: 20), // 행과 행 사이 간격
+          _buildDetailText('플랫폼 ', '양쪽'),
+          SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
 
   // 편의시설
   Widget _buildConvenienceInfo() {
@@ -360,30 +360,29 @@ Widget _buildFacilityInfo() {
   }
 
   // 날씨 정보
-Widget _buildWeatherInfo() {
-  return _buildSection(
-    title: '날씨 정보',
-    content: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16), // 양쪽 패딩 설정
-      child: Container(
-        width: double.infinity, // 화면 너비에 맞춤
-        height: 94,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              offset: Offset(2, 6),
-              blurRadius: 7,
-            ),
-          ],
+  Widget _buildWeatherInfo() {
+    return _buildSection(
+      title: '날씨 정보',
+      content: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16), // 양쪽 패딩 설정
+        child: Container(
+          width: double.infinity, // 화면 너비에 맞춤
+          height: 94,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                offset: Offset(2, 6),
+                blurRadius: 7,
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   // 공통 섹션 레이아웃
   Widget _buildSection({required String title, required Widget content}) {

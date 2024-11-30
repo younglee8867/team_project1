@@ -68,6 +68,7 @@ class _StationMapState extends State<StationMap> {
       });
     }
   }
+
 // 검색바 색깔 const Color.fromRGBO(0, 57, 115, 148)
   @override
   Widget build(BuildContext context) {
@@ -101,17 +102,16 @@ class _StationMapState extends State<StationMap> {
                       TextField(
                         controller: TextEditingController(text: _startStation),
                         decoration: InputDecoration(
-                          hintText: '출발역 입력'.tr(),
-                          prefixIcon: Icon(Icons.search),
-                          prefixIconColor: Color(0xff386B88),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            //borderSide: BorderSide(color: Color.fromRGBO(0, 57, 115, 148) )
-                          ),
-                          hintStyle: TextStyle(
-                            color: Color(0xFFABABAB),
-                          ) 
-                        ),
+                            hintText: '출발역 입력'.tr(),
+                            prefixIcon: Icon(Icons.search),
+                            prefixIconColor: Color(0xff386B88),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              //borderSide: BorderSide(color: Color.fromRGBO(0, 57, 115, 148) )
+                            ),
+                            hintStyle: TextStyle(
+                              color: Color(0xFFABABAB),
+                            )),
                         onTap: () => _navigateToSearch(context),
                         readOnly: true, // 클릭 시에만 검색 페이지로 이동
                       ),
@@ -119,17 +119,13 @@ class _StationMapState extends State<StationMap> {
                       TextField(
                         controller: TextEditingController(text: _endStation),
                         decoration: InputDecoration(
-                          hintText: '도착역 입력'.tr(),
-                          prefixIcon: Icon(Icons.search),
-                          prefixIconColor: Color(0xff386B88),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            
-                          ),
-                          hintStyle: TextStyle(
-                            color: Color(0xFFABABAB)
-                          )
-                        ),
+                            hintText: '도착역 입력'.tr(),
+                            prefixIcon: Icon(Icons.search),
+                            prefixIconColor: Color(0xff386B88),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            hintStyle: TextStyle(color: Color(0xFFABABAB))),
                         onTap: () => _navigateToSearch(context),
                         readOnly: true, // 클릭 시에만 검색 페이지로 이동
                       ),
@@ -159,7 +155,7 @@ class _StationMapState extends State<StationMap> {
                     right: 16,
                     child: Container(
                       padding:
-                      EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                          EdgeInsets.symmetric(vertical: 0, horizontal: 16),
                       decoration: BoxDecoration(
                         color: Color(0xff397394),
                         borderRadius: BorderRadius.circular(20),
