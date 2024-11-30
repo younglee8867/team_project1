@@ -128,7 +128,7 @@ class _searchStaInfo extends State<searchStaInfo> {
       height: 200,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('../assets/images/StationMap.png'),
+          image: AssetImage('../assets/images/station/StationMap.png'),
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(
             Colors.black.withOpacity(0.4),

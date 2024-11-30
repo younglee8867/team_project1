@@ -50,3 +50,18 @@ void toggleFavorite(List<Map<String, dynamic>> history, int index) {
     history[index]['isFavorite'] = !history[index]['isFavorite'];
   }
 }
+
+Map<String, String> getStationMap() {
+  return {
+    '전체': 'assets/images/station/StationMap.jpg',
+    '1호선': 'assets/images/station/Line1.jpg',
+    '2호선': 'assets/images/station/Line2.jpg',
+    '3호선': 'assets/images/station/Line3.jpg',
+    '4호선': 'assets/images/station/Line4.jpg',
+    '5호선': 'assets/images/station/Line5.jpg',
+    '6호선': 'assets/images/station/Line6.jpg',
+    '7호선': 'assets/images/station/Line7.jpg',
+    '8호선': 'assets/images/station/Line8.jpg',
+    '9호선': 'assets/images/station/Line9.jpg',
+  };
+}

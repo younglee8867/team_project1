@@ -160,9 +160,6 @@ class _WriteStationPageState extends State<WriteStationPage> {
                             String translatedSuffix = '역'.tr();
                             _endStationController.value = TextEditingValue(
                               text: "$value $translatedSuffix",
-                              selection: TextSelection.collapsed(
-                                offset: "$value $translatedSuffix".length,
-                              ),
                             );
                           }
                         },

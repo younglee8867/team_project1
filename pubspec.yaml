@@ -60,6 +60,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/station/
     - assets/images/menuBar/
     - assets/images/miniGame/
     - assets/langs/

@@ -1,7 +1,9 @@
 // 길찾기 화면(노선도)
 import 'package:flutter/material.dart';
-import 'WriteStation.dart'; // WriteStation 페이지를 import
 import 'package:easy_localization/easy_localization.dart';
+
+import '../util/util.dart';
+import 'WriteStation.dart';
 
 void main() => runApp(MyApp());
 
@@ -24,6 +26,7 @@ class _StationMapState extends State<StationMap> {
   String _endStation = ''; // 도착역
   List<Map<String, dynamic>> _searchHistory = []; // 검색 기록 리스트
   String? _selectedLine = '전체'; // 드롭다운의 초기 선택값 설정
+  String _currentMapPath = 'assets/images/station/StationMap.jpg'; // 초기 노선도 경로
 
   // 출발역과 도착역을 교환하는 메서드
   void _swapStations() {
@@ -53,7 +56,7 @@ class _StationMapState extends State<StationMap> {
       ),
     );
 
-    // WriteStation에서 돌아오면 출발역, 도착역, 검색 기록 값을 업데이트
+// WriteStation에서 돌아오면 출발역, 도착역, 검색 기록 값을 업데이트
     if (result != null) {
       setState(() {
         if (result['startStation'] != null) {
@@ -69,7 +72,16 @@ class _StationMapState extends State<StationMap> {
     }
   }
 
-// 검색바 색깔 const Color.fromRGBO(0, 57, 115, 148)
+  // 드롭박스 값 변경 시 노선도 업데이트
+  void _updateMap(String line) {
+    final stationMap = getStationMap();
+    setState(() {
+      _currentMapPath =
+          stationMap[line] ?? 'assets/images/station/StationMap.jpg';
+      _selectedLine = line;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,7 +157,7 @@ class _StationMapState extends State<StationMap> {
                     maxScale: 4.0,
                     child: Container(
                       child: Center(
-                        child: Image.asset('assets/images/StationMap.jpg'),
+                        child: Image.asset(_currentMapPath),
                       ),
                     ),
                   ),
@@ -168,9 +180,9 @@ class _StationMapState extends State<StationMap> {
                         style: TextStyle(color: Colors.white),
                         underline: SizedBox(),
                         onChanged: (String? newValue) {
-                          setState(() {
-                            _selectedLine = newValue;
-                          });
+                          if (newValue != null) {
+                            _updateMap(newValue);
+                          }
                         },
                         items: <String>[
                           '전체',

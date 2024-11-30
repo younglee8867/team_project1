@@ -21,6 +21,7 @@ import 'package:flutter_application_1/Setting/Settings.dart';
 import 'package:flutter_application_1/Setting/LocalServiceTerms.dart';
 import 'package:flutter_application_1/SearchSta/SearchSta.dart';
 import 'package:flutter_application_1/SearchSta/SearchStaInfo.dart';
+
 /* void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
