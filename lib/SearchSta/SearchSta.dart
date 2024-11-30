@@ -2,6 +2,7 @@
 //11.29 검색 기록을 SharedStationData에서 가져옴
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/killingTime/killingTime.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 // 위젯
 import '../widgets/searchBar.dart';
@@ -106,7 +107,7 @@ class _SearchStationPageState extends State<SearchStationPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                searchStaInfo(searchHistory: _searchHistory)),
+                                SearchStaInfo(searchHistory: _searchHistory)),
                       );
                     }
                   },
@@ -120,7 +121,7 @@ class _SearchStationPageState extends State<SearchStationPage> {
                     itemBuilder: (context, index) {
                       final record = _searchHistory[index];
                       return SearchResultItem(
-                        stationName: record['name'],
+                        stationName: record['name'] + "역".tr(),
                         favImagePath: record['isFavorite']
                             ? 'assets/images/favStarFill.png'
                             : 'assets/images/favStar.png', // 상태에 따라 이미지 선택

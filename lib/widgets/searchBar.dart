@@ -62,10 +62,8 @@ class SearchTopBar extends StatelessWidget {
                     onSubmitted: onSearch,
                     onChanged: (value) {
                       if (value.length == 3) {
-                        // "역"만 번역해서 문자열 조합
-                        String translatedSuffix = '역'.tr();
                         controller.value = TextEditingValue(
-                          text: "$value $translatedSuffix",
+                          text: "$value ",
                         );
                       }
                     },

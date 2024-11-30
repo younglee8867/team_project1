@@ -88,13 +88,6 @@ class _Home extends State<Home> {
     });
   }
 
-  // 검색 기록 삭제
-  void _deleteSearchHistory() {
-    setState(() {
-      clearHistory(_searchHistory);
-    });
-  }
-
   // 드롭박스 값 변경 시 노선도 업데이트
   void _updateMap(String line) {
     final stationMap = getStationMap();
@@ -121,21 +114,67 @@ class _Home extends State<Home> {
             },
             child: Column(
               children: [
-                SearchTopBar(
-                  // 상단 - 검색바
-                  controller: _searchController,
-                  onSearch: (_) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            SearchStationPage(), // 페이지를 SearchStaInfoPage로 이동
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(
+                      color: const Color.fromRGBO(0, 57, 115, 148),
+                      width: 2,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      // 메뉴 아이콘
+                      GestureDetector(
+                        onTap: _toggleMenuVisibility,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset(
+                            'assets/images/menu.png',
+                            width: 40,
+                            height: 40,
+                          ),
+                        ),
                       ),
-                    );
-                  },
-                  onMenuTap: _toggleMenuVisibility, // 메뉴 탭 기능 유지
-                  onDelete: _deleteSearchHistory,
+                      // 검색 텍스트 필드
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: '역 검색'.tr(),
+                            hintStyle: TextStyle(color: Color(0xFFABABAB)),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SearchStationPage(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      // 검색 버튼
+                      IconButton(
+                        icon: const Icon(Icons.search, color: Color(0xFF386B88)),
+                        onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SearchStationPage(),
+                              ),
+                            );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
+              ),
                 // 노선도 이미지 추가
                 Expanded(
                   child: Stack(
