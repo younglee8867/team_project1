@@ -81,7 +81,7 @@ body: ListView(
       height: 200,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: const AssetImage('assets/images/StationMap.jpg'),
+          image: const AssetImage('assets/images/station/StationMap.jpg'),
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(
             Colors.black.withOpacity(0.4),

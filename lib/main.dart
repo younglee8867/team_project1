@@ -34,11 +34,10 @@ class SmartSubway extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-      home: const SplashScreen()
-    );
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
+        home: const SplashScreen());
   }
 }
 
@@ -81,33 +80,40 @@ class _Home extends State<Home> {
   late List<Map<String, dynamic>> _searchHistory;
   bool _isMenuVisible = false;
   String? _selectedLine = '전체';
+  String _currentMapPath = 'assets/images/station/StationMap.jpg'; // 초기 노선도 경로
 
-    void _toggleMenuVisibility() {
+  void _toggleMenuVisibility() {
     setState(() {
       _isMenuVisible = !_isMenuVisible;
     });
   }
 
-@override
-Widget build(BuildContext context) {
-  final TextEditingController _searchController = TextEditingController();
-  late List<Map<String, dynamic>> _searchHistory;
+  // 드롭박스 값 변경 시 노선도 업데이트
+  void _updateMap(String line) {
+    final stationMap = getStationMap();
+    setState(() {
+      _currentMapPath =
+          stationMap[line] ?? 'assets/images/station/StationMap.jpg';
+      _selectedLine = line;
+    });
+  }
 
-  return Scaffold(
-    backgroundColor: Colors.white,
-    body: Stack(
-      children: [
-        GestureDetector(
-          onTap: () {
-            if (_isMenuVisible) {
-              setState(() {
-                _isMenuVisible = false;
-              });
-            }
-          },
-          child: Column(
-            children: [
-              // 메뉴 아이콘과 검색 바
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          GestureDetector(
+            onTap: () {
+              if (_isMenuVisible) {
+                setState(() {
+                  _isMenuVisible = false;
+                });
+              }
+            },
+            child: Column(
+              children: [
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Container(
@@ -169,109 +175,101 @@ Widget build(BuildContext context) {
                   ),
                 ),
               ),
-              
-              // 노선도 이미지와 드롭다운
-              Expanded(
-                child: Stack(
-                  children: [
-                    // 노선도 이미지
-                    InteractiveViewer(
-                      boundaryMargin: const EdgeInsets.all(20.0),
-                      minScale: 1.0,
-                      maxScale: 4.0,
-                      child: Center(
-                        child: Image.asset('assets/images/StationMap.jpg'),
-                      ),
-                    ),
-                    
-                    // 호선별 드롭다운
-                    Positioned(
-                      top: 16,
-                      right: 16,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 0,
-                          horizontal: 16,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xff397394),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: DropdownButton<String>(
-                          value: _selectedLine,
-                          icon: const Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.white,
-                            size: 18,
+                // 노선도 이미지 추가
+                Expanded(
+                  child: Stack(
+                    children: [
+                      // 노선도 이미지
+                      InteractiveViewer(
+                        boundaryMargin: EdgeInsets.all(20.0),
+                        minScale: 1.0,
+                        maxScale: 4.0,
+                        child: Container(
+                          child: Center(
+                            child: Image.asset(_currentMapPath),
                           ),
-                          dropdownColor: const Color.fromARGB(255, 128, 180, 210),
-                          style: const TextStyle(color: Colors.white),
-                          underline: const SizedBox(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedLine = newValue;
-                            });
-                          },
-                          items: <String>[
-                            '전체',
-                            '1호선',
-                            '2호선',
-                            '3호선',
-                            '4호선',
-                            '5호선',
-                            '6호선',
-                            '7호선',
-                            '8호선',
-                            '9호선',
-                          ].map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
                         ),
                       ),
-                    ),
-                  ],
+                      // 호선별 드롭박스
+                      Positioned(
+                        top: 16,
+                        right: 16,
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Color(0xff397394),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: DropdownButton<String>(
+                            value: _selectedLine,
+                            icon: Icon(Icons.arrow_drop_down,
+                                color: Colors.white, size: 18),
+                            dropdownColor: Color.fromARGB(255, 128, 180, 210),
+                            style: TextStyle(color: Colors.white),
+                            underline: SizedBox(),
+                            onChanged: (String? newValue) {
+                              if (newValue != null) {
+                                _updateMap(newValue);
+                              }
+                            },
+                            items: <String>[
+                              '전체',
+                              '1호선',
+                              '2호선',
+                              '3호선',
+                              '4호선',
+                              '5호선',
+                              '6호선',
+                              '7호선',
+                              '8호선',
+                              '9호선'
+                            ].map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-
-        // 좌측 메뉴바 오버레이
-        if (_isMenuVisible)
-          MenuOverlay(
-            onClose: _toggleMenuVisibility,
-            onSearchTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => StationMap()),
-              );
-            },
-            onFavoritesTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => FavoriteSta(favoriteStations: []),
-                ),
-              );
-            },
-            onGameTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => KillingTimeGame()),
-              );
-            },
-            onSettingsTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Settings()),
-              );
-            },
-          ),
-      ],
-    ),
-  );
-}
+          if (_isMenuVisible) // 좌측 - 메뉴바 카테고리별 이동
+            MenuOverlay(
+              onClose: _toggleMenuVisibility,
+              onSearchTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => StationMap()),
+                );
+              },
+              onFavoritesTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => FavoriteSta(favoriteStations: [])),
+                );
+              },
+              onGameTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => KillingTimeGame()),
+                );
+              },
+              onSettingsTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Settings()),
+                );
+              },
+            ),
+        ],
+      ),
+    );
+  }
 }
