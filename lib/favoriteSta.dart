@@ -73,7 +73,7 @@ class _FavoriteStaState extends State<FavoriteSta> {
               itemBuilder: (context, index) {
                 final record = favoriteOnly[index];
                 return SearchResultItem(
-                  stationName: record['name'],
+                  stationName: record['name'] +"역".tr(),
                   favImagePath: record['isFavorite']
                       ? 'assets/images/favStarFill.png'
                       : 'assets/images/favStar.png',
