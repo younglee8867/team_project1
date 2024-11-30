@@ -1,6 +1,3 @@
-// 길찾기 화면(출발역,도착역 검색)
-//11.29 SharedStationData 사용
-
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -32,8 +29,7 @@ class _WriteStationPageState extends State<WriteStationPage> {
   @override
   void initState() {
     super.initState();
-    // 초기 값 설정
-    _searchHistory = SharedStationData.searchHistory; // SharedStationData 사용
+    _searchHistory = SharedStationData.searchHistory;
     if (widget.initialStartStation != null) {
       _startStationController.text = widget.initialStartStation!;
     }
@@ -47,7 +43,7 @@ class _WriteStationPageState extends State<WriteStationPage> {
       SharedStationData.addSearchHistory({
         "name": stationName,
         "isFavorite": false,
-      }); // 검색 기록 추가
+      });
     });
   }
 
@@ -63,13 +59,30 @@ class _WriteStationPageState extends State<WriteStationPage> {
     });
   }
 
-  // 출발역과 도착역 교환
   void _swapStations() {
     setState(() {
       String temp = _startStationController.text;
       _startStationController.text = _endStationController.text;
       _endStationController.text = temp;
     });
+  }
+
+  // 공통된 함수로 빼기
+  Widget buildStationInputField(
+      TextEditingController controller, String hint, Function(String) onSubmitted) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: hint.tr(),
+        hintStyle: TextStyle(color: Color(0xFFABABAB)),
+        prefixIcon: Icon(Icons.search),
+        prefixIconColor: Color(0xff386B88),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+      ),
+      onSubmitted: onSubmitted,
+    );
   }
 
   @override
@@ -79,7 +92,6 @@ class _WriteStationPageState extends State<WriteStationPage> {
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
-            // 검색 기록과 입력 값을 반환
             Navigator.pop(context, {
               'startStation': _startStationController.text,
               'endStation': _endStationController.text,
@@ -100,11 +112,9 @@ class _WriteStationPageState extends State<WriteStationPage> {
         elevation: 0,
       ),
       body: Center(
-        //padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 출발역 및 도착역 입력바
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -115,53 +125,114 @@ class _WriteStationPageState extends State<WriteStationPage> {
                 Expanded(
                   child: Column(
                     children: [
-                      TextField(
-                        controller: _startStationController,
-                        decoration: InputDecoration(
-                          hintText: '출발역 입력'.tr(),
-                          hintStyle: TextStyle(color: Color(0xFFABABAB)),
-                          prefixIcon: Icon(Icons.search),
-                          prefixIconColor: Color(0xff386B88),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        onSubmitted: (value) {
-                          if (value.isNotEmpty) _addSearchRecord(value);
-                        },
-                        onChanged: (value) {
-                          // 사용자가 입력할 때 자동으로 '역' 추가 -> 번역 안돼서 그냥 없앰
-                          if (value.length >= 3) {
-                            //final translatedSuffix = '역'.tr();
-                            _startStationController.value = TextEditingValue(
-                              text: "$value ",                              
-                            );
-                            
+                      // 출발역 입력 필드
+                      buildStationInputField(
+                        _startStationController,
+                        '출발역 입력',
+                        (value) {
+                          if (value.isNotEmpty) {
+                            if (value.length == 3) {
+                              final number = int.tryParse(value) ?? 0;
+                              if ((101 <= number && number <= 123) || 
+                                  (201 <= number && number <= 217) || 
+                                  (301 <= number && number <= 308) || 
+                                  (401 <= number && number <= 417) || 
+                                  (501 <= number && number <= 507) || 
+                                  (601 <= number && number <= 622) || 
+                                  (701 <= number && number <= 707) || 
+                                  (801 <= number && number <= 806) || 
+                                  (901 <= number && number <= 904)) {
+                                _addSearchRecord(value);
+                                _startStationController.value = TextEditingValue(
+                                  text: "$value",
+                                );
+                              } else {
+                                _startStationController.clear();
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text("오류"),
+                                    content: Text("유효하지 않은 역 번호입니다."),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.of(context).pop(),
+                                        child: Text("확인"),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text("오류"),
+                                  content: Text("숫자 세 자리를 입력해주세요."),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(),
+                                      child: Text("확인"),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
                           }
                         },
                       ),
                       SizedBox(height: 8),
-                      TextField(
-                        controller: _endStationController,
-                        decoration: InputDecoration(
-                          hintText: '도착역 입력'.tr(),
-                          hintStyle: TextStyle(color: Color(0xFFABABAB)),
-                          prefixIcon: Icon(Icons.search),
-                          prefixIconColor: Color(0xff386B88),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        onSubmitted: (value) {
-                          if (value.isNotEmpty) _addSearchRecord(value);
-                        },
-                        onChanged: (value) {
-                          
-                          if (value.length >= 3) {
-                            //String translatedSuffix = '역'.tr();
-                            _endStationController.value = TextEditingValue(
-                              text: "$value ",
-                            );
+                      // 도착역 입력 필드
+                      buildStationInputField(
+                        _endStationController,
+                        '도착역 입력',
+                        (value) {
+                          if (value.isNotEmpty) {
+                            if (value.length == 3) {
+                              final number = int.tryParse(value) ?? 0;
+                              if ((101 <= number && number <= 123) || 
+                                  (201 <= number && number <= 217) || 
+                                  (301 <= number && number <= 308) || 
+                                  (401 <= number && number <= 417) || 
+                                  (501 <= number && number <= 507) || 
+                                  (601 <= number && number <= 622) || 
+                                  (701 <= number && number <= 707) || 
+                                  (801 <= number && number <= 806) || 
+                                  (901 <= number && number <= 904)) {
+                                _addSearchRecord(value);
+                                _endStationController.value = TextEditingValue(
+                                  text: "$value",
+                                );
+                              } else {
+                                _endStationController.clear();
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text("오류"),
+                                    content: Text("유효하지 않은 역 번호입니다."),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.of(context).pop(),
+                                        child: Text("확인"),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text("오류"),
+                                  content: Text("숫자 세 자리를 입력해주세요."),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(),
+                                      child: Text("확인"),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
                           }
                         },
                       ),
@@ -170,8 +241,6 @@ class _WriteStationPageState extends State<WriteStationPage> {
                 ),
               ],
             ),
-
-            // 검색기록
             SizedBox(height: 20),
             Flexible(
               child: ListView.builder(
@@ -179,11 +248,11 @@ class _WriteStationPageState extends State<WriteStationPage> {
                 itemBuilder: (context, index) {
                   final record = _searchHistory[index];
                   return SearchResultItem(
-                    stationName: record['name'] + "역".tr(),
+                    stationName: record['name'] + " " + "역".tr(),
                     favImagePath: record['isFavorite']
                         ? 'assets/images/favStarFill.png'
-                        : 'assets/images/favStar.png', // 상태에 따라 이미지 선택
-                    onToggleFav: () => _toggleFavorite(index), // 인덱스를 전달
+                        : 'assets/images/favStar.png',
+                    onToggleFav: () => _toggleFavorite(index),
                   );
                 },
               ),
@@ -191,7 +260,7 @@ class _WriteStationPageState extends State<WriteStationPage> {
             TextButton(
               onPressed: _clearSearchHistory,
               style: TextButton.styleFrom(
-                foregroundColor: Color(0xFFACACAC), // 텍스트 색상
+                foregroundColor: Color(0xFFACACAC),
               ),
               child: Text('검색기록 삭제').tr(),
             ),
