@@ -78,6 +78,10 @@ class _FavoriteStaState extends State<FavoriteSta> {
                       ? 'assets/images/favStarFill.png'
                       : 'assets/images/favStar.png',
                   onToggleFav: () => _toggleFavorite(index), // 상태 변경
+                  onSelect: () {
+                    // 기록에 있는 역을 검색창으로
+                    Navigator.pop(context, record['name']);
+                  },
                 );
               },
             ),

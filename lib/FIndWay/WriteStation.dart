@@ -251,8 +251,26 @@ class _WriteStationPageState extends State<WriteStationPage> {
                     stationName: record['name'] + " " + "역".tr(),
                     favImagePath: record['isFavorite']
                         ? 'assets/images/favStarFill.png'
-                        : 'assets/images/favStar.png',
-                    onToggleFav: () => _toggleFavorite(index),
+                        : 'assets/images/favStar.png', // 상태에 따라 이미지 선택
+                    onToggleFav: () => _toggleFavorite(index), // 인덱스를 전달
+                    onSelect: () {
+                      setState(() {
+                        // 기록에 있는 역을 검색창으로
+                        // 현재 입력 포커스를 확인
+                        if (_startStationController.selection.baseOffset !=
+                            -1) {
+                          // 출발역에 포커스가 있는 경우
+                          _startStationController.text = record['name'];
+                        } else if (_endStationController.selection.baseOffset !=
+                            -1) {
+                          // 도착역에 포커스가 있는 경우
+                          _endStationController.text = record['name'];
+                        } else {
+                          // 기본적으로 출발역에 입력
+                          _startStationController.text = record['name'];
+                        }
+                      });
+                    },
                   );
                 },
               ),

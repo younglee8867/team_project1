@@ -126,6 +126,12 @@ class _SearchStationPageState extends State<SearchStationPage> {
                             ? 'assets/images/favStarFill.png'
                             : 'assets/images/favStar.png', // 상태에 따라 이미지 선택
                         onToggleFav: () => _toggleFavImage(index), // 인덱스를 전달
+                        onSelect: () {
+                          setState(() {
+                            // 기록에 있는 역을 검색창으로
+                            _searchController.text = record['name'];
+                          });
+                        },
                       );
                     },
                   ),
