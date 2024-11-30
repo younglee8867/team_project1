@@ -11,7 +11,6 @@ import 'SearchSta/SearchStaInfo.dart';
 import 'FindWay/StationMap.dart';
 import 'Setting/Settings.dart';
 import 'util/util.dart';
-import 'package:provider/provider.dart';
 import 'favoriteSta.dart';
 import 'killingTime/killingTime.dart';
 
@@ -24,16 +23,10 @@ void main() async {
       supportedLocales: const [Locale('en'), Locale('ko')],
       path: 'assets/langs', // JSON 파일 경로
       fallbackLocale: const Locale('ko'), // 기본 언어를 한국어로 설정
-      child: MultiProvider(
-        providers: [ // 상태관리
-          ChangeNotifierProvider(create: (_) => SearchHistoryProvider()),
-        ],
-        child: SmartSubway(),
-      ),
+      child: SmartSubway(),
     ),
   );
 }
-
 
 class SmartSubway extends StatelessWidget {
   const SmartSubway({super.key});
@@ -97,7 +90,9 @@ class _Home extends State<Home> {
 
 @override
 Widget build(BuildContext context) {
-  final searchHistoryProvider = Provider.of<SearchHistoryProvider>(context);
+  final TextEditingController _searchController = TextEditingController();
+  late List<Map<String, dynamic>> _searchHistory;
+
   return Scaffold(
     backgroundColor: Colors.white,
     body: Stack(
@@ -258,7 +253,7 @@ Widget build(BuildContext context) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FavoriteSta(),
+                  builder: (context) => FavoriteSta(favoriteStations: []),
                 ),
               );
             },

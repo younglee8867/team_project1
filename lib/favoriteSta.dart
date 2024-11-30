@@ -1,11 +1,37 @@
 // 즐겨찾기 화면
+//11.29 SharedStationData를 통해 favoriteOnly를 관리
 import 'package:flutter/material.dart';
 import './util/util.dart';
-import 'package:provider/provider.dart';
 import './widgets//searchResultItem.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-class FavoriteSta extends StatelessWidget {
+class FavoriteSta extends StatefulWidget {
+  final List<Map<String, dynamic>> favoriteStations;
+
+  const FavoriteSta({
+    required this.favoriteStations,
+  });
+
+  @override
+  _FavoriteStaState createState() => _FavoriteStaState();
+}
+
+class _FavoriteStaState extends State<FavoriteSta> {
+  late List<Map<String, dynamic>> favoriteOnly;
+
+  @override
+  void initState() {
+    super.initState();
+    // SharedStationData의 즐겨찾기 항목으로 초기화
+    favoriteOnly = SharedStationData.favoriteStations;
+  }
+
+  void _toggleFavorite(int index) {
+    setState(() {
+      SharedStationData.toggleFavoriteStatus(favoriteOnly[index]['name']);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +42,7 @@ class FavoriteSta extends StatelessWidget {
             if (Navigator.canPop(context)) {
               Navigator.pop(context);
             } else {
-              print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음');
+              print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음'); // 디버깅용 로그
             }
           },
           child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
@@ -32,40 +58,29 @@ class FavoriteSta extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: Consumer<SearchHistoryProvider>(
-        builder: (context, provider, child) {
-          // 즐겨찾기된 항목만 필터링
-          final favList = provider.searchHistory
-              .where((item) => item['isFavorite'] == true)
-              .toList();
-
-          if (favList.isEmpty) {
-            // 즐겨찾기가 없을 때
-            return Center(
+      body: favoriteOnly.isEmpty
+          ? Center(
+              // 리스트에 항목이 없을 때
               child: Text(
                 '즐겨찾기 항목이 없습니다.',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ).tr(),
-            );
-          } else {
-            // 즐겨찾기 리스트 출력
-            return ListView.builder(
+            )
+          : ListView.builder(
+              // 리스트에 항목이 있을 때
               padding: const EdgeInsets.all(8.0),
-              itemCount: favList.length,
+              itemCount: favoriteOnly.length,
               itemBuilder: (context, index) {
-                final record = favList[index];
+                final record = favoriteOnly[index];
                 return SearchResultItem(
                   stationName: record['name'],
-                  favImagePath: 'assets/images/favStarFill.png',
-                  onToggleFav: () => provider.toggleFavorite(
-                    provider.searchHistory.indexOf(record),
-                  ), // 원래 리스트의 인덱스를 전달
+                  favImagePath: record['isFavorite']
+                      ? 'assets/images/favStarFill.png'
+                      : 'assets/images/favStar.png',
+                  onToggleFav: () => _toggleFavorite(index), // 상태 변경
                 );
               },
-            );
-          }
-        },
-      ),
+            ),
     );
   }
 }

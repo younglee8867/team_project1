@@ -1,77 +1,54 @@
-import 'package:flutter/foundation.dart';
+// 공통 로직 또는 유틸리티 함수
+//11.29 SharedStationData로 길찾기페이지와 역검색페이지에서
+// 통합적으로 관리하도록 했습니다..
 
-class SearchHistoryProvider extends ChangeNotifier {
-  // 검색 기록 리스트
-  List<Map<String, dynamic>> _searchHistory = [];
-  // 출발역과 도착역
-  String _startStation = '';
-  String _endStation = '';
-  // 호선 선택
-  String _selectedLine = '전체';
-  // 메뉴 표시 상태
-  bool _isMenuVisible = false;
-  
-  // 검색 기록 Getter
-  List<Map<String, dynamic>> get searchHistory => _searchHistory;
-
-  // getter: 메뉴 표시 여부 가져오기
-  bool get isMenuVisible => _isMenuVisible;
-
-  // 출발역 Getter와 Setter
-  String get startStation => _startStation;
-  void setStartStation(String station) {
-    _startStation = station;
-    notifyListeners();
-  }
-
-  // 도착역 Getter와 Setter
-  String get endStation => _endStation;
-  void setEndStation(String station) {
-    _endStation = station;
-    notifyListeners();
-  }
-
-  // 호선 선택 Getter와 Setter
-  String get selectedLine => _selectedLine;
-  void setSelectedLine(String line) {
-    _selectedLine = line;
-    notifyListeners();
-  }
-
-  /// 메뉴 표시/숨기기 토글
-  void toggleMenuVisibility() {
-    _isMenuVisible = !_isMenuVisible;
-    notifyListeners();
-  }
-
-
-  // 출발역과 도착역 교환
-  void swapStations() {
-    final temp = _startStation;
-    _startStation = _endStation;
-    _endStation = temp;
-    notifyListeners();
-  }
+class SharedStationData {
+  static List<Map<String, dynamic>> searchHistory = [];
+  static List<Map<String, dynamic>> favoriteStations = [];
 
   // 검색 기록 추가
-  void addSearchHistory(String stationName) {
-    if (!_searchHistory.any((item) => item['name'] == stationName)) {
-      _searchHistory.insert(0, {'name': stationName, 'isFavorite': false});
-      notifyListeners();
-    }
+  //앱 전체에서 공유되는 검색기록을 관리
+  //모든 화면에서 공통적으로 참조되는 검색기록
+  static void addSearchHistory(Map<String, dynamic> station) {
+    // 중복 항목 방지
+    searchHistory.removeWhere((item) => item['name'] == station['name']);
+    // 리스트의 맨 위에 삽입
+    searchHistory.insert(0, station);
   }
 
-  // 검색 기록 삭제
-  void clearHistory() {
-    _searchHistory.clear();
-    notifyListeners();
-  }
 
-  // 즐겨찾기 토글
-  void toggleFavorite(int index) {
-    if (index >= 0 && index < _searchHistory.length) {
-      _searchHistory[index]['isFavorite'] = !_searchHistory[index]['isFavorite'];
-      notifyListeners();
+  // 즐겨찾기 상태
+  static void toggleFavoriteStatus(String stationName) {
+    for (var station in searchHistory) {
+      if (station['name'] == stationName) {
+        station['isFavorite'] = !(station['isFavorite'] ?? false);
+        break;
+      }
     }
+    // 즐겨찾기 목록 업데이트
+    favoriteStations = searchHistory
+        .where((station) => station['isFavorite'] == true)
+        .toList();
+  }
+}
+
+// 검색 기록 추가
+bool addSearchHistory(List<Map<String, dynamic>> history, String stationName) {
+  if (!history.any((item) => item['name'] == stationName)) {
+    history.insert(0, {'name': stationName, 'isFavorite': false});
+    return true;
+  }
+  return false;
+}
+
+// 검색기록 삭제
+void clearHistory(List history) {
+  history.clear();
+}
+
+// 즐겨찾기 표시
+void toggleFavorite(List<Map<String, dynamic>> history, int index) {
+  if (index >= 0 && index < history.length) {
+    history[index]['isFavorite'] = !history[index]['isFavorite'];
   }
 }

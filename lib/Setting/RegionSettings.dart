@@ -1,59 +1,58 @@
-// 지역설정 화면
-//11.25 사이드 바 없애고 페이지 구성으로 바꿈
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class RegionSettingsPage extends StatefulWidget {
+  const RegionSettingsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: RegionSettingsPage(),
-    );
-  }
+  State<RegionSettingsPage> createState() => _RegionSettingsPage();
 }
 
-class RegionSettingsPage extends StatelessWidget {
-  const RegionSettingsPage({Key? key}) : super(key: key);
-
+class _RegionSettingsPage extends State<RegionSettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF22536F)),
-          onPressed: () {
+        leading: GestureDetector(
+          onTap: () {
             if (Navigator.canPop(context)) {
               Navigator.pop(context);
             }
           },
+          child: const Icon(Icons.arrow_back, color: Color(0xff22536F)),
         ),
-        title: const Text(
-          '지역 설정',
-          style: TextStyle(
-            color: Color(0xFF22536F),
-            fontFamily: 'Roboto',
+        title: Text(
+          '지역 설정'.tr(),
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xff22536F),
           ),
         ),
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
-      body: ListView(
-        children: const [
-          RegionButton(region: '수도권'),
-          Divider(thickness: 1, height: 1),
-          RegionButton(region: '부산'),
-          Divider(thickness: 1, height: 1),
-          RegionButton(region: '대구'),
-          Divider(thickness: 1, height: 1),
-          RegionButton(region: '광주'),
-          Divider(thickness: 1, height: 1),
-          RegionButton(region: '대전'),
-          Divider(thickness: 1, height: 1),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        child: ListView(
+          children: const [
+            RegionButton(region: '수도권'),
+            Divider(thickness: 1, height: 1),
+            SizedBox(height: 30),
+            RegionButton(region: '부산'),
+            Divider(thickness: 1, height: 1),
+            SizedBox(height: 30),
+            RegionButton(region: '대구'),
+            Divider(thickness: 1, height: 1),
+            SizedBox(height: 30),
+            RegionButton(region: '광주'),
+            Divider(thickness: 1, height: 1),
+            SizedBox(height: 30),
+            RegionButton(region: '대전'),
+            Divider(thickness: 1, height: 1),
+          ],
+        ),
       ),
     );
   }
@@ -68,13 +67,13 @@ class RegionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(
-        region,
+        region.tr(), // 번역 키를 통해 다국어 적용
         style: const TextStyle(
           fontSize: 16,
           color: Color(0xFF22536F),
-          fontFamily: 'Roboto', // 텍스트 컬러 설정
+          fontFamily: 'Roboto',
         ),
-      ),
+      ).tr(),
       onTap: () {
         // 버튼 눌렀을 때 별다른 동작 없음
       },

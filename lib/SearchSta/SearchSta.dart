@@ -1,7 +1,8 @@
 // 역검색
+//11.29 검색 기록을 SharedStationData에서 가져옴
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/killingTime/killingTime.dart';
-import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 // 위젯
 import '../widgets/searchBar.dart';
@@ -28,58 +29,103 @@ class FlutterApp extends StatelessWidget {
   }
 }
 
-class SearchStationPage extends StatelessWidget {
+class SearchStationPage extends StatefulWidget {
+  @override
+  _SearchStationPageState createState() => _SearchStationPageState();
+}
+
+class _SearchStationPageState extends State<SearchStationPage> {
+  final TextEditingController _searchController = TextEditingController();
+  late List<Map<String, dynamic>> _searchHistory; // 검색 기록 리스트
+  late String _favImagePath;
+  late bool isFavorite;
+  bool _isMenuVisible = false; // 메뉴바 표시 여부
+
+  // 초기값
+  @override
+  void initState() {
+    super.initState();
+    isFavorite = false;
+    _favImagePath = '../assets/images/favStar.png';
+    _searchHistory = SharedStationData.searchHistory; // SharedStationData 사용
+  }
+
+  // 메뉴 표시/숨기기 토글
+  void _toggleMenuVisibility() {
+    setState(() {
+      _isMenuVisible = !_isMenuVisible;
+    });
+  }
+
+  // 즐겨찾기 표시 토글
+  void _toggleFavImage(int index) {
+    setState(() {
+      SharedStationData.toggleFavoriteStatus(_searchHistory[index]['name']);
+    });
+  }
+
+  // 검색 기록 추가
+  void _addSearchHistory(String stationName) {
+    setState(() {
+      SharedStationData.addSearchHistory({
+        "name": stationName,
+        "isFavorite": false,
+      });
+    });
+  }
+
+  // 검색 기록 삭제
+  void _deleteSearchHistory() {
+    setState(() {
+      _searchHistory.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final searchHistoryProvider = Provider.of<SearchHistoryProvider>(context);
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
         children: [
           GestureDetector(
             onTap: () {
-              // 메뉴 닫기
-              if (searchHistoryProvider.isMenuVisible) {
-                searchHistoryProvider.toggleMenuVisibility();
+              if (_isMenuVisible) {
+                setState(() {
+                  _isMenuVisible = false;
+                });
               }
             },
             child: Column(
               children: [
-                // 상단 검색바
                 SearchTopBar(
-                  controller: TextEditingController(),
+                  // 상단 - 검색바
+                  controller: _searchController,
                   onSearch: (value) {
                     if (value.isNotEmpty) {
-                      searchHistoryProvider.addSearchHistory(value);
-                      /*Navigator.push(
+                      _addSearchHistory(value);
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => searchStaInfo(
-                            searchHistory: searchHistoryProvider.searchHistory,
-                          ),
-                        ),
-                      );*/
+                            builder: (context) =>
+                                SearchStaInfo(searchHistory: _searchHistory)),
+                      );
                     }
                   },
-                  onMenuTap: searchHistoryProvider.toggleMenuVisibility,
-                  onDelete: searchHistoryProvider.clearHistory,
+                  onMenuTap: _toggleMenuVisibility,
+                  onDelete: _deleteSearchHistory,
                 ),
-
-                // 검색 기록 표시
                 Expanded(
+                  // 가운데 - 검색기록 내역
                   child: ListView.builder(
-                    itemCount: searchHistoryProvider.searchHistory.length,
+                    itemCount: _searchHistory.length,
                     itemBuilder: (context, index) {
-                      final record =
-                          searchHistoryProvider.searchHistory[index];
+                      final record = _searchHistory[index];
                       return SearchResultItem(
-                        stationName: record['name'],
+                        stationName: record['name'] + "역".tr(),
                         favImagePath: record['isFavorite']
                             ? 'assets/images/favStarFill.png'
-                            : 'assets/images/favStar.png',
-                        onToggleFav: () =>
-                            searchHistoryProvider.toggleFavorite(index),
+                            : 'assets/images/favStar.png', // 상태에 따라 이미지 선택
+                        onToggleFav: () => _toggleFavImage(index), // 인덱스를 전달
                       );
                     },
                   ),
@@ -87,11 +133,9 @@ class SearchStationPage extends StatelessWidget {
               ],
             ),
           ),
-
-          // 메뉴 오버레이 표시
-          if (searchHistoryProvider.isMenuVisible)
+          if (_isMenuVisible) // 좌측 - 메뉴바 카테고리별 이동
             MenuOverlay(
-              onClose: searchHistoryProvider.toggleMenuVisibility,
+              onClose: _toggleMenuVisibility,
               onSearchTap: () {
                 Navigator.push(
                   context,
@@ -102,10 +146,8 @@ class SearchStationPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => FavoriteSta(
-                      //favoriteStations: searchHistoryProvider.searchHistory,
-                    ),
-                  ),
+                      builder: (context) =>
+                          FavoriteSta(favoriteStations: _searchHistory)),
                 );
               },
               onGameTap: () {
