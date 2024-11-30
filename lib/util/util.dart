@@ -10,10 +10,12 @@ class SharedStationData {
   //앱 전체에서 공유되는 검색기록을 관리
   //모든 화면에서 공통적으로 참조되는 검색기록
   static void addSearchHistory(Map<String, dynamic> station) {
-    if (!searchHistory.any((item) => item['name'] == station['name'])) {
-      searchHistory.add(station);
-    }
+    // 중복 항목 방지
+    searchHistory.removeWhere((item) => item['name'] == station['name']);
+    // 리스트의 맨 위에 삽입
+    searchHistory.insert(0, station);
   }
+
 
   // 즐겨찾기 상태
   static void toggleFavoriteStatus(String stationName) {

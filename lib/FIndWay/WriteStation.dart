@@ -89,7 +89,7 @@ class _WriteStationPageState extends State<WriteStationPage> {
           child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
         ),
         title: Text(
-          '경로검색',
+          '길찾기',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -109,7 +109,7 @@ class _WriteStationPageState extends State<WriteStationPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: Icon(Icons.swap_vert, color: Colors.black),
+                  icon: Icon(Icons.swap_vert, color: Color(0xff386B88)),
                   onPressed: _swapStations,
                 ),
                 Expanded(
@@ -130,12 +130,13 @@ class _WriteStationPageState extends State<WriteStationPage> {
                           if (value.isNotEmpty) _addSearchRecord(value);
                         },
                         onChanged: (value) {
-                          // 사용자가 입력할 때 자동으로 '역' 추가
+                          // 사용자가 입력할 때 자동으로 '역' 추가 -> 번역 안돼서 그냥 없앰
                           if (value.length >= 3) {
-                            String translatedSuffix = '역'.tr();
+                            //final translatedSuffix = '역'.tr();
                             _startStationController.value = TextEditingValue(
-                              text: "$value $translatedSuffix",
+                              text: "$value ",                              
                             );
+                            
                           }
                         },
                       ),
@@ -155,11 +156,11 @@ class _WriteStationPageState extends State<WriteStationPage> {
                           if (value.isNotEmpty) _addSearchRecord(value);
                         },
                         onChanged: (value) {
-                          // 사용자가 입력할 때 자동으로 '역' 추가
+                          
                           if (value.length >= 3) {
-                            String translatedSuffix = '역'.tr();
+                            //String translatedSuffix = '역'.tr();
                             _endStationController.value = TextEditingValue(
-                              text: "$value $translatedSuffix",
+                              text: "$value ",
                             );
                           }
                         },
@@ -178,7 +179,7 @@ class _WriteStationPageState extends State<WriteStationPage> {
                 itemBuilder: (context, index) {
                   final record = _searchHistory[index];
                   return SearchResultItem(
-                    stationName: record['name'],
+                    stationName: record['name'] + "역".tr(),
                     favImagePath: record['isFavorite']
                         ? 'assets/images/favStarFill.png'
                         : 'assets/images/favStar.png', // 상태에 따라 이미지 선택
@@ -189,6 +190,9 @@ class _WriteStationPageState extends State<WriteStationPage> {
             ),
             TextButton(
               onPressed: _clearSearchHistory,
+              style: TextButton.styleFrom(
+                foregroundColor: Color(0xFFACACAC), // 텍스트 색상
+              ),
               child: Text('검색기록 삭제').tr(),
             ),
           ],

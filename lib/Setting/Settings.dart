@@ -31,7 +31,6 @@ class _Settings extends State<Settings> {
     {'title': '이용약관', 'page': 'TermsOfService'},
   ];
 
-  // 리스트 항목 클릭 시 이동할 함수
  // 리스트 항목 클릭 시 이동할 함수
   void onItemTap(BuildContext context, String pageName) {
     // 선택된 항목에 맞는 페이지로 이동
@@ -105,7 +104,7 @@ class _Settings extends State<Settings> {
                           color: Color(0xFF22536F),
                           fontSize: 16,
                         ),
-                      ),
+                      ).tr(),
                     ),
                     // 구분선
                     const Divider(

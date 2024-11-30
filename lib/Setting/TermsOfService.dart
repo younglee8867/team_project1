@@ -25,13 +25,13 @@ class _TermsOfServicePage extends State<TermsOfServicePage> {
           child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
         ),
         title: Text(
-          '이용 약관',
+          '이용약관'.tr(),
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
             color: Color(0xff22536F),
           ),
-        ).tr(),
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         ),
