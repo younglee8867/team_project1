@@ -73,11 +73,15 @@ class _FavoriteStaState extends State<FavoriteSta> {
               itemBuilder: (context, index) {
                 final record = favoriteOnly[index];
                 return SearchResultItem(
-                  stationName: record['name'] +"역".tr(),
+                  stationName: record['name'] + "역".tr(),
                   favImagePath: record['isFavorite']
                       ? 'assets/images/favStarFill.png'
                       : 'assets/images/favStar.png',
                   onToggleFav: () => _toggleFavorite(index), // 상태 변경
+                  onSelect: () {
+                    // 기록에 있는 역을 검색창으로
+                    Navigator.pop(context, record['name']);
+                  },
                 );
               },
             ),
