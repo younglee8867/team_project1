@@ -1,8 +1,7 @@
-// 사과게임
-// 11.24 게임 디테일 수정(잘못 클릭하면 아예 다음것도 안됨)
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,7 +11,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '사과 게임',
       home: AppleGame(),
     );
   }
@@ -92,11 +90,19 @@ class _AppleGameState extends State<AppleGame> {
         _apples.removeWhere((apple) => _selectedApples.contains(apple));
         _selectedApples.clear();
       });
+    } else {
+      // 선택한 두 사과의 합이 10이 아니면 초기화
+      Future.delayed(Duration(milliseconds: 100), () {
+        setState(() {
+          _selectedApples.clear();
+        });
+      });
     }
   }
 
   // 사과 위젯 만들기
   Widget _buildApple(Apple apple) {
+    bool isSelected = _selectedApples.contains(apple);
     return Positioned(
       left: apple.x,
       top: apple.y,
@@ -110,16 +116,17 @@ class _AppleGameState extends State<AppleGame> {
           height: 62,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image:
-                  AssetImage('assets/images/miniGame/apple.png'), // 사과 이미지 경로
+              image: AssetImage('assets/images/miniGame/apple.png'),
               fit: BoxFit.cover,
             ),
+            border: isSelected
+                ? Border.all(color: Colors.red, width: 3) // 선택된 사과 테두리 표시
+                : null,
           ),
           child: Stack(
             children: [
-              // 이미지 위에 텍스트 표시
               Positioned(
-                top: 20, // 텍스트를 10만큼 아래로 이동
+                top: 20,
                 left: 0,
                 right: 0,
                 child: Center(
@@ -142,12 +149,20 @@ class _AppleGameState extends State<AppleGame> {
 
   // 사과를 선택하는 기능
   void _onAppleSelected(Apple apple) {
-    if (_selectedApples.contains(apple)) {
-      _selectedApples.remove(apple);
-    } else {
-      _selectedApples.add(apple);
+    if (_selectedApples.length < 2) {
+      setState(() {
+        if (_selectedApples.contains(apple)) {
+          _selectedApples.remove(apple);
+        } else {
+          _selectedApples.add(apple);
+        }
+      });
+
+      // 두 개의 사과를 선택한 후 합산을 체크
+      if (_selectedApples.length == 2) {
+        _checkForMatch();
+      }
     }
-    _checkForMatch();
   }
 
   @override
@@ -164,13 +179,13 @@ class _AppleGameState extends State<AppleGame> {
           child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
         ),
         title: Text(
-          "사과 게임",
+          '사과게임',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
             color: Color(0xff22536F),
           ),
-        ),
+        ).tr(),
         backgroundColor: Colors.white,
       ),
       body: GestureDetector(

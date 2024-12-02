@@ -6,6 +6,9 @@ import 'package:flutter_application_1/SearchSta/SearchSta.dart';
 import 'package:flutter_application_1/SearchSta/SearchStaInfo.dart';
 import '../widgets/searchBar.dart';
 import '../widgets/menuOverlay.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'firebase_options.dart';
 
 import 'SearchSta/SearchStaInfo.dart';
 import 'FindWay/StationMap.dart';
@@ -14,8 +17,20 @@ import 'util/util.dart';
 import 'favoriteSta.dart';
 import 'killingTime/killingTime.dart';
 
-void main() async {
+Future<Map<String, dynamic>?> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  try {
+    await Firebase.initializeApp();
+    print('Firebase initialized successfully');
+  } catch (e) {
+    print('failed: $e');
+  }
+
   await EasyLocalization.ensureInitialized();
 
   runApp(
@@ -27,6 +42,7 @@ void main() async {
     ),
   );
 }
+
 
 class SmartSubway extends StatelessWidget {
   const SmartSubway({super.key});
@@ -264,7 +280,7 @@ class _Home extends State<Home> {
               onSettingsTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Settings()),
+                  MaterialPageRoute(builder: (context) => settings()),
                 );
               },
             ),
