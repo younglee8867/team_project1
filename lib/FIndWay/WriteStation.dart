@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import '../widgets/searchResultItem.dart';
 import '../favoriteSta.dart';
 import '../util/util.dart';
+import '../FindWay/minimumDistance.dart';
 
 class WriteStationPage extends StatefulWidget {
   final String? initialStartStation;
@@ -38,6 +39,21 @@ class _WriteStationPageState extends State<WriteStationPage> {
     }
   }
 
+  void _navigateToMinimumDistance() {
+    if (_startStationController.text.isNotEmpty &&
+        _endStationController.text.isNotEmpty) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => minimumDistance(
+              /*          startStation: _startStationController.text,
+            endStation: _endStationController.text, */
+              ),
+        ),
+      );
+    }
+  }
+
   void _addSearchRecord(String stationName) {
     setState(() {
       SharedStationData.addSearchHistory({
@@ -68,8 +84,8 @@ class _WriteStationPageState extends State<WriteStationPage> {
   }
 
   // 공통된 함수로 빼기
-  Widget buildStationInputField(
-      TextEditingController controller, String hint, Function(String) onSubmitted) {
+  Widget buildStationInputField(TextEditingController controller, String hint,
+      Function(String) onSubmitted) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
@@ -81,7 +97,11 @@ class _WriteStationPageState extends State<WriteStationPage> {
           borderRadius: BorderRadius.circular(30),
         ),
       ),
-      onSubmitted: onSubmitted,
+      onSubmitted: (value) {
+        // 사용자가 Enter를 누르면 페이지 전환 검사 실행
+        onSubmitted(value);
+        _navigateToMinimumDistance(); // 입력값 확인 후 페이지 전환
+      },
     );
   }
 
@@ -133,17 +153,18 @@ class _WriteStationPageState extends State<WriteStationPage> {
                           if (value.isNotEmpty) {
                             if (value.length == 3) {
                               final number = int.tryParse(value) ?? 0;
-                              if ((101 <= number && number <= 123) || 
-                                  (201 <= number && number <= 217) || 
-                                  (301 <= number && number <= 308) || 
-                                  (401 <= number && number <= 417) || 
-                                  (501 <= number && number <= 507) || 
-                                  (601 <= number && number <= 622) || 
-                                  (701 <= number && number <= 707) || 
-                                  (801 <= number && number <= 806) || 
+                              if ((101 <= number && number <= 123) ||
+                                  (201 <= number && number <= 217) ||
+                                  (301 <= number && number <= 308) ||
+                                  (401 <= number && number <= 417) ||
+                                  (501 <= number && number <= 507) ||
+                                  (601 <= number && number <= 622) ||
+                                  (701 <= number && number <= 707) ||
+                                  (801 <= number && number <= 806) ||
                                   (901 <= number && number <= 904)) {
                                 _addSearchRecord(value);
-                                _startStationController.value = TextEditingValue(
+                                _startStationController.value =
+                                    TextEditingValue(
                                   text: "$value",
                                 );
                               } else {
@@ -155,7 +176,8 @@ class _WriteStationPageState extends State<WriteStationPage> {
                                     content: Text("유효하지 않은 역 번호입니다."),
                                     actions: [
                                       TextButton(
-                                        onPressed: () => Navigator.of(context).pop(),
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
                                         child: Text("확인"),
                                       ),
                                     ],
@@ -170,7 +192,8 @@ class _WriteStationPageState extends State<WriteStationPage> {
                                   content: Text("숫자 세 자리를 입력해주세요."),
                                   actions: [
                                     TextButton(
-                                      onPressed: () => Navigator.of(context).pop(),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
                                       child: Text("확인"),
                                     ),
                                   ],
@@ -189,14 +212,14 @@ class _WriteStationPageState extends State<WriteStationPage> {
                           if (value.isNotEmpty) {
                             if (value.length == 3) {
                               final number = int.tryParse(value) ?? 0;
-                              if ((101 <= number && number <= 123) || 
-                                  (201 <= number && number <= 217) || 
-                                  (301 <= number && number <= 308) || 
-                                  (401 <= number && number <= 417) || 
-                                  (501 <= number && number <= 507) || 
-                                  (601 <= number && number <= 622) || 
-                                  (701 <= number && number <= 707) || 
-                                  (801 <= number && number <= 806) || 
+                              if ((101 <= number && number <= 123) ||
+                                  (201 <= number && number <= 217) ||
+                                  (301 <= number && number <= 308) ||
+                                  (401 <= number && number <= 417) ||
+                                  (501 <= number && number <= 507) ||
+                                  (601 <= number && number <= 622) ||
+                                  (701 <= number && number <= 707) ||
+                                  (801 <= number && number <= 806) ||
                                   (901 <= number && number <= 904)) {
                                 _addSearchRecord(value);
                                 _endStationController.value = TextEditingValue(
@@ -211,7 +234,8 @@ class _WriteStationPageState extends State<WriteStationPage> {
                                     content: Text("유효하지 않은 역 번호입니다."),
                                     actions: [
                                       TextButton(
-                                        onPressed: () => Navigator.of(context).pop(),
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
                                         child: Text("확인"),
                                       ),
                                     ],
@@ -226,7 +250,8 @@ class _WriteStationPageState extends State<WriteStationPage> {
                                   content: Text("숫자 세 자리를 입력해주세요."),
                                   actions: [
                                     TextButton(
-                                      onPressed: () => Navigator.of(context).pop(),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
                                       child: Text("확인"),
                                     ),
                                   ],

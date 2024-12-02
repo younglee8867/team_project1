@@ -1,6 +1,7 @@
 // 최소거리화면
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../util/firebaseUtil.dart';
 
 void main() {
   runApp(minimumDistance());
@@ -13,6 +14,13 @@ class minimumDistance extends StatefulWidget {
 
 class _minimumDistance extends State<minimumDistance> {
   bool isMinDistanceSelected = true;
+/*   late Future<Map<String, dynamic>?> stationData;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchStationData();
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +56,7 @@ class _minimumDistance extends State<minimumDistance> {
               children: [
                 _buildButtonRow(),
                 _buildTravelDetails(),
-                 _circleIndicator(Color(0xFF856869)),
+                _circleIndicator(Color(0xFF856869)),
                 _buildStationIndicators(),
               ],
             ),
@@ -57,7 +65,6 @@ class _minimumDistance extends State<minimumDistance> {
       ),
     );
   }
-
 
   Widget _buildButtonRow() {
     return Padding(
@@ -104,41 +111,38 @@ class _minimumDistance extends State<minimumDistance> {
 
   Widget _buildTravelDetails() {
     return Padding(
-      padding: const EdgeInsets.only(left: 0, top: 0),
-      child: Row(children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.only(left: 0, top: 0),
+        child: Row(
           children: [
-            Text(
-              '소요 시간',
-              style: TextStyle(color: Color(0xFF979797), fontSize: 16)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('소요 시간',
+                    style: TextStyle(color: Color(0xFF979797), fontSize: 16)),
+                Text('4분',
+                    style: TextStyle(color: Color(0xFF4C4C4C), fontSize: 45))
+                // 아래 줄들은 '4분' 텍스트, 세로선, 인디케이터를 숨기기 위해 제거되었습니다.
+                // Text('4 분', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 45)),
+                // SizedBox(height: 20),
+                // Container(width: 7, height: 145, color: Color(0xFF856869)),
+                // Positioned(left: 60, top: 308, child: _circleIndicator(Color(0xFF846868))),
+                // Positioned(left: 60, top: 444, child: _circleIndicator(Color(0xFF856869))),
+                // Positioned(left: 76, top: 318, child: Text('1', style: TextStyle(color: Colors.white, fontSize: 20))),
+                // Positioned(left: 76, top: 454, child: Text('1', style: TextStyle(color: Colors.white, fontSize: 20))),
+                // Positioned(left: 126, top: 318, child: Text('101', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 32))),
+                // Positioned(left: 126, top: 453, child: Text('103', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 32))),
+              ],
             ),
-            Text(
-              '4분',
-              style: TextStyle(color: Color(0xFF4C4C4C), fontSize: 45)
-            )
-            // 아래 줄들은 '4분' 텍스트, 세로선, 인디케이터를 숨기기 위해 제거되었습니다.
-            // Text('4 분', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 45)),
-            // SizedBox(height: 20),
-            // Container(width: 7, height: 145, color: Color(0xFF856869)),
-            // Positioned(left: 60, top: 308, child: _circleIndicator(Color(0xFF846868))),
-            // Positioned(left: 60, top: 444, child: _circleIndicator(Color(0xFF856869))),
-            // Positioned(left: 76, top: 318, child: Text('1', style: TextStyle(color: Colors.white, fontSize: 20))),
-            // Positioned(left: 76, top: 454, child: Text('1', style: TextStyle(color: Colors.white, fontSize: 20))),
-            // Positioned(left: 126, top: 318, child: Text('101', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 32))),
-            // Positioned(left: 126, top: 453, child: Text('103', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 32))),
+            SizedBox(width: 100),
+            Padding(
+              padding: const EdgeInsets.only(top: 40),
+              child: Text(
+                '|   환승 없음  |  비용 200원',
+                style: TextStyle(color: Color(0xFF979797), fontSize: 15),
+              ),
+            ),
           ],
-        ),
-        SizedBox(width: 100),
-        Padding(
-          padding: const EdgeInsets.only(top: 40),
-          child: Text(
-            '|   환승 없음  |  비용 200원',
-            style: TextStyle(color: Color(0xFF979797), fontSize: 15),
-          ),
-        ),
-      ],)
-    );
+        ));
   }
 
   Widget _circleIndicator(Color color) {
