@@ -107,7 +107,7 @@ class _SearchStationPageState extends State<SearchStationPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                SearchStaInfo(searchHistory: _searchHistory)),
+                                SearchStaInfo(searchHistory: _searchHistory, stationName: value,)),
                       );
                     }
                   },
@@ -165,7 +165,7 @@ class _SearchStationPageState extends State<SearchStationPage> {
               onSettingsTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Settings()),
+                  MaterialPageRoute(builder: (context) => settings()),
                 );
               },
             ),

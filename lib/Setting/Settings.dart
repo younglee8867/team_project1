@@ -11,18 +11,18 @@ import 'TermsOfService.dart';
 
 void main() {
   runApp(const MaterialApp(
-    home: Settings(),
+    home: settings(),
   ));
 }
 
-class Settings extends StatefulWidget {
-  const Settings({super.key});
+class settings extends StatefulWidget {
+  const settings({super.key});
 
   @override
   _Settings createState() => _Settings();
 }
 
-class _Settings extends State<Settings> {
+class _Settings extends State<settings> {
   final List<Map<String, String>> settingsOptions = [
     {'title': '지역 설정', 'page': 'RegionSettings'},
     {'title': '화면 모드', 'page': 'DisplayMode'},

@@ -1,21 +1,22 @@
 {
   "project_info": {
-    "project_number": "561653222807",
-    "project_id": "mju-teamproject-fa7ee",
-    "storage_bucket": "mju-teamproject-fa7ee.firebasestorage.app"
+    "project_number": "520527718838",
+    "firebase_url": "https://station-a1609-default-rtdb.firebaseio.com",
+    "project_id": "station-a1609",
+    "storage_bucket": "station-a1609.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:561653222807:android:e4bb5ce4ea1e6e649248d2",
+        "mobilesdk_app_id": "1:520527718838:android:39fd28b8225ddffebcf917",
         "android_client_info": {
-          "package_name": "com.example.flutter_application_1"
+          "package_name": "teamProject.app"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAXFEQ_fURIB_4JxX9rfdcYmjF1mKS7LKw"
+          "current_key": "AIzaSyCrwTU3i6EIILEafiSqwAtrCQyVI6EA3Vg"
         }
       ],
       "services": {
