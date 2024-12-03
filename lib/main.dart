@@ -27,6 +27,7 @@ Future<Map<String, dynamic>?> main() async {
   try {
     await Firebase.initializeApp();
     print('Firebase initialized successfully');
+ 
   } catch (e) {
     print('failed: $e');
   }

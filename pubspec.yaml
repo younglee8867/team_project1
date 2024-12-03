@@ -37,6 +37,7 @@ dependencies:
   provider: ^6.1.2
   firebase_core: ^3.8.0
   cloud_firestore: ^5.5.0
+  shared_preferences: ^2.0.18
   #firebase_auth: ^4.8.0
 
 
@@ -68,6 +69,7 @@ flutter:
     - assets/images/station/
     - assets/images/menuBar/
     - assets/images/miniGame/
+    - assets/images/weather/
     - assets/langs/
 
   # To add assets to your application, add an assets section, like this:
