@@ -2,12 +2,22 @@
 [12.02] 데베 연동 성공
 수정사항 1. 화면 UI
 수정사항 2. 즐찾기능 추가
+수정사항 3. 출발역, 도착역 클릭시 -> 길찾기로(해당역)
 */
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/FIndWay/WriteStation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../util/firebaseUtil.dart';
+import 'package:flutter_application_1/util/firebaseGetPrev.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../util/util.dart';
+import '../constants/lineColor.dart';
+
 
 class SearchStaInfo extends StatefulWidget {
+
   final String stationName;
 
   const SearchStaInfo({Key? key, required this.stationName, required List<Map<String, dynamic>> searchHistory})
@@ -18,26 +28,52 @@ class SearchStaInfo extends StatefulWidget {
 }
 
 class _SearchStaInfo extends State<SearchStaInfo> {
+  List<Map<String, dynamic>> _searchHistory = SharedStationData.searchHistory;
   late Future<Map<String, dynamic>?> stationData;
+  late Future<bool> isFavorite;
 
-  @override
-  void initState() {
-    super.initState();
-    stationData = fetchStationData(widget.stationName); 
-    // 검색한 역 값(ex.101)을 파라메터로 전달
-    // util/firebaseUtil.dart에서 정의한 함수로 데이터베이스에 해당 값 있는지 확인
+ @override
+void initState() {
+  super.initState();
+  stationData = fetchStationData(widget.stationName);
+  isFavorite = _loadFavoriteStatus(widget.stationName);
+}
+
+  Future<bool> _loadFavoriteStatus(String stationName) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(stationName) ?? false;
   }
+
+  Future<void> _toggleFavorite(int index) async {
+    final prefs = await SharedPreferences.getInstance();
+    final currentStatus = await _loadFavoriteStatus(_searchHistory[index]['name']);
+    
+    
+    setState(() {
+      isFavorite = Future.value(!currentStatus);
+      SharedStationData.toggleFavoriteStatus(widget.stationName);
+    });
+
+    await prefs.setBool(widget.stationName, !currentStatus);
+    print('${widget.stationName} 즐겨찾기 상태: ${!currentStatus}');
+  }
+  
+
+  /*void _toggleFavorite(int index) {
+    setState(() {
+      SharedStationData.toggleFavoriteStatus(widget.stationName);
+    });
+  }*/
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar( // 뒤로 가기
+      appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
             if (Navigator.canPop(context)) {
-              Navigator.pop(context);
+              Navigator.pop(context, true); // 데이터를 갱신하도록 플래그 전달
             }
           },
           child: const Icon(Icons.arrow_back, color: Color(0xff22536F)),
@@ -75,7 +111,7 @@ class _SearchStaInfo extends State<SearchStaInfo> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  //_buildStationNavigationAndButtons(),
+                  _buildStationNavigationAndButtons(),
                   const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -98,7 +134,7 @@ class _SearchStaInfo extends State<SearchStaInfo> {
   }
 
     // 지도 이미지
-  Widget _buildMapImage() {
+Widget _buildMapImage() {
     return Container(
       width: double.infinity,
       height: 200,
@@ -116,34 +152,60 @@ class _SearchStaInfo extends State<SearchStaInfo> {
   }
 
   // 동그라미(호선)와 역 이름
-  Widget _buildCircleWithText(String stationName) {
-    return Column(
-      children: [
-        // 호선 색깔
-        Container(
-          width: 125,
-          height: 125,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.brown, width: 10),
-          ),
-          alignment: Alignment.center,
-          // 호선 번호 (ex. 1,2,3..)
-          child: Text(
-            stationName.isNotEmpty
-                ? stationName.substring(0,1)
-                : '0',
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 50,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
+Widget _buildCircleWithText(String stationName) {
+  bool isFavorite = false;
+
+  // 즐겨찾기 상태 로드
+  Future<void> _loadFavoriteStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isFavorite = prefs.getBool(stationName) ?? false;
+    });
+  }
+
+  // 즐겨찾기 상태 토글
+  Future<void> _toggleFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+    await prefs.setBool(stationName, isFavorite);
+    print('$stationName 즐겨찾기 상태: $isFavorite');
+  }
+
+  // 첫 로드 시 즐겨찾기 상태 가져오기
+  _loadFavoriteStatus();
+
+  // 각 호선마다 색상 가져오기
+  final color = SubwayColors.getColor(stationName.substring(0, 1));
+
+  return Column(
+    children: [
+      // 호선 색깔
+      Container(
+        width: 125,
+        height: 125,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+          border: Border.all(color: color, width: 10), // 색 지정
         ),
-        const SizedBox(height: 10),
-        Center(
+        alignment: Alignment.center,
+        // 호선 번호 (ex. 1,2,3..)
+        child: Text(
+          stationName.isNotEmpty
+              ? stationName.substring(0, 1)
+              : '0',
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 50,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      const SizedBox(height: 10),
+      Center(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center, // 세로 정렬 중앙
           children: [
@@ -151,7 +213,7 @@ class _SearchStaInfo extends State<SearchStaInfo> {
             Expanded(
               child: Text(
                 stationName.isNotEmpty
-                    ? stationName + " "+"역".tr()
+                    ? stationName + " " + "역".tr()
                     : '알 수 없음',
                 style: const TextStyle(
                   color: Colors.black,
@@ -163,34 +225,162 @@ class _SearchStaInfo extends State<SearchStaInfo> {
                 textAlign: TextAlign.center, // 텍스트를 가운데 정렬
               ),
             ),
-            // 별 아이콘
-                  GestureDetector(
-                    //onTap: onToggleFav,
-                    child: Image.asset(
-                      'assets/images/favStar.png',
-                      width: 24,
-                      height: 24,
-                    ),
-                  ),
+
+            // 즐겨찾기 아이콘
+            GestureDetector(
+              onTap: () async {
+                // 즐겨찾기 상태를 반전
+                await _toggleFavorite();
+              },
+              child: Image.asset(
+                isFavorite
+                    ? 'assets/images/favStarFill.png' // 즐겨찾기 상태일 때 채워진 별
+                    : 'assets/images/favStar.png',    // 즐겨찾기 상태가 아닐 때 빈 별
+                width: 24,
+                height: 24,
+              ),
+            ),
+
           ],
-        )
-        )
+        ),
+      ),
+    ],
+  );
+}
 
 
 
+// 이전역, 다음역 및 출발역, 도착역 버튼
+Widget _buildStationNavigationAndButtons() {
+  
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween, // 아이템 간 간격 설정
+    children: [
+      // 이전역
+      _buildStationNavigation('이전역', false),
+
+      // 출발역과 도착역 (클릭시 해당 값과 함께 페이지 이동)
+      Row(
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context, 
+                 MaterialPageRoute(
+                      builder: (context) =>
+                      WriteStationPage(initialStartStation: widget.stationName, searchHistory: [],)
+                    ),           
+                                
+              ); // 버튼 동작 구현
+            },
+            child: Container(
+              alignment: Alignment.center,
+              width: 80,
+              height: 31,
+              decoration: BoxDecoration(
+                color: Color(0xFF686868),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '출발역',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 10), // 출발역과 도착역 사이 간격
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context, 
+                 MaterialPageRoute(
+                      builder: (context) =>
+                      WriteStationPage(initialEndStation: widget.stationName, searchHistory: [],)
+                    ),           
+                                
+              ); // 버튼 동작 구현
+            },
+            child: Container(
+              alignment: Alignment.center,
+              width: 80,
+              height: 31,
+              decoration: BoxDecoration(
+                color: Color(0xFF686868),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '도착역',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
+          ),
+        ],
+      ),
+
+      // 다음역
+      _buildStationNavigation('다음역', true),
+    ],
+  );
+}
+
+// 이전역 다음역
+Widget _buildStationNavigation(String label, bool isNext) {
+    return Row(
+      children: [
+        if (!isNext)
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/Chevron_left_right.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        SizedBox(width: 10),
+        Text(
+          label,
+          style: TextStyle(
+            color: Color(0xff676363),
+            fontSize: 16,
+          ),
+        ),
+        if (isNext)
+          Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.rotationY(3.14159),
+            child: Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/Chevron_left_right.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
       ],
     );
-  }
+}
+
 
 // 역 정보
-  Widget _buildStationInfo(Map<String, dynamic>? stationDetails) {
+Widget _buildStationInfo(Map<String, dynamic>? stationDetails) {
     if (stationDetails == null) return SizedBox();
 
     return _buildSection(
       title: '역 정보',
-      content: Column(
+      content: Row(
         children: [
-          //_buildDetailText('배차시간', stationDetails['schedule']),
+          _buildDetailText('배차시간', 
+          stationDetails['schedule']?['interval'] != null
+            ? '${stationDetails['schedule']?['interval']}분'
+            : '정보 없음'),
+          SizedBox(width: 20),
+          _buildDetailText_lastTime('막차', stationDetails['schedule']?['lastTrainTime']),
+          SizedBox(width: 50),
           _buildDetailText('빠른하차', stationDetails['quickExit']),
         ],
       ),
@@ -198,55 +388,147 @@ class _SearchStaInfo extends State<SearchStaInfo> {
   }
 
 // 시설 정보
-  Widget _buildFacilityInfo(Map<String, dynamic>? facilityInfo) {
+Widget _buildFacilityInfo(Map<String, dynamic>? facilityInfo) {
     if (facilityInfo == null) return SizedBox();
 
     return _buildSection(
       title: '시설 정보',
       content: Column(
         children: [
+          Row(children: [
           _buildDetailText('내리는문', facilityInfo['doorSide']),
+          SizedBox(width: 100),
           _buildDetailText('화장실', facilityInfo['restrooms']),
-          _buildDetailText('플랫폼', facilityInfo['platformType']),
+          ]),
+          Row(children: [
+            _buildDetailText('플랫폼', facilityInfo['platformType']),
+          ]),
+
         ],
       ),
     );
   }
 
 // 편의 시설
-  Widget _buildConvenienceInfo(Map<String, dynamic>? amenities) {
+Widget _buildConvenienceInfo(Map<String, dynamic>? amenities) {
     if (amenities == null) return SizedBox();
 
     return _buildSection(
       title: '편의 시설',
       content: Column(
         children: [
-          _buildDetailText('편의점 / 카페', amenities['store'] ? '있음' : '없음'),
-          _buildDetailText('유실물센터', amenities['foundCenter'] ? '있음' : '없음'),
-          _buildDetailText('물품보관소', amenities['storageRoom'] ? '있음' : '없음'),
-          _buildDetailText('엘리베이터', amenities['elevator'] ? '있음' : '없음'),
+          Row(children: [
+            _buildDetailTextAmenities('편의점 / 카페',amenities['store']),
+            SizedBox(width: 105),
+            _buildDetailTextAmenities('유실물센터', amenities['foundCenter']),
+          ]),
+          Row(children: [
+          _buildDetailTextAmenities('물품보관소', amenities['storageRoom']),
+          SizedBox(width: 120),
+          _buildDetailTextAmenities('엘리베이터', amenities['elevator']),
+          ],)
         ],
       ),
     );
   }
 
 // 날씨 정보
-  Widget _buildWeatherInfo(Map<String, dynamic>? weatherInfo) {
-    if (weatherInfo == null) return SizedBox();
+Widget _buildWeatherInfo(Map<String, dynamic>? weatherInfo) {
+  if (weatherInfo == null) return SizedBox();
 
-    return _buildSection(
-      title: '날씨 정보',
-      content: Center(
-        child: Text(
-          '${weatherInfo['condition']} (${weatherInfo['temperature']})',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  return _buildSection(
+    title: '날씨 정보',
+    content: Center(
+      child: Container(
+        width: double.infinity, // 화면 너비에 맞춤
+        height: 94,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              offset: const Offset(2, 6),
+              blurRadius: 7,
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Row(
+            children: [
+              SizedBox(width: 30),
+              Image.asset(
+                'assets/images/locationWeather.png',
+                width: 40,
+                height: 40,
+              ),
+              SizedBox(width: 10),
+              Text(
+                '${widget.stationName}' + " 역",
+                style: TextStyle(fontSize: 25, color: Color(0xff676363)),
+              ),
+              SizedBox(width: 50),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        '${weatherInfo['temperature']}' + '°C',
+                        style: TextStyle(fontSize: 36),
+                      ),
+                      SizedBox(width: 20),
+                      Text(
+                        '${weatherInfo['condition']}',
+                        style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    '체감온도 : ${weatherInfo['perceivedTem']}°C / 습도 : ${weatherInfo['humidity']}%',
+                    style: TextStyle(fontSize: 11),
+                  ),
+                ],
+              ),
+              // 날씨 이미지
+              SizedBox(width: 30),
+              if (weatherInfo['condition'] == "맑음")
+                Image.asset(
+                  'assets/images/weather/sunny.png', // 맑음 이미지
+                  width: 50,
+                  height: 50,
+                )
+              else if (weatherInfo['condition'] == "비")
+                Image.asset(
+                  'assets/images/weather/rain.png', // 비 이미지
+                  width: 50,
+                  height: 50,
+                )
+              else if (weatherInfo['condition'] == "눈")
+                Image.asset(
+                  'assets/images/weather/snow.png', // 비 이미지
+                  width: 50,
+                  height: 50,
+                )
+              else if (weatherInfo['condition'] == "흐림")
+                Image.asset(
+                  'assets/images/weather/cloud.png', // 비 이미지
+                  width: 50,
+                  height: 50,
+                )
+            ],
+          ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
 // 공통 위젯
-  Widget _buildSection({required String title, required Widget content}) {
+Widget _buildSection({required String title, required Widget content}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
@@ -261,12 +543,13 @@ class _SearchStaInfo extends State<SearchStaInfo> {
     );
   }
 
-  Widget _buildDetailText(String label, String value) {
+// 기본 시설 위젯
+Widget _buildDetailText(String label, String value, {TextStyle? style}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: RichText(
         text: TextSpan(
-          text: "$label: ",
+          text: "$label  ",
           style: TextStyle(color: Colors.black, fontSize: 16),
           children: [
             TextSpan(
@@ -277,5 +560,47 @@ class _SearchStaInfo extends State<SearchStaInfo> {
         ),
       ),
     );
+}
+
+// 편의시설 위젯
+Widget _buildDetailTextAmenities(String label, bool value) {
+  // 조건에 따라 텍스트 스타일 설정
+  final textValue = value
+      ? TextStyle(color: Colors.black, fontSize: 16) // true일 때
+      : TextStyle(color: Color.fromARGB(255, 207, 207, 207), fontSize: 16); // false일 때
+
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4.0),
+    child: RichText(
+      textAlign: TextAlign.left,
+      text: TextSpan(
+        text: "$label  ", // 라벨 텍스트
+        style: textValue
+      ),
+    ),
+  );
+}
+
+
+// 막차 시간 위젯
+Widget _buildDetailText_lastTime(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: RichText(
+        text: TextSpan(
+          text: "$label  ",
+          style: TextStyle(color: const Color.fromARGB(144, 234, 31, 31), fontSize: 16),
+          children: [
+            TextSpan(
+              text: value,
+            ),
+          ],
+        ),
+      ),
+    );
   }
+  
+
+
+
 }

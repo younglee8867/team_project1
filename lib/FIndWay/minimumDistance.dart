@@ -3,24 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../util/firebaseUtil.dart';
 
-void main() {
-  runApp(minimumDistance());
-}
-
 class minimumDistance extends StatefulWidget {
+  final String startStation;
+  final String endStation;
+
+  const minimumDistance({
+    Key? key,
+    required this.startStation,
+    required this.endStation,
+  }) : super(key: key);
+
   @override
-  _minimumDistance createState() => _minimumDistance();
+  _minimumDistanceState createState() => _minimumDistanceState();
 }
 
-class _minimumDistance extends State<minimumDistance> {
-  bool isMinDistanceSelected = true;
-/*   late Future<Map<String, dynamic>?> stationData;
+class _minimumDistanceState extends State<minimumDistance> {
+  late Future<Map<String, dynamic>?> startStationData;
+  late Future<Map<String, dynamic>?> endStationData;
 
   @override
   void initState() {
     super.initState();
-    fetchStationData();
-  } */
+    startStationData = fetchStationData(widget.startStation);
+    endStationData = fetchStationData(widget.endStation);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,128 +55,95 @@ class _minimumDistance extends State<minimumDistance> {
           backgroundColor: Colors.white,
           elevation: 0,
         ),
-        body: Center(
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.9,
-            child: Column(
+        body: FutureBuilder(
+          future: Future.wait([startStationData, endStationData]),
+          builder:
+              (context, AsyncSnapshot<List<Map<String, dynamic>?>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text("데이터를 불러오는 중 오류가 발생했습니다."));
+            } else if (!snapshot.hasData ||
+                snapshot.data!.any((data) => data == null)) {
+              return Center(
+                child: Text("출발역 또는 도착역 정보를 찾을 수 없습니다."),
+              );
+            }
+
+            final startData = snapshot.data![0];
+            final endData = snapshot.data![1];
+            final distance = (endData!['routeInfo']['distance'] as int) -
+                (startData!['routeInfo']['distance'] as int);
+
+            return ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               children: [
-                _buildButtonRow(),
-                _buildTravelDetails(),
-                _circleIndicator(Color(0xFF856869)),
-                _buildStationIndicators(),
+                Column(
+                  children: [
+                    Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 120),
+                            child: _buildCircleWithText(widget.startStation),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: Column(
+                        children: [
+                          _buildStationInfo(startData),
+                          _buildStationInfo(endData),
+                          _buildTravelDetails(distance),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ],
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildButtonRow() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 40),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          _buildButton('최소 거리 순', isMinDistanceSelected),
-          SizedBox(width: 30),
-          _buildButton('최소 환승 순', !isMinDistanceSelected),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildButton(String text, bool isSelected) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          isMinDistanceSelected = (text == '최소 거리 순');
-        });
-      },
-      child: Container(
-        width: 120,
-        height: 40,
-        decoration: ShapeDecoration(
-          color: isSelected ? Color(0xFF397394) : Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-            side: BorderSide(width: 1, color: Color(0xFF397394)),
-          ),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          text,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Color(0xFF397394),
-            fontSize: 14,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTravelDetails() {
-    return Padding(
-        padding: const EdgeInsets.only(left: 0, top: 0),
-        child: Row(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('소요 시간',
-                    style: TextStyle(color: Color(0xFF979797), fontSize: 16)),
-                Text('4분',
-                    style: TextStyle(color: Color(0xFF4C4C4C), fontSize: 45))
-                // 아래 줄들은 '4분' 텍스트, 세로선, 인디케이터를 숨기기 위해 제거되었습니다.
-                // Text('4 분', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 45)),
-                // SizedBox(height: 20),
-                // Container(width: 7, height: 145, color: Color(0xFF856869)),
-                // Positioned(left: 60, top: 308, child: _circleIndicator(Color(0xFF846868))),
-                // Positioned(left: 60, top: 444, child: _circleIndicator(Color(0xFF856869))),
-                // Positioned(left: 76, top: 318, child: Text('1', style: TextStyle(color: Colors.white, fontSize: 20))),
-                // Positioned(left: 76, top: 454, child: Text('1', style: TextStyle(color: Colors.white, fontSize: 20))),
-                // Positioned(left: 126, top: 318, child: Text('101', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 32))),
-                // Positioned(left: 126, top: 453, child: Text('103', style: TextStyle(color: Color(0xFF4B4B4B), fontSize: 32))),
-              ],
-            ),
-            SizedBox(width: 100),
-            Padding(
-              padding: const EdgeInsets.only(top: 40),
-              child: Text(
-                '|   환승 없음  |  비용 200원',
-                style: TextStyle(color: Color(0xFF979797), fontSize: 15),
-              ),
-            ),
-          ],
-        ));
-  }
-
-  Widget _circleIndicator(Color color) {
+  Widget _buildCircleWithText(String stationName) {
     return Container(
-      width: 44,
-      height: 44,
-      decoration: ShapeDecoration(
-        color: color,
-        shape: OvalBorder(),
+      width: 100,
+      height: 100,
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Text(
+          stationName,
+          style: TextStyle(color: Colors.white, fontSize: 20),
+        ),
       ),
     );
   }
 
-  Widget _buildStationIndicators() {
+  Widget _buildStationInfo(Map<String, dynamic>? data) {
+    return data == null
+        ? Text("역 정보를 가져올 수 없습니다.")
+        : Text(
+            "역 정보: ${data['stationDetails']['quickExit']}",
+            style: TextStyle(fontSize: 16),
+          );
+  }
+
+  Widget _buildTravelDetails(int distance) {
     return Padding(
-      padding: const EdgeInsets.only(left: 131.0, top: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '190 방면   |    빠른 하차 ',
-            style: TextStyle(color: Color(0xFF979797), fontSize: 12),
-          ),
-          Text(
-            '5-2, 10-4',
-            style: TextStyle(color: Color(0xFF4F4F4F), fontSize: 12),
-          ),
-        ],
+      padding: const EdgeInsets.only(top: 20),
+      child: Text(
+        "출발역과 도착역 간 거리: $distance m",
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
   }
