@@ -1,117 +1,82 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
-void main() {
-  runApp(FlutterApp());
-}
-
-class FlutterApp extends StatelessWidget {
-  const FlutterApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Stack(
-          children: [
-            // 회색 배경
-            Container(color: Colors.grey[200]),
-
-            // 둥근 모서리를 가진 사이드바
-            Positioned(
-              left: 0,
-              top: 0,
-              bottom: 0,
-              child: RegionSettingsPage(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class RegionSettingsPage extends StatelessWidget {
+class RegionSettingsPage extends StatefulWidget {
   const RegionSettingsPage({super.key});
 
   @override
+  State<RegionSettingsPage> createState() => _RegionSettingsPage();
+}
+
+class _RegionSettingsPage extends State<RegionSettingsPage> {
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 250,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(30),
-          bottomRight: Radius.circular(30),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
+          child: const Icon(Icons.arrow_back, color: Color(0xff22536F)),
         ),
+        title: Text(
+          '지역 설정'.tr(),
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xff22536F),
+          ),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 상단 여백 추가
-          const SizedBox(height: 50),
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context); // 뒤로가기
-            },
-          ),
-          // 메뉴 항목들
-          MenuItem(text: '수도권', onPressed: () {}),
-          MenuItem(text: '부산', onPressed: () {}),
-          MenuItem(text: '대구', onPressed: () {}),
-          MenuItem(text: '광주', onPressed: () {}),
-          MenuItem(text: '대전', onPressed: () {}),
-
-          const Spacer(),
-
-          // 설정 아이콘 및 언어 표시
-          const Padding(
-            padding: EdgeInsets.only(left: 20.0, bottom: 20),
-            child: Row(
-              children: [
-                Icon(Icons.settings, size: 24, color: Color(0xFF22536F)),
-                SizedBox(width: 5),
-                Text('En',
-                    style: TextStyle(fontSize: 20, color: Color(0xFF22536F))),
-              ],
-            ),
-          ),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        child: ListView(
+          children: const [
+            RegionButton(region: '수도권'),
+            Divider(thickness: 1, height: 1),
+            SizedBox(height: 30),
+            RegionButton(region: '부산'),
+            Divider(thickness: 1, height: 1),
+            SizedBox(height: 30),
+            RegionButton(region: '대구'),
+            Divider(thickness: 1, height: 1),
+            SizedBox(height: 30),
+            RegionButton(region: '광주'),
+            Divider(thickness: 1, height: 1),
+            SizedBox(height: 30),
+            RegionButton(region: '대전'),
+            Divider(thickness: 1, height: 1),
+          ],
+        ),
       ),
     );
   }
 }
 
-class MenuItem extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
+class RegionButton extends StatelessWidget {
+  final String region;
 
-  const MenuItem({super.key, required this.text, required this.onPressed});
+  const RegionButton({Key? key, required this.region}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: TextButton(
-        onPressed: onPressed,
-        style: TextButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+    return ListTile(
+      title: Text(
+        region.tr(), // 번역 키를 통해 다국어 적용
+        style: const TextStyle(
+          fontSize: 16,
+          color: Color(0xFF22536F),
+          fontFamily: 'Roboto',
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              text,
-              style: const TextStyle(
-                fontSize: 18,
-                color: Color(0xFF22536F),
-              ),
-            ),
-            const Divider(color: Color(0xFFD5D5D5), thickness: 1),
-          ],
-        ),
-      ),
+      ).tr(),
+      onTap: () {
+        // 버튼 눌렀을 때 별다른 동작 없음
+      },
     );
   }
 }

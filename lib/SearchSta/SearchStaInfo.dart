@@ -1,861 +1,654 @@
-// 1-1 역정보
-// <구현> : 변하는 값들
-// 시간되면 역정보, 시설정보, 편의시설 앞에 아이콘..
+/*
+[12.02] 데베 연동 성공
+수정사항 1. 화면 UI
+수정사항 2. 즐찾기능 추가
+수정사항 3. 출발역, 도착역 클릭시 -> 길찾기로(해당역)
+*/
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:flutter_application_1/FIndWay/WriteStation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../util/firebaseUtil.dart';
+import 'package:flutter_application_1/util/firebaseGetPrev.dart';
+import 'package:easy_localization/easy_localization.dart';
+import '../util/util.dart';
+import '../constants/lineColor.dart';
 
-void main() {
-  debugPaintSizeEnabled = false;
-  runApp(FlutterApp());
+class SearchStaInfo extends StatefulWidget {
+  final String stationName;
+
+  const SearchStaInfo(
+      {Key? key,
+      required this.stationName,
+      required List<Map<String, dynamic>> searchHistory})
+      : super(key: key);
+
+  @override
+  _SearchStaInfo createState() => _SearchStaInfo();
 }
 
-class FlutterApp extends StatelessWidget {
+class _SearchStaInfo extends State<SearchStaInfo> {
+  List<Map<String, dynamic>> _searchHistory = SharedStationData.searchHistory;
+  late Future<Map<String, dynamic>?> stationData;
+  late Future<bool> isFavorite;
+
+  @override
+  void initState() {
+    super.initState();
+    stationData = fetchStationData(widget.stationName);
+    isFavorite = _loadFavoriteStatus(widget.stationName);
+  }
+
+  Future<bool> _loadFavoriteStatus(String stationName) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(stationName) ?? false;
+  }
+
+  Future<void> _toggleFavorite(int index) async {
+    final prefs = await SharedPreferences.getInstance();
+    final currentStatus =
+        await _loadFavoriteStatus(_searchHistory[index]['name']);
+
+    setState(() {
+      isFavorite = Future.value(!currentStatus);
+      SharedStationData.toggleFavoriteStatus(widget.stationName);
+    });
+
+    await prefs.setBool(widget.stationName, !currentStatus);
+    print('${widget.stationName} 즐겨찾기 상태: ${!currentStatus}');
+  }
+
+  /*void _toggleFavorite(int index) {
+    setState(() {
+      SharedStationData.toggleFavoriteStatus(widget.stationName);
+    });
+  }*/
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: searchStaInfo(),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context, true); // 데이터를 갱신하도록 플래그 전달
+            }
+          },
+          child: const Icon(Icons.arrow_back, color: Color(0xff22536F)),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: FutureBuilder<Map<String, dynamic>?>(
+        future: stationData,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("데이터를 불러오는 중 오류가 발생했습니다."));
+          } else if (!snapshot.hasData || snapshot.data == null) {
+            return Center(
+                child: Text("역 정보를 찾을 수 없습니다. ${widget.stationName}"));
+          }
+
+          final data = snapshot.data!;
+          return ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            children: [
+              Column(
+                children: [
+                  Stack(
+                    children: [
+                      _buildMapImage(),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 120), // 위쪽으로 50px의 간격 추가
+                          child: _buildCircleWithText(widget.stationName),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  _buildStationNavigationAndButtons(),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Column(
+                      children: [
+                        _buildStationInfo(data['stationDetails']), // 역정보
+                        _buildFacilityInfo(data['facilityInfo']), // 시설정보
+                        _buildConvenienceInfo(data['amenities']), // 편의시설
+                        _buildWeatherInfo(data['weatherInfo']), // 날씨 정보
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  // 지도 이미지
+  Widget _buildMapImage() {
+    return Container(
+      width: double.infinity,
+      height: 200,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: const AssetImage('assets/images/station/StationMap.jpg'),
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(
+            Colors.black.withOpacity(0.4),
+            BlendMode.dstATop,
+          ),
         ),
       ),
     );
   }
-}
 
-class searchStaInfo extends StatefulWidget {
-  @override
-  _searchStaInfo createState() => _searchStaInfo();
-}
+  // 동그라미(호선)와 역 이름
+  Widget _buildCircleWithText(String stationName) {
+    bool isFavorite = false;
 
-class _searchStaInfo extends State<searchStaInfo> {
-  // 즐찾 이미지
-  String imagePath = '../assets/images/favStar.png';
+    // 즐겨찾기 상태 로드
+    Future<void> _loadFavoriteStatus() async {
+      final prefs = await SharedPreferences.getInstance();
+      setState(() {
+        isFavorite = prefs.getBool(stationName) ?? false;
+      });
+    }
 
-  // Function to toggle the image
-  void toggleImage() {
-    setState(() {
-      imagePath = imagePath == '../assets/images/favStar.png'
-          ? '../assets/images/favStarFill.png' // New image path
-          : '../assets/images/favStar.png';
-    });
-  }
+    // 즐겨찾기 상태 토글
+    Future<void> _toggleFavorite() async {
+      final prefs = await SharedPreferences.getInstance();
+      setState(() {
+        isFavorite = !isFavorite;
+      });
+      await prefs.setBool(stationName, isFavorite);
+      print('$stationName 즐겨찾기 상태: $isFavorite');
+    }
 
-  // 스타일 속성 정의(제목)
-  final TextStyle commonTextStyle = TextStyle(
-    color: Color(0xFF676363),
-    fontSize: 15,
-    fontFamily: 'Roboto',
-    height: 0.5,
-    letterSpacing: 0.50,
-    fontWeight: FontWeight.w800,
-  );
+    // 첫 로드 시 즐겨찾기 상태 가져오기
+    _loadFavoriteStatus();
 
-  final TextStyle detailTextStyleTitle = TextStyle(
-    color: Color(0xFF676363),
-    fontSize: 15,
-    fontFamily: 'Roboto',
-    height: 0.10,
-    letterSpacing: 0.50,
-  );
+    // 각 호선마다 색상 가져오기
+    final color = SubwayColors.getColor(stationName.substring(0, 1));
 
-  // 스타일 속성 정의(상세 내용)
-  final TextStyle detailTextStyle = TextStyle(
-    color: Color(0xFF676363),
-    fontSize: 15,
-    fontFamily: 'Roboto',
-    height: 0.10,
-    letterSpacing: 0.50,
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     return Column(
       children: [
+        // 호선 색깔
         Container(
-          //width: screenWidth *0.3,
-          //height: screenHeight *0.5,
-          width: 412,
-          height: 917,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(color: Colors.white),
-          child: Stack(
+          width: 125,
+          height: 125,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            border: Border.all(color: color, width: 10), // 색 지정
+          ),
+          alignment: Alignment.center,
+          // 호선 번호 (ex. 1,2,3..)
+          child: Text(
+            stationName.isNotEmpty ? stationName.substring(0, 1) : '0',
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 50,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Center(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center, // 세로 정렬 중앙
             children: [
-              Positioned(
-                top: 30,
-                child: Container(
-                  width: 419,
-                  height: 188,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(
-                          '../assets/images/StationMap.png'), // 이미지 경로 확인
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(
-                        Colors.black.withOpacity(0.4),
-                        BlendMode.dstATop,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              // 지도이미지
-              Positioned(
-                left: 22,
-                top: 40,
-                child: Container(
-                  width: 50, // 필요에 따라 너비를 지정하세요.
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Color(0xFF22536F),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              // 노선도(동그라미)
-              Positioned(
-                left: 136,
-                top: 161,
-                child: Container(
-                  width: 140,
-                  height: 135,
-                  decoration: ShapeDecoration(
-                    color: Color(0xFF885D53),
-                    shape: OvalBorder(),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 144,
-                top: 168,
-                child: Container(
-                  width: 125,
-                  height: 121,
-                  decoration: ShapeDecoration(
-                    color: Colors.white,
-                    shape: OvalBorder(),
-                  ),
-                ),
-              ),
-              // 노선도 안 숫자
-              Positioned(
-                left: 178,
-                top: 175,
-                child: DefaultTextStyle(
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 100,
-                      fontFamily: 'Roboto',
-                      height: 0,
-                      letterSpacing: 0.50,
-                    ),
-                    child: Text('9')),
-              ),
-              // 동그라미 밑 역 이름
-              Positioned(
-                left: 158,
-                top: 316,
-                child: DefaultTextStyle(
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Roboto',
-                      height: 0.5,
-                      letterSpacing: 0.50,
-                    ),
-                    child: Text('901 역')),
-              ),
-              // 도착역 박스
-              Positioned(
-                left: 118,
-                top: 356,
-                child: Container(
-                  width: 80,
-                  height: 31,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left: 0,
-                        top: 0,
-                        child: Container(
-                          width: 80,
-                          height: 31,
-                          padding: const EdgeInsets.all(12),
-                          clipBehavior: Clip.antiAlias,
-                          decoration: ShapeDecoration(
-                            color: Color(0xFF686868),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8)),
-                          ),
-                        ),
-                      ),
-                      // 출발역
-                      Positioned(
-                        left: 18,
-                        top: 13,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context); // 구현 : 길찾기의 출발역으로
-                          },
-                          child: DefaultTextStyle(
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontFamily: 'Inter',
-                                height: 0.5,
-                              ),
-                              child: Text('출발역')),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              // 도착역 박스
-              Positioned(
-                left: 214,
-                top: 356,
-                child: Container(
-                  width: 80,
-                  height: 31,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left: 0,
-                        top: 0,
-                        child: Container(
-                          width: 80,
-                          height: 31,
-                          padding: const EdgeInsets.all(12),
-                          clipBehavior: Clip.antiAlias,
-                          decoration: ShapeDecoration(
-                            color: Color(0xFF686868),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8)),
-                          ),
-                        ),
-                      ),
-                      // 도착역
-                      Positioned(
-                        left: 18,
-                        top: 13,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context); // 구현 : 길찾기의 도착역으로
-                          },
-                          child: DefaultTextStyle(
-                            //'도착역',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontFamily: 'Inter',
-                              height: 0.5,
-                            ),
-                            child: Text('도착역'),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 400,
-                top: 339,
-                child: Transform(
-                  transform: Matrix4.identity()
-                    ..translate(0.0, 0.0)
-                    ..rotateZ(-3.14),
-                  child: Container(
-                    width: 24,
-                    height: 24,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(),
-                    //child: Stack(children: [
-                    //,
-                    //]),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 250,
-                right: 32,
-                child: GestureDetector(
-                  onTap: toggleImage,
-                  child: SizedBox(
-                    width: imagePath == '../assets/images/favStar.png'
-                        ? 24.0
-                        : 27.0,
-                    height: imagePath == '../assets/images/favStar.png'
-                        ? 24.0
-                        : 27.0,
-                    child: Image.asset(
-                      imagePath,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                // 구현 : 화살표 누르면 이전역, 다음역 정보 뜨게?..가능하면..?
-                left: 392,
-                top: 306,
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(
-                          '../assets/images/Chevron_left_right.png'), // 이미지 경로 확인
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  transform: Matrix4.rotationY(3.14159),
-                ),
-              ),
-              Positioned(
-                left: 10,
-                top: 306,
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(
-                          '../assets/images/Chevron_left_right.png'), // 이미지 경로 확인
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 320,
-                top: 316,
-                child: DefaultTextStyle(
-                    // 구현 : 바뀌는 값(다음역)
-                    style: commonTextStyle,
-                    child: Text('902 역')),
-              ),
-              Positioned(
-                left: 34,
-                top: 316,
-                child: DefaultTextStyle(
-                    //'900 역', // 구현 : 바뀌는 값(이전역)
-                    style: commonTextStyle,
-                    child: Text('900 역')),
-              ),
-              Positioned(
-                left: 35,
-                top: 517,
-                child: DefaultTextStyle(
-                  //'시설 정보',
-                  textAlign: TextAlign.center,
-                  style: commonTextStyle,
-                  child: Text('시설 정보'),
-                ),
-              ),
-              Positioned(
-                left: 39,
-                top: 422,
-                child: DefaultTextStyle(
-                    //'역 정보',
-                    style: commonTextStyle,
-                    child: Text('역 정보')),
-              ),
-              // 날씨 정보
-              Positioned(
-                left: 35,
-                top: 760,
-                child: DefaultTextStyle(
-                    //'날씨 정보',
-                    style: commonTextStyle,
-                    child: Text('날씨 정보')),
-              ),
-              Positioned(
-                left: 35,
-                top: 655,
-                child: DefaultTextStyle(
-                    //'편의 시설',
-                    textAlign: TextAlign.center,
-                    style: commonTextStyle,
-                    child: Text('편의 시설')),
-              ),
-              Positioned(
-                left: 35,
-                top: 637,
-                child: Container(
-                  width: 326,
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        width: 1,
-                        strokeAlign: BorderSide.strokeAlignCenter,
-                        color: Color(0xFFE4E4E4),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 35,
-                top: 741,
-                child: Container(
-                  width: 326,
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        width: 1,
-                        strokeAlign: BorderSide.strokeAlignCenter,
-                        color: Color(0xFFE4E4E4),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 35,
-                top: 500,
-                child: Container(
-                  width: 326,
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        width: 1,
-                        strokeAlign: BorderSide.strokeAlignCenter,
-                        color: Color(0xFFE4E4E4),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 40,
-                top: 457,
-                child: DefaultTextStyle(
-                  style: detailTextStyleTitle, // DefaultTextStyle 적용
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '배차시간 ',
-                          style: detailTextStyle, // 개별 스타일
-                        ),
-                        TextSpan(
-                          text: '7분', // 바뀌는 값
-                          style: detailTextStyle.copyWith(
-                              fontWeight: FontWeight.bold), // 덮어쓰기
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 189,
-                top: 457,
-                child: DefaultTextStyle(
-                  style: detailTextStyleTitle, // DefaultTextStyle 적용
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '빠른하차 ',
-                          style: detailTextStyle, // 개별 스타일
-                        ),
-                        TextSpan(
-                          text: '3-1  4-3', // 바뀌는 값
-                          style: detailTextStyle.copyWith(
-                              fontWeight: FontWeight.bold), // 덮어쓰기
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              Stack(
-                children: [
-                  Positioned(
-                    left: 40,
-                    top: 558,
-                    child: DefaultTextStyle(
-                      style: detailTextStyleTitle, // DefaultTextStyle 적용
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '내리는문 ',
-                            ),
-                            TextSpan(
-                              text: '오른쪽', // 바뀌는 값
-                              style: detailTextStyle.copyWith(
-                                  fontWeight: FontWeight.bold), // 덮어쓰기
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 189,
-                    top: 558,
-                    child: DefaultTextStyle(
-                      style: detailTextStyleTitle, // DefaultTextStyle 적용
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '화장실 ',
-                            ),
-                            TextSpan(
-                              text: '50m', // 바뀌는 값
-                              style: detailTextStyle.copyWith(
-                                  fontWeight: FontWeight.bold), // 덮어쓰기
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 40,
-                    top: 595,
-                    child: DefaultTextStyle(
-                      style: detailTextStyleTitle, // DefaultTextStyle 적용
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '플랫폼 ',
-                            ),
-                            TextSpan(
-                              text: '양쪽', // 바뀌는 값
-                              style: detailTextStyle.copyWith(
-                                  fontWeight: FontWeight.bold), // 덮어쓰기
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              // 구현 : 바뀌는 값(역 마다 편의시설)
-              Stack(
-                children: [
-                  // 첫 번째 텍스트 묶음
-                  Positioned(
-                    left: 40,
-                    top: 691,
-                    child: DefaultTextStyle(
-                        //'편의점 / 카페',
-                        style: detailTextStyle,
-                        child: Text('편의점 / 카페')),
-                  ),
-                  Positioned(
-                    left: 40,
-                    top: 721,
-                    child: DefaultTextStyle(
-                        //'물품보관소',
-                        style: detailTextStyle,
-                        child: Text('물품보관소')),
-                  ),
-                  // 두 번째 텍스트 묶음
-                  Positioned(
-                    left: 189,
-                    top: 691,
-                    child: DefaultTextStyle(
-                        //'유실물센터',
-                        style: detailTextStyle,
-                        child: Text('유실물센터')),
-                  ),
-                  Positioned(
-                    left: 189,
-                    top: 721,
-                    child: DefaultTextStyle(
-                      //'엘리베이터',
-                      style: detailTextStyle,
-                      child: Text('엘리베이터'),
-                    ),
-                  ),
-                ],
-              ),
-
-              // 날씨 상세 구현 : 역마다 바뀌는 값
-              Positioned(
-                left: 40,
-                top: 792,
-                child: Container(
-                  width: 332,
-                  height: 94,
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 255, 255, 255),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2), // 그림자 색상
-                        offset: Offset(2, 6), // 아래쪽으로만 그림자
-                        blurRadius: 7, // 흐림 정도
-                        spreadRadius: 0.3, // 바닥 면 그림자 크기 조정
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 55,
-                top: 805,
-                child: Container(
-                  width: 18,
-                  height: 21,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(
-                          '../assets/images/subway_small.png'), // 이미지 경로 확인
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 84,
-                top: 815,
-                child: DefaultTextStyle(
-                  //'901 역',
-                  style: TextStyle(
-                    color: Color(0xFF676363),
-                    fontSize: 15,
+              // 역 이름을 가로 중앙에 배치
+              Expanded(
+                child: Text(
+                  stationName.isNotEmpty
+                      ? stationName + " " + "역".tr()
+                      : '알 수 없음',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
                     fontFamily: 'Roboto',
-                    height: 0.5,
-                    letterSpacing: 0.50,
+                    height: 1.5,
                   ),
-                  child: Text('901 역'),
+                  textAlign: TextAlign.center, // 텍스트를 가운데 정렬
                 ),
               ),
-              Positioned(
-                left: 219,
-                top: 864,
-                child: SizedBox(
-                  width: 116.14,
-                  height: 20.70,
-                  child: DefaultTextStyle(
-                    //'체감 10.8° / 습도 95%',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 11,
-                      fontFamily: 'Roboto',
-                      height: 0.20,
-                      letterSpacing: 0.50,
-                    ),
-                    child: Text('체감 10.8° / 습도 95%'),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 214,
-                top: 828,
-                child: SizedBox(
-                  width: 85.29,
-                  height: 20.70,
-                  child: DefaultTextStyle(
-                    //'10.8°',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 30,
-                      fontFamily: 'Roboto',
-                      height: 0.5,
-                      letterSpacing: 0.50,
-                    ),
-                    child: Text('10.8°'),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 59,
-                top: 837,
-                child: Container(
-                  width: 140.75,
-                  height: 39.67,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left: 49.52,
-                        top: 0,
-                        child: Container(
-                          width: 41.70,
-                          height: 39.67,
-                          decoration: ShapeDecoration(
-                            color: Color(0xFFFFF4D1),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 99.04,
-                        top: 0,
-                        child: Container(
-                          width: 41.70,
-                          height: 39.67,
-                          decoration: ShapeDecoration(
-                            color: Color(0xFFD9F5D2),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 53,
-                        top: 8,
-                        child: SizedBox(
-                          width: 33.88,
-                          height: 20.70,
-                          child: Text(
-                            '미세먼지',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 8,
-                              fontFamily: 'Roboto',
-                              height: 1,
-                              letterSpacing: 0.50,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 0,
-                        top: 0,
-                        child: Container(
-                          width: 41.70,
-                          height: 39.67,
-                          decoration: ShapeDecoration(
-                            color: Color(0xFFD1E9FF),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 7.82,
-                        top: 8,
-                        child: SizedBox(
-                          width: 25.20,
-                          height: 20.70,
-                          child: Text(
-                            '강수량',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 8,
-                              fontFamily: 'Roboto',
-                              height: 1,
-                              letterSpacing: 0.50,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 9.56,
-                        top: 25,
-                        child: SizedBox(
-                          width: 21.72,
-                          height: 20.70,
-                          child: Text(
-                            '0mm',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 8,
-                              fontFamily: 'Roboto',
-                              height: 0.9,
-                              letterSpacing: 0.50,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 61.69,
-                        top: 24,
-                        child: SizedBox(
-                          width: 16.51,
-                          height: 20.70,
-                          child: Text(
-                            '나쁨',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Color(0xFFE69800),
-                              fontSize: 8,
-                              fontFamily: 'Roboto',
-                              height: 0.9,
-                              letterSpacing: 0.50,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 111.21,
-                        top: 24,
-                        child: SizedBox(
-                          width: 16.51,
-                          height: 20.70,
-                          child: Text(
-                            '보통',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Color(0xFF4A7700),
-                              fontSize: 8,
-                              fontFamily: 'Roboto',
-                              height: 0.9,
-                              letterSpacing: 0.50,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 106.86,
-                        top: 8,
-                        child: SizedBox(
-                          width: 25.20,
-                          height: 20.70,
-                          child: Text(
-                            '자외선',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 8,
-                              fontFamily: 'Roboto',
-                              height: 1,
-                              letterSpacing: 0.50,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+
+              // 즐겨찾기 아이콘
+              GestureDetector(
+                onTap: () async {
+                  // 즐겨찾기 상태를 반전
+                  await _toggleFavorite();
+                },
+                child: Image.asset(
+                  isFavorite
+                      ? 'assets/images/favStarFill.png' // 즐겨찾기 상태일 때 채워진 별
+                      : 'assets/images/favStar.png', // 즐겨찾기 상태가 아닐 때 빈 별
+                  width: 24,
+                  height: 24,
                 ),
               ),
             ],
           ),
         ),
       ],
+    );
+  }
+
+// 이전역, 다음역 및 출발역, 도착역 버튼
+  Widget _buildStationNavigationAndButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween, // 아이템 간 간격 설정
+      children: [
+        // 이전역
+        _buildStationNavigation('이전역'.tr(), false),
+
+        // 출발역과 도착역 (클릭시 해당 값과 함께 페이지 이동)
+        Row(
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => WriteStationPage(
+                            initialStartStation: widget.stationName,
+                            searchHistory: [],
+                          )),
+                ); // 버튼 동작 구현
+              },
+              child: Container(
+                alignment: Alignment.center,
+                width: 80,
+                height: 31,
+                decoration: BoxDecoration(
+                  color: Color(0xFF686868),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '출발역'.tr(),
+                  style: TextStyle(color: Colors.white, fontSize: 14),
+                ),
+              ),
+            ),
+
+            const SizedBox(width: 10), // 출발역과 도착역 사이 간격
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => WriteStationPage(
+                            initialEndStation: widget.stationName,
+                            searchHistory: [],
+                          )),
+                ); // 버튼 동작 구현
+              },
+              child: Container(
+                alignment: Alignment.center,
+                width: 80,
+                height: 31,
+                decoration: BoxDecoration(
+                  color: Color(0xFF686868),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '도착역'.tr(),
+                  style: TextStyle(color: Colors.white, fontSize: 14),
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        // 다음역
+        _buildStationNavigation('다음역'.tr(), true),
+      ],
+    );
+  }
+
+// 이전역 다음역
+  Widget _buildStationNavigation(String label, bool isNext) {
+    return Row(
+      children: [
+        if (!isNext)
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/Chevron_left_right.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        SizedBox(width: 10),
+        Text(
+          label,
+          style: TextStyle(
+            color: Color(0xff676363),
+            fontSize: 16,
+          ),
+        ),
+        if (isNext)
+          Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.rotationY(3.14159),
+            child: Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/Chevron_left_right.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+// 역 정보
+  Widget _buildStationInfo(Map<String, dynamic>? stationDetails) {
+    if (stationDetails == null) return SizedBox();
+
+    return _buildSection(
+      title: '역 정보'.tr(),
+      content: Row(
+        children: [
+          _buildDetailText(
+              '배차시간'.tr(),
+              stationDetails['schedule']?['interval'] != null
+                  ? '${stationDetails['schedule']?['interval']}${'분'.tr()}'
+                  : '정보 없음'.tr()),
+          SizedBox(width: 20),
+          _buildDetailText_lastTime(
+              '막차'.tr(), stationDetails['schedule']?['lastTrainTime']),
+          SizedBox(width: 20),
+          _buildDetailText('빠른하차'.tr(), stationDetails['quickExit']),
+        ],
+      ),
+    );
+  }
+
+  String getTranslatedDirection(String originalDirection) {
+    Map<String, String> translationMap = {
+      '왼쪽': '왼쪽'.tr(), // JSON 파일에서 번역
+      '오른쪽': '오른쪽'.tr(),
+    };
+
+    return translationMap[originalDirection] ??
+        originalDirection; // 번역되지 않으면 원본 반환
+  }
+
+  String getTranslatedPlatform(String originalPlatform) {
+    Map<String, String> translationMap = {
+      '왼쪽': '왼쪽'.tr(), // JSON에서 번역
+      '오른쪽': '오른쪽'.tr(),
+    };
+
+    return translationMap[originalPlatform] ??
+        originalPlatform; // 번역되지 않으면 원본 반환
+  }
+
+// 시설 정보
+  Widget _buildFacilityInfo(Map<String, dynamic>? facilityInfo) {
+    if (facilityInfo == null) return SizedBox();
+
+    return _buildSection(
+      title: '시설 정보'.tr(),
+      content: Column(
+        children: [
+          Row(children: [
+            _buildDetailText(
+              '내리는문'.tr(),
+              getTranslatedDirection(facilityInfo['doorSide']), // 번역된 방향 텍스트
+            ),
+            SizedBox(width: 100),
+            _buildDetailText('화장실'.tr(), facilityInfo['restrooms']),
+          ]),
+          Row(children: [
+            _buildDetailText(
+              '플랫폼'.tr(),
+              getTranslatedPlatform(
+                  facilityInfo['platformType']), // 번역된 플랫폼 텍스트
+            ),
+          ]),
+        ],
+      ),
+    );
+  }
+
+// 편의 시설
+  Widget _buildConvenienceInfo(Map<String, dynamic>? amenities) {
+    if (amenities == null) return SizedBox();
+
+    return _buildSection(
+      title: '편의 시설'.tr(),
+      content: Column(
+        children: [
+          Row(children: [
+            _buildDetailTextAmenities('편의점 / 카페'.tr(), amenities['store']),
+            SizedBox(width: 105),
+            _buildDetailTextAmenities('유실물센터'.tr(), amenities['foundCenter']),
+          ]),
+          Row(
+            children: [
+              _buildDetailTextAmenities('물품보관소'.tr(), amenities['storageRoom']),
+              SizedBox(width: 120),
+              _buildDetailTextAmenities('엘리베이터'.tr(), amenities['elevator']),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  String getTranslatedCondition(String originalCondition) {
+    Map<String, String> translationMap = {
+      '맑음': 'Sunny'.tr(),
+      '비': 'Rain'.tr(),
+      '눈': 'Snow'.tr(),
+      '흐림': 'Cloudy'.tr(),
+    };
+
+    return translationMap[originalCondition] ??
+        originalCondition; // 번역되지 않으면 원본 반환
+  }
+
+// 날씨 정보
+  Widget _buildWeatherInfo(Map<String, dynamic>? weatherInfo) {
+    if (weatherInfo == null) return SizedBox();
+
+    return _buildSection(
+      title: '날씨 정보'.tr(),
+      content: Center(
+        child: Container(
+          width: double.infinity, // 화면 너비에 맞춤
+          height: 94,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                offset: const Offset(2, 6),
+                blurRadius: 7,
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: Row(
+              children: [
+                SizedBox(width: 30),
+                Image.asset(
+                  'assets/images/locationWeather.png',
+                  width: 40,
+                  height: 40,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  '${widget.stationName}' + "역".tr(),
+                  style: TextStyle(fontSize: 25, color: Color(0xff676363)),
+                ),
+                SizedBox(width: 40),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          '${weatherInfo['temperature']}' + '°C',
+                          style: TextStyle(fontSize: 25),
+                        ),
+                        SizedBox(width: 20),
+                        Text(
+                          getTranslatedCondition(weatherInfo['condition']),
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      '${'체감온도'.tr()} : ${weatherInfo['perceivedTem'] ?? 'N/A'}°C / ${'습도'.tr()} : ${weatherInfo['humidity'] ?? 'N/A'}%',
+                      style: TextStyle(fontSize: 11),
+                    ),
+                  ],
+                ),
+                // 날씨 이미지
+                SizedBox(width: 20),
+                if (weatherInfo['condition'] != null)
+                  _buildWeatherImage(weatherInfo['condition']),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+// 날씨 이미지 빌더
+  Widget _buildWeatherImage(String condition) {
+    String translatedCondition = getTranslatedCondition(condition);
+
+    if (translatedCondition == 'Sunny') {
+      return Image.asset(
+        'assets/images/weather/sunny.png',
+        width: 30,
+        height: 30,
+      );
+    } else if (translatedCondition == 'Rain') {
+      return Image.asset(
+        'assets/images/weather/rain.png',
+        width: 30,
+        height: 30,
+      );
+    } else if (translatedCondition == 'Snow') {
+      return Image.asset(
+        'assets/images/weather/snow.png',
+        width: 30,
+        height: 30,
+      );
+    } else if (translatedCondition == 'Cloudy') {
+      return Image.asset(
+        'assets/images/weather/cloud.png',
+        width: 30,
+        height: 30,
+      );
+    } else {
+      return SizedBox(); // 기본적으로 빈 위젯 반환
+    }
+  }
+
+// 공통 위젯
+  Widget _buildSection({required String title, required Widget content}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          SizedBox(height: 10),
+          content,
+          Divider(thickness: 1),
+        ],
+      ),
+    );
+  }
+
+// 기본 시설 위젯
+  Widget _buildDetailText(String label, String value, {TextStyle? style}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: RichText(
+        text: TextSpan(
+          text: "$label  ",
+          style: TextStyle(color: Colors.black, fontSize: 16),
+          children: [
+            TextSpan(
+              text: value,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+// 편의시설 위젯
+  Widget _buildDetailTextAmenities(String label, bool value) {
+    // 조건에 따라 텍스트 스타일 설정
+    final textValue = value
+        ? TextStyle(color: Colors.black, fontSize: 16) // true일 때
+        : TextStyle(
+            color: Color.fromARGB(255, 207, 207, 207),
+            fontSize: 16); // false일 때
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: RichText(
+        textAlign: TextAlign.left,
+        text: TextSpan(
+            text: "$label  ", // 라벨 텍스트
+            style: textValue),
+      ),
+    );
+  }
+
+// 막차 시간 위젯
+  Widget _buildDetailText_lastTime(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: RichText(
+        text: TextSpan(
+          text: "$label  ",
+          style: TextStyle(
+              color: const Color.fromARGB(144, 234, 31, 31), fontSize: 16),
+          children: [
+            TextSpan(
+              text: value,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
