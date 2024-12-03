@@ -132,6 +132,7 @@ class _SearchStationPageState extends State<SearchStationPage> {
                             _searchController.text = record['name'];
                           });
                         },
+                      
                       );
                     },
                   ),
