@@ -21,17 +21,13 @@ class minimumDistance extends StatefulWidget {
 class _minimumDistanceState extends State<minimumDistance> {
   late Future<Map<String, dynamic>?> startStationData;
   late Future<Map<String, dynamic>?> endStationData;
-<<<<<<< HEAD
   late Map<String, List<Map<String, dynamic>>> graph;
-=======
->>>>>>> 56b96174276ddc4fcbcfca74fdec6ee1979dd5a9
 
   @override
   void initState() {
     super.initState();
     startStationData = fetchStationData(widget.startStation);
     endStationData = fetchStationData(widget.endStation);
-<<<<<<< HEAD
     graph = {};
   }
 
@@ -119,8 +115,6 @@ class _minimumDistanceState extends State<minimumDistance> {
     print("백트래킹: currentStation=$currentStation, visited=$visited");
 
     return minDistance == double.infinity ? -1 : minDistance.toInt();
-=======
->>>>>>> 56b96174276ddc4fcbcfca74fdec6ee1979dd5a9
   }
 
   @override
@@ -151,24 +145,13 @@ class _minimumDistanceState extends State<minimumDistance> {
           elevation: 0,
         ),
         body: FutureBuilder(
-<<<<<<< HEAD
           future: Future.wait([startStationData, endStationData, buildGraph()]),
           builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-=======
-          future: Future.wait([startStationData, endStationData]),
-          builder:
-              (context, AsyncSnapshot<List<Map<String, dynamic>?>> snapshot) {
->>>>>>> 56b96174276ddc4fcbcfca74fdec6ee1979dd5a9
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(child: Text("데이터를 불러오는 중 오류가 발생했습니다."));
-<<<<<<< HEAD
             } else if (!snapshot.hasData || snapshot.data![2] == false) {
-=======
-            } else if (!snapshot.hasData ||
-                snapshot.data!.any((data) => data == null)) {
->>>>>>> 56b96174276ddc4fcbcfca74fdec6ee1979dd5a9
               return Center(
                 child: Text("출발역 또는 도착역 정보를 찾을 수 없습니다."),
               );
@@ -176,53 +159,19 @@ class _minimumDistanceState extends State<minimumDistance> {
 
             final startData = snapshot.data![0];
             final endData = snapshot.data![1];
-<<<<<<< HEAD
             print("!!!!!!!!startStationData: $startData");
             print("!!!!!!!!endStationData: $endData");
 
             int minDistance = dfs(startData['routeInfo']['startStation'],
                 endData['routeInfo']['endStation'], {}, 0);
             print("DFS 결과: 최소 거리 = $minDistance");
-=======
-            final distance = (endData!['routeInfo']['distance'] as int) -
-                (startData!['routeInfo']['distance'] as int);
->>>>>>> 56b96174276ddc4fcbcfca74fdec6ee1979dd5a9
 
             return ListView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               children: [
-<<<<<<< HEAD
                 Text("출발역: ${widget.startStation}"),
                 Text("도착역: ${widget.endStation}"),
                 _buildTravelDetails(minDistance),
-=======
-                Column(
-                  children: [
-                    Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.center,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 120),
-                            child: _buildCircleWithText(widget.startStation),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
-                      child: Column(
-                        children: [
-                          _buildStationInfo(startData),
-                          _buildStationInfo(endData),
-                          _buildTravelDetails(distance),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
->>>>>>> 56b96174276ddc4fcbcfca74fdec6ee1979dd5a9
               ],
             );
           },
@@ -261,11 +210,7 @@ class _minimumDistanceState extends State<minimumDistance> {
     return Padding(
       padding: const EdgeInsets.only(top: 20),
       child: Text(
-<<<<<<< HEAD
         distance == -1 ? "출발역에서 도착역으로 가는 경로를 찾을 수 없습니다." : "최소 거리: $distance m",
-=======
-        "출발역과 도착역 간 거리: $distance m",
->>>>>>> 56b96174276ddc4fcbcfca74fdec6ee1979dd5a9
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
