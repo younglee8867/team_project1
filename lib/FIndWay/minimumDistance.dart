@@ -39,13 +39,21 @@ class _minimumDistanceState extends State<minimumDistance> {
         final data = doc.data();
         if (data.containsKey('routeInfo')) {
           final routeInfo = data['routeInfo'];
-          String startStation = routeInfo['startStation'].toString();
-          String endStation = routeInfo['endStation'].toString();
+          String startStation = routeInfo['startStation'].toString(); // 문자열로 변환
+          String endStation = routeInfo['endStation'].toString(); // 문자열로 변환
           int distance = routeInfo['distance'];
 
+          // 단방향 경로 추가 (start -> end)
           graph.putIfAbsent(startStation, () => []);
           graph[startStation]!
               .add({'station': endStation, 'distance': distance});
+
+          // 역방향 경로 추가 (end -> start)
+          graph.putIfAbsent(endStation, () => []);
+          graph[endStation]!
+              .add({'station': startStation, 'distance': distance});
+
+          print("그래프에 추가: $startStation <-> $endStation ($distance m)");
         }
       }
       print("그래프 생성 완료: $graph");
@@ -54,67 +62,69 @@ class _minimumDistanceState extends State<minimumDistance> {
     }
   }
 
-  int dfs(String currentStation, String endStation, Set<String> visited,
-      int currentDistance) {
-    if (!graph.containsKey(currentStation) || !graph.containsKey(endStation)) {
-      print("경로 없음: 출발역 $currentStation 또는 도착역 $endStation 이 그래프에 존재하지 않음.");
+  int dijkstra(String startStation, String endStation) {
+    // 1. 그래프와 역 정보를 확인
+    if (!graph.containsKey(startStation) || !graph.containsKey(endStation)) {
+      print("경로 없음: 출발역 $startStation 또는 도착역 $endStation 이 그래프에 존재하지 않음.");
       return -1;
     }
 
-    if (currentStation == endStation) {
-      print(
-          "도착: currentStation=$currentStation, totalDistance=$currentDistance");
-      return currentDistance;
+    // 2. 거리 배열 초기화
+    Map<String, double> distances = {}; // distances만 double 사용
+    Map<String, String?> previousNodes = {};
+    Set<String> visited = {};
+
+    // 모든 노드의 초기 거리를 무한대로 설정
+    for (var station in graph.keys) {
+      distances[station] = double.infinity; // 무한대 값
+      previousNodes[station] = null;
     }
 
-    visited.add(currentStation);
-    print("현재 방문 노드: $visited");
+    // 시작 노드의 거리는 0으로 설정
+    distances[startStation] = 0;
 
-    if (graph[currentStation] == null || graph[currentStation]!.isEmpty) {
-      print("currentStation=$currentStation 에 연결된 이웃 노드가 없습니다.");
-      return -1; // 이웃 노드가 없으면 경로를 찾을 수 없음
-    }
+    // 3. 방문할 노드를 저장할 우선순위 큐(리스트 사용)
+    List<MapEntry<String, double>> queue = [];
+    queue.add(MapEntry(startStation, 0.0));
 
-/*     // 현재 역에서 도착역으로 바로 연결된 경로가 있는지 확인
-    for (var neighbor in graph[currentStation] ?? []) {
-      String nextStation = neighbor['station'];
-      int distanceToNext = neighbor['distance'];
+    while (queue.isNotEmpty) {
+      // 4. 우선순위 큐에서 최소 거리 노드를 선택
+      queue.sort((a, b) => a.value.compareTo(b.value));
+      final current = queue.removeAt(0).key;
 
-      if (nextStation == endStation) {
-        print(
-            "직접 경로 발견: $currentStation -> $endStation, distance=$distanceToNext");
-        return currentDistance + distanceToNext; // 바로 반환
-      }
-    }
- */
-    double minDistance = double.infinity;
+      // 5. 이미 방문한 노드는 건너뜀
+      if (visited.contains(current)) continue;
+      visited.add(current);
 
-    for (var neighbor in graph[currentStation] ?? []) {
-      String nextStation = neighbor['station'];
-      int distanceToNext = neighbor['distance'];
+      // 6. 현재 노드의 이웃을 탐색
+      for (var neighbor in graph[current] ?? []) {
+        String nextStation = neighbor['station'];
+        int edgeWeight = neighbor['distance'];
 
-      print("이웃 탐색: nextStation=$nextStation, distanceToNext=$distanceToNext");
+        if (visited.contains(nextStation)) continue;
 
-      if (nextStation == endStation) {
-        print(
-            "직접 경로 발견: $currentStation -> $endStation, distance=$distanceToNext");
-        return currentDistance; // 바로 반환
-      }
+        // 7. 새로운 거리 계산
+        double newDistance = distances[current]! + edgeWeight;
 
-      if (!visited.contains(nextStation)) {
-        int distance = dfs(
-            nextStation, endStation, visited, currentDistance + distanceToNext);
-        if (distance < minDistance) {
-          minDistance = distance.toDouble();
+        // 8. 최단 거리 갱신
+        if (newDistance < distances[nextStation]!) {
+          distances[nextStation] = newDistance;
+          previousNodes[nextStation] = current;
+
+          // 9. 우선순위 큐에 추가
+          queue.add(MapEntry(nextStation, newDistance));
         }
       }
     }
 
-    visited.remove(currentStation);
+    // 10. 결과 출력
+    if (distances[endStation] == double.infinity) {
+      print("경로를 찾을 수 없습니다.");
+      return -1;
+    }
 
-    print("백트래킹: currentStation=$currentStation, visited=$visited");
-
-    return minDistance == double.infinity ? -1 : minDistance.toInt();
+    print("최단 거리: ${distances[endStation]!.toInt()}");
+    return distances[endStation]!.toInt();
   }
 
   @override
@@ -128,7 +138,7 @@ class _minimumDistanceState extends State<minimumDistance> {
               if (Navigator.canPop(context)) {
                 Navigator.pop(context);
               } else {
-                print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음'); // 디버깅용 로그
+                print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음');
               }
             },
             child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
@@ -145,33 +155,29 @@ class _minimumDistanceState extends State<minimumDistance> {
           elevation: 0,
         ),
         body: FutureBuilder(
-          future: Future.wait([startStationData, endStationData, buildGraph()]),
+          future: Future.wait([buildGraph()]),
           builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(child: Text("데이터를 불러오는 중 오류가 발생했습니다."));
-            } else if (!snapshot.hasData || snapshot.data![2] == false) {
+            } else if (!snapshot.hasData) {
               return Center(
                 child: Text("출발역 또는 도착역 정보를 찾을 수 없습니다."),
               );
             }
 
-            final startData = snapshot.data![0];
-            final endData = snapshot.data![1];
-            print("!!!!!!!!startStationData: $startData");
-            print("!!!!!!!!endStationData: $endData");
-
-            int minDistance = dfs(startData['routeInfo']['startStation'],
-                endData['routeInfo']['endStation'], {}, 0);
-            print("DFS 결과: 최소 거리 = $minDistance");
+            // 다익스트라 호출
+            int shortestDistance =
+                dijkstra(widget.startStation, widget.endStation);
+            print("최단 거리 = $shortestDistance");
 
             return ListView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               children: [
                 Text("출발역: ${widget.startStation}"),
                 Text("도착역: ${widget.endStation}"),
-                _buildTravelDetails(minDistance),
+                _buildTravelDetails(shortestDistance),
               ],
             );
           },
