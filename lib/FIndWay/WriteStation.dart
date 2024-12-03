@@ -46,10 +46,14 @@ class _WriteStationPageState extends State<WriteStationPage> {
         context,
         MaterialPageRoute(
           builder: (context) => minimumDistance(
-              /* startStation: _startStationController.text,
-            endStation: _endStationController.text, */
-              ),
+            startStation: _startStationController.text,
+            endStation: _endStationController.text,
+          ),
         ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('출발역과 도착역을 입력하세요.')),
       );
     }
   }
