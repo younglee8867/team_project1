@@ -23,7 +23,6 @@ import 'package:flutter_application_1/main.dart';
 // ...
 import 'firebase_options.dart';
 
-import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +31,6 @@ Future<void> main() async {
   );
   runApp(SmartSubway());
 }
-
 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
@@ -61,54 +59,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCw_wxQVe7v5Q8BkYADHF1tUZgAemaewOc',
-    appId: '1:520527718838:web:08d5224f6f277a34bcf917',
-    messagingSenderId: '520527718838',
-    projectId: 'station-a1609',
-    authDomain: 'station-a1609.firebaseapp.com',
-    databaseURL: 'https://station-a1609-default-rtdb.firebaseio.com',
-    storageBucket: 'station-a1609.firebasestorage.app',
-    measurementId: 'G-CTNW5CR070',
+    apiKey: 'AIzaSyBSSgPUoDpZB164PivwY8-Zg957t6nTfmA',
+    appId: '1:614310136265:web:d82fc5c31c350117eac018',
+    messagingSenderId: '614310136265',
+    projectId: 'project1-b950c',
+    authDomain: 'project1-b950c.firebaseapp.com',
+    storageBucket: 'project1-b950c.firebasestorage.app',
+    measurementId: 'G-93ZDM0XHJ4',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCrwTU3i6EIILEafiSqwAtrCQyVI6EA3Vg',
-    appId: '1:520527718838:android:39fd28b8225ddffebcf917',
-    messagingSenderId: '520527718838',
-    projectId: 'station-a1609',
-    databaseURL: 'https://station-a1609-default-rtdb.firebaseio.com',
-    storageBucket: 'station-a1609.firebasestorage.app',
+    apiKey: 'AIzaSyAE2QrgBnAADf9tY1DsVZNk3bBlETEIiuY',
+    appId: '1:614310136265:android:d540235e5d6cc552eac018',
+    messagingSenderId: '614310136265',
+    projectId: 'project1-b950c',
+    storageBucket: 'project1-b950c.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC413sC1Rv06ykiH6qye4m1aZt8vraxX9g',
-    appId: '1:520527718838:ios:651896cebe9fc3d6bcf917',
-    messagingSenderId: '520527718838',
-    projectId: 'station-a1609',
-    databaseURL: 'https://station-a1609-default-rtdb.firebaseio.com',
-    storageBucket: 'station-a1609.firebasestorage.app',
+    apiKey: 'AIzaSyDCYiSdqd6E5GYLc2zJyR2OHuIBtRcsctA',
+    appId: '1:614310136265:ios:a3785b1bb48bf92beac018',
+    messagingSenderId: '614310136265',
+    projectId: 'project1-b950c',
+    storageBucket: 'project1-b950c.firebasestorage.app',
     iosBundleId: 'com.example.flutterApplication1',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyC413sC1Rv06ykiH6qye4m1aZt8vraxX9g',
-    appId: '1:520527718838:ios:651896cebe9fc3d6bcf917',
-    messagingSenderId: '520527718838',
-    projectId: 'station-a1609',
-    databaseURL: 'https://station-a1609-default-rtdb.firebaseio.com',
-    storageBucket: 'station-a1609.firebasestorage.app',
+    apiKey: 'AIzaSyDCYiSdqd6E5GYLc2zJyR2OHuIBtRcsctA',
+    appId: '1:614310136265:ios:a3785b1bb48bf92beac018',
+    messagingSenderId: '614310136265',
+    projectId: 'project1-b950c',
+    storageBucket: 'project1-b950c.firebasestorage.app',
     iosBundleId: 'com.example.flutterApplication1',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCw_wxQVe7v5Q8BkYADHF1tUZgAemaewOc',
-    appId: '1:520527718838:web:084f085c294d68debcf917',
-    messagingSenderId: '520527718838',
-    projectId: 'station-a1609',
-    authDomain: 'station-a1609.firebaseapp.com',
-    databaseURL: 'https://station-a1609-default-rtdb.firebaseio.com',
-    storageBucket: 'station-a1609.firebasestorage.app',
-    measurementId: 'G-4FTK6BLDSC',
+    apiKey: 'AIzaSyBSSgPUoDpZB164PivwY8-Zg957t6nTfmA',
+    appId: '1:614310136265:web:804cc6a259b32c75eac018',
+    messagingSenderId: '614310136265',
+    projectId: 'project1-b950c',
+    authDomain: 'project1-b950c.firebaseapp.com',
+    storageBucket: 'project1-b950c.firebasestorage.app',
+    measurementId: 'G-S96Y8L7CS1',
   );
 
 }

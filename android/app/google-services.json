@@ -1,22 +1,21 @@
 {
   "project_info": {
-    "project_number": "520527718838",
-    "firebase_url": "https://station-a1609-default-rtdb.firebaseio.com",
-    "project_id": "station-a1609",
-    "storage_bucket": "station-a1609.firebasestorage.app"
+    "project_number": "614310136265",
+    "project_id": "project1-b950c",
+    "storage_bucket": "project1-b950c.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:520527718838:android:39fd28b8225ddffebcf917",
+        "mobilesdk_app_id": "1:614310136265:android:d540235e5d6cc552eac018",
         "android_client_info": {
-          "package_name": "teamProject.app"
+          "package_name": "teamproject1.app"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCrwTU3i6EIILEafiSqwAtrCQyVI6EA3Vg"
+          "current_key": "AIzaSyAE2QrgBnAADf9tY1DsVZNk3bBlETEIiuY"
         }
       ],
       "services": {
