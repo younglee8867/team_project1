@@ -1,3 +1,9 @@
+//최소 거리 길찾기 결과
+/* 12.05 결국 라인 교집합일때의 조건을 해결 못함
+거꾸로 갈때의 시간이 이상함
+
+해보려고 했지만 할 수 없음
+ */
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -39,6 +45,7 @@ class _minimumDistanceState extends State<minimumDistance> {
     }
   }
 
+  //그래프 생성 함수
   Future<void> buildGraph() async {
     if (graphBuilt) return;
 
@@ -79,6 +86,7 @@ class _minimumDistanceState extends State<minimumDistance> {
     }
   }
 
+  //다익스트라 알고리즘 함수
   Future<Map<String, dynamic>> dijkstra(
       String startStation, String endStation) async {
     if (!graph.containsKey(startStation) || !graph.containsKey(endStation)) {
@@ -142,12 +150,13 @@ class _minimumDistanceState extends State<minimumDistance> {
     }
 
     Map<String, List<int>> lineData = await fetchLineData(path);
-    int transferCount = calculateTransfers(lineData);
+    int transferCount = calculateTransfers(lineData); //환승횟수를 계산하기 위해
 
+    //UI위젯에 값을 넘겨주기 위함
     List<Map<String, dynamic>> uiDetails = await generateUIDetails(
       path,
       lineData,
-      durations, // duration 데이터 추가
+      durations,
     );
 
     return {
@@ -159,6 +168,7 @@ class _minimumDistanceState extends State<minimumDistance> {
     };
   }
 
+  //초기 라인 값을 저장
   Future<Map<String, List<int>>> fetchLineData(List<String> path) async {
     Map<String, List<int>> lineData = {};
 
@@ -175,8 +185,8 @@ class _minimumDistanceState extends State<minimumDistance> {
     return lineData;
   }
 
+  //환승횟수세기
   int calculateTransfers(Map<String, List<int>> lineData) {
-    //환승횟수세기
     int transferCount = 0;
     List<int> currentLines = lineData.entries.first.value;
 
@@ -190,7 +200,7 @@ class _minimumDistanceState extends State<minimumDistance> {
     return transferCount;
   }
 
-//findWay에서 UI를 가져와서 출력
+//findWay에서 가져온 UI를 가져와서 출력
   Future<List<Map<String, dynamic>>> generateUIDetails(
     List<String> path,
     Map<String, List<int>> lineData,
@@ -353,18 +363,18 @@ class _minimumDistanceState extends State<minimumDistance> {
           SizedBox(height: 16),
           Center(
             child: Align(
-              alignment: Alignment.centerLeft, // 왼쪽 정렬
+              alignment: Alignment.centerLeft,
               child: Padding(
-                padding: EdgeInsets.only(left: 20), // 왼쪽에 여백 추가
+                padding: EdgeInsets.only(left: 20),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start, // 텍스트 왼쪽 정렬
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "소요 시간",
                       style: TextStyle(fontSize: 18, color: Colors.grey),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start, // 왼쪽 정렬
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         // 소요시간 값
                         Text(
@@ -375,8 +385,8 @@ class _minimumDistanceState extends State<minimumDistance> {
                             color: Color(0xff4C4C4C),
                           ),
                         ),
-                        SizedBox(width: 16), // 소요시간 값과 나머지 정보 사이 간격
-                        // 환승, 비용, 거리 정보
+                        SizedBox(width: 16),
+                        //환승정보 비용정보 거리 출력
                         Text(
                           "환승 ${result['transferCount']}회 | 비용 ${result['cost']}원 | 거리 ${(result['distance'] / 1000).toStringAsFixed(2)}km",
                           style: TextStyle(fontSize: 16, color: Colors.grey),
@@ -416,6 +426,7 @@ class _minimumDistanceState extends State<minimumDistance> {
     );
   }
 
+  //findway에 값을 넘겨주기 위함
   Widget _buildTravelDetails(List<Map<String, dynamic>> uiDetails) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
