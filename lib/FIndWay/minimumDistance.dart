@@ -62,7 +62,6 @@ class _minimumDistanceState extends State<minimumDistance> {
     }
   }
 
-
   int dijkstra(String startStation, String endStation) {
     // 1. 그래프와 역 정보를 확인
     if (!graph.containsKey(startStation) || !graph.containsKey(endStation)) {
