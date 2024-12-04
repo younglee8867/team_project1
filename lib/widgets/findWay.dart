@@ -8,7 +8,7 @@ import 'package:flutter_application_1/constants/lineColor.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../util/firebaseUtil.dart';
 
-/*void main() {
+/* void main() {
   runApp(const MyApp());
 }
 
@@ -22,124 +22,95 @@ class MyApp extends StatelessWidget {
       home: const findWayItem(stationName: '101'),
     );
   }
-}위젯만 따로 테스트*/
+} */
 
-
-class findWayItem extends StatelessWidget {
+class findWay extends StatelessWidget {
+  final String lineNumber;
   final String stationName;
-  
-  const findWayItem({
+  final String quickExit;
+  final String doorSide;
+  final String duration;
+
+  const findWay({
     Key? key,
+    required this.lineNumber,
     required this.stationName,
+    this.quickExit = '',
+    this.doorSide = '',
+    required this.duration,
   }) : super(key: key);
 
-  // 숫자만 추출하는 함수
-  String extractNumber(String input) {
-    final RegExp numberRegex = RegExp(r'\d+'); // 숫자에 해당하는 정규식
-    final match = numberRegex.firstMatch(input);
-    // 근데 여기에 환승하는 역 색상코드땜에 따로 함수 써야함(12.04)
-
-    return match?.group(0) ?? ''; // 숫자가 없으면 빈 문자열 반환
-  }
-
-
-@override
-Widget build(BuildContext context) {
-  final colorLine = SubwayColors.getColor(stationName.substring(0, 1));
-
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-    Row(
-      crossAxisAlignment: CrossAxisAlignment.center, // 수직 정렬 중앙
-      mainAxisSize: MainAxisSize.min, // Row의 크기를 최소한으로 설정
-      children: [
-        // 숫자 동그라미
-        Container(
-          width: 44, 
-          height: 44,
-          decoration: BoxDecoration(
-            color: colorLine, 
-            shape: BoxShape.circle, 
-          ),
-          alignment: Alignment.center,
-          child: DefaultTextStyle(
-             // 숫자 표시
-            style: const TextStyle(
-              color: Colors.white, 
-              fontWeight: FontWeight.bold, 
-              fontSize: 22, 
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 동그라미 안에 호선 번호
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: SubwayColors.getColor(lineNumber), // 라인별로 색상 지정
+              shape: BoxShape.circle,
             ),
-            child: Text(extractNumber(stationName).substring(0, 1)),
-          ),
-
-        ),
-        const SizedBox(width: 20), 
-        // 역 정보
-        SizedBox(
-          width: 200, // 고정 너비
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, 
-            children: [
-              DefaultTextStyle(
+            child: Center(
+              child: Text(
+                lineNumber,
                 style: const TextStyle(
-                  fontSize: 20,
-                  color: Color(0xff4C4C4C),
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
-                child: Text(stationName),
               ),
-              const SizedBox(height: 5), // 이름과 부가정보 사이 간격
-              DefaultTextStyle(
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xff979797),
-                ),
-                child: Text.rich(
-                    TextSpan(
-                      children: [
-                        const TextSpan(
-                          text: '내리는 문 ',
-                          style: TextStyle(fontSize: 12, color: Colors.black),
-                        ),
-                        TextSpan(
-                          text: '오른쪽', //'${facilityInfo['doorSide']}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold, 
-                            color: Colors.black,
-                          ),
-                        ),
-                        const TextSpan(
-                          text: '       빠른 하차 ',
-                          style: TextStyle(fontSize: 12, color: Colors.black),
-                        ),
-                        TextSpan(
-                          text: '3-2', //'${stationDetails['quickExit']}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold, 
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ],
-    ),
-      ],
-    ) 
-
-  );
-}
-
-
-
-
+          const SizedBox(width: 16),
+          // 역 정보
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
+              children: [
+                // 역 이름
+                Text(
+                  stationName,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xff4C4C4C),
+                  ),
+                ),
+                const SizedBox(height: 4), // 역 이름과 그 아래 정보들 사이 간격
+                // 소요 시간과 추가 정보 (빠른 하차 / 내리는 문)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start, // 왼쪽 정렬
+                  children: [
+                    const SizedBox(width: 8), // 소요시간과 추가 정보 사이 간격
+                    if (quickExit.isNotEmpty || doorSide.isNotEmpty)
+                      Text(
+                        [
+                          if (quickExit.isNotEmpty) '빠른 하차: $quickExit',
+                          if (doorSide.isNotEmpty) '내리는 문: $doorSide',
+                        ].join(' | '),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    Text(
+                      duration,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
