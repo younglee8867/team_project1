@@ -27,7 +27,6 @@ Future<Map<String, dynamic>?> main() async {
   try {
     await Firebase.initializeApp();
     print('Firebase initialized successfully');
- 
   } catch (e) {
     print('failed: $e');
   }
@@ -43,7 +42,6 @@ Future<Map<String, dynamic>?> main() async {
     ),
   );
 }
-
 
 class SmartSubway extends StatelessWidget {
   const SmartSubway({super.key});
@@ -131,42 +129,57 @@ class _Home extends State<Home> {
             },
             child: Column(
               children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Container(
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(28),
-                    border: Border.all(
-                      color: const Color.fromRGBO(0, 57, 115, 148),
-                      width: 2,
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Container(
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(28),
+                      border: Border.all(
+                        color: const Color.fromRGBO(0, 57, 115, 148),
+                        width: 2,
+                      ),
                     ),
-                  ),
-                  child: Row(
-                    children: [
-                      // 메뉴 아이콘
-                      GestureDetector(
-                        onTap: _toggleMenuVisibility,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Image.asset(
-                            'assets/images/menu.png',
-                            width: 40,
-                            height: 40,
+                    child: Row(
+                      children: [
+                        // 메뉴 아이콘
+                        GestureDetector(
+                          onTap: _toggleMenuVisibility,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset(
+                              'assets/images/menu.png',
+                              width: 40,
+                              height: 40,
+                            ),
                           ),
                         ),
-                      ),
-                      // 검색 텍스트 필드
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: '역 검색'.tr(),
-                            hintStyle: TextStyle(color: Color(0xFFABABAB)),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                        // 검색 텍스트 필드
+                        Expanded(
+                          child: TextField(
+                            decoration: InputDecoration(
+                              hintText: '역 검색'.tr(),
+                              hintStyle: TextStyle(color: Color(0xFFABABAB)),
+                              border: InputBorder.none,
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 8),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SearchStationPage(),
+                                ),
+                              );
+                            },
                           ),
-                          onTap: () {
+                        ),
+                        // 검색 버튼
+                        IconButton(
+                          icon: const Icon(Icons.search,
+                              color: Color(0xFF386B88)),
+                          onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -175,23 +188,10 @@ class _Home extends State<Home> {
                             );
                           },
                         ),
-                      ),
-                      // 검색 버튼
-                      IconButton(
-                        icon: const Icon(Icons.search, color: Color(0xFF386B88)),
-                        onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SearchStationPage(),
-                              ),
-                            );
-                        },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
                 // 노선도 이미지 추가
                 Expanded(
                   child: Stack(
@@ -257,6 +257,13 @@ class _Home extends State<Home> {
             ),
           ),
           if (_isMenuVisible) // 좌측 - 메뉴바 카테고리별 이동
+            ...[
+            GestureDetector(
+              onTap: _toggleMenuVisibility, // 배경 누르면 메뉴 닫힘
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+              ),
+            ),
             MenuOverlay(
               onClose: _toggleMenuVisibility,
               onSearchTap: () {
@@ -285,6 +292,7 @@ class _Home extends State<Home> {
                 );
               },
             ),
+          ],
         ],
       ),
     );

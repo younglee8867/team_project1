@@ -142,6 +142,7 @@ class _minimumDistanceState extends State<minimumDistance> {
       }
     }
 
+    //경로를 path에 담음
     List<String> path = [];
     String? currentNode = endStation;
     while (currentNode != null) {
@@ -149,10 +150,11 @@ class _minimumDistanceState extends State<minimumDistance> {
       currentNode = previousNodes[currentNode];
     }
 
-    Map<String, List<int>> lineData = await fetchLineData(path);
-    int transferCount = calculateTransfers(lineData); //환승횟수를 계산하기 위해
+    Map<String, List<int>> lineData =
+        await fetchLineData(path); //경로에 해당하는 라인 정보를 담기 위해
+    int transferCount = calculateTransfers(lineData); //라인정보로 환승횟수를 계산하기 위해
 
-    //UI위젯에 값을 넘겨주기 위함
+    //UI위젯 함수에 값을 넘겨주기 위함
     List<Map<String, dynamic>> uiDetails = await generateUIDetails(
       path,
       lineData,
@@ -168,7 +170,7 @@ class _minimumDistanceState extends State<minimumDistance> {
     };
   }
 
-  //초기 라인 값을 저장
+  //path에 담긴 경로에 해당하는 라인값을 lineData에 담음
   Future<Map<String, List<int>>> fetchLineData(List<String> path) async {
     Map<String, List<int>> lineData = {};
 
