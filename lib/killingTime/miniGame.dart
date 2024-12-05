@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+//import 'package:audioplayers/audioplayers.dart';
 
 void main() {
   runApp(MyApp());
@@ -28,22 +29,30 @@ class _AppleGameState extends State<AppleGame> {
   bool _isGameOver = false; // 게임 종료 여부
   late Timer _timer; // 타이머
   int _timeLeft = 30; // 남은 시간 (초)
+  bool _applesGenerated = false; // 사과 생성 여부 확인
 
   @override
   void initState() {
     super.initState();
-    _generateApples();
+    //_generateApples();
     _startTimer();
   }
 
   // 사과 생성 함수
-  void _generateApples() {
+ void _generateApples() {
     Random rand = Random();
     _apples.clear();
+
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     const double padding = 10.0; // 사과 간 간격
     const double appleSize = 50.0; // 사과 크기
-    const int columns = 8; // 가로 열 수
-    const int rows = 17; // 세로 행 수
+    final double usableWidth = screenWidth * 0.9; // 화면의 90% 너비
+    final double usableHeight = screenHeight * 0.9; // 화면의 90% 높이
+
+    final int columns = (usableWidth / (appleSize + padding)).floor(); // 가로 열 수
+    final int rows = (usableHeight / (appleSize + padding)).floor(); // 세로 행 수
 
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < columns; j++) {
@@ -54,7 +63,9 @@ class _AppleGameState extends State<AppleGame> {
         ));
       }
     }
+    _applesGenerated = true; // 사과가 생성되었음을 표시
   }
+
 
   // 타이머 시작 함수
   void _startTimer() {
@@ -167,129 +178,119 @@ class _AppleGameState extends State<AppleGame> {
 
   @override
   Widget build(BuildContext context) {
+        if (!_applesGenerated) {
+      _generateApples(); // 화면 크기 확인 후 사과 생성
+    }
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
-        leading: GestureDetector(
-          onTap: () {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-          },
-          child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
-        ),
-        title: Text(
-          '사과게임',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Color(0xff22536F),
-          ),
-        ).tr(),
-        backgroundColor: Colors.white,
+  leading: GestureDetector(
+    onTap: () {
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+    },
+    child: Icon(Icons.arrow_back, color: Color(0xff978080)),
+  ),
+  backgroundColor: Color.fromARGB(255, 255, 255, 255),
+  actions: [
+    Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0), // 이미지 간 간격
+      child: Image.asset(
+        'assets/images/miniGame/gameMusic.png',
+        height: 30,
+        width: 30,
       ),
-      body: GestureDetector(
-        onTap: () {
-          if (_isGameOver) {
-            setState(() {
-              _score = 0;
-              _isGameOver = false;
-              _timeLeft = 30;
-              _generateApples();
-              _startTimer();
-            });
-          }
-        },
-        child: Stack(
-          children: [
-            // 배경
-            Container(color: const Color.fromARGB(255, 255, 255, 255)),
-
-            // 사과들 그리기
-            for (Apple apple in _apples) _buildApple(apple),
-
-            // 점수 표시
-            Positioned(
-              top: 80,
-              right: 20,
-              child: AnimatedContainer(
-                duration: Duration(milliseconds: 300),
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 120, 158, 225), // 배경 색상
-                  borderRadius: BorderRadius.circular(12), // 둥근 모서리
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Score: $_score',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
+    ),
+    Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0), // 이미지 간 간격
+      child: Image.asset(
+        'assets/images/miniGame/gameInfo.png',
+        height: 30,
+        width: 30,
+      ),
+    ),
+  ],
+  
+),
+      body: Column( 
+        children: [
+          Row(
+            children: [
+              // 점수 표시
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 300),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xff978080),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'Score: $_score',
+                    style: TextStyle(fontSize: 30, color: Colors.white),
+                  ),
                 ),
               ),
+              Spacer(),              // 남은 시간 표시
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 300),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xff978080),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'Time: $_timeLeft',
+                    style: TextStyle(fontSize: 30, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Expanded(
+            child: Stack(
+              children: [
+                // 배경
+                Container(color: Colors.white),
+                // 사과들 그리기
+                for (Apple apple in _apples) _buildApple(apple),
+                // 게임 종료 메시지
+                if (_isGameOver)
+                  Center(
+                    child: AlertDialog(
+                      title: Text('Game Over'),
+                      content: Text('Score: $_score'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _score = 0;
+                              _isGameOver = false;
+                              _timeLeft = 30;
+                              _generateApples();
+                              _startTimer();
+                            });
+                          },
+                          child: Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
             ),
-
-            // 남은 시간 표시
-            Positioned(
-              top: 20,
-              right: 20,
-              child: AnimatedContainer(
-                duration: Duration(milliseconds: 300),
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 225, 152, 92), // 배경 색상
-                  borderRadius: BorderRadius.circular(12), // 둥근 모서리
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Time: $_timeLeft',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // 게임 종료 메시지
-            if (_isGameOver)
-              Center(
-                child: AlertDialog(
-                  title: Text('Game Over'),
-                  content: Text('Score: $_score'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _score = 0;
-                          _isGameOver = false;
-                          _timeLeft = 30;
-                          _generateApples();
-                          _startTimer();
-                        });
-                      },
-                      child: Text('Retry'),
-                    ),
-                  ],
-                ),
-              ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
+
 
 // 사과 클래스 정의
 class Apple {

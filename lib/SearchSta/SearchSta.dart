@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/killingTime/killingTime.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_application_1/main.dart';
 
 // 위젯
 import '../widgets/searchBar.dart';
@@ -171,6 +172,27 @@ class _SearchStationPageState extends State<SearchStationPage> {
               },
             ),
         ],
+      ),
+            // 하단바
+      bottomNavigationBar: Container(
+        height: 60.0, // 높이 조절
+        color: const Color.fromARGB(204, 34, 83, 111), // 배경색 설정
+        child: Center(
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Home(), // Home()으로 이동
+                ),
+              );
+            },
+            child: Image.asset(
+              'assets/images/homeLight.png',
+              width: 35,
+            ),
+          ),
+        ),
       ),
     );
   }

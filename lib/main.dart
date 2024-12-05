@@ -4,6 +4,8 @@ import 'package:easy_localization/easy_localization.dart';
 
 import 'package:flutter_application_1/SearchSta/SearchSta.dart';
 import 'package:flutter_application_1/SearchSta/SearchStaInfo.dart';
+import 'package:flutter_application_1/constants/displayMode.dart';
+import 'package:provider/provider.dart';
 import '../widgets/searchBar.dart';
 import '../widgets/menuOverlay.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,12 +36,19 @@ Future<Map<String, dynamic>?> main() async {
 
   await EasyLocalization.ensureInitialized();
 
-  runApp(
-    EasyLocalization(
-      supportedLocales: const [Locale('en'), Locale('ko')],
-      path: 'assets/langs', // JSON 파일 경로
-      fallbackLocale: const Locale('ko'), // 기본 언어를 한국어로 설정
-      child: SmartSubway(),
+   runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => ThemeNotifier(false), // 초기값: 라이트 모드
+        ),
+      ],
+      child: EasyLocalization(
+        supportedLocales: const [Locale('en'), Locale('ko')], // 지원 언어
+        path: 'assets/langs', // JSON 파일 경로
+        fallbackLocale: const Locale('ko'), // 기본 언어: 한국어
+        child: const SmartSubway(),
+      ),
     ),
   );
 }
@@ -93,6 +102,7 @@ class Home extends StatefulWidget {
 
 // 홈화면
 class _Home extends State<Home> {
+  
   final TextEditingController _searchController = TextEditingController();
   late List<Map<String, dynamic>> _searchHistory;
   bool _isMenuVisible = false;
@@ -117,8 +127,29 @@ class _Home extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+        ThemeNotifier themeNotifier = Provider.of<ThemeNotifier>(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
+      /*appBar: AppBar(
+        title: Text(
+          themeNotifier.isDarkMode ? "Dark Mode" : "Light Mode",
+          style: TextStyle(
+              color: themeNotifier.isDarkMode
+                  ? Colors.white
+                  : Colors.grey.shade900),
+        ),
+        actions: [
+          Switch(
+            value: themeNotifier.isDarkMode,
+            onChanged: (value) {
+              themeNotifier.toggleTheme();
+            },
+            activeTrackColor: Colors.lightBlueAccent,
+            activeColor: Colors.blue,
+          ),
+        ],
+      ),*/
       body: Stack(
         children: [
           GestureDetector(
@@ -143,6 +174,7 @@ class _Home extends State<Home> {
                       width: 2,
                     ),
                   ),
+                 
                   child: Row(
                     children: [
                       // 메뉴 아이콘
@@ -256,6 +288,7 @@ class _Home extends State<Home> {
               ],
             ),
           ),
+          
           if (_isMenuVisible) // 좌측 - 메뉴바 카테고리별 이동
             MenuOverlay(
               onClose: _toggleMenuVisibility,
@@ -286,6 +319,27 @@ class _Home extends State<Home> {
               },
             ),
         ],
+      ),
+            // 하단바
+      bottomNavigationBar: Container(
+        height: 60.0, // 높이 조절
+        color: const Color.fromARGB(204, 34, 83, 111), // 배경색 설정
+        child: Center(
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Home(), // Home()으로 이동
+                ),
+              );
+            },
+            child: Image.asset(
+              'assets/images/homeLight.png',
+              width: 35,
+            ),
+          ),
+        ),
       ),
     );
   }

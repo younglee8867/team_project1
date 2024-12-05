@@ -38,7 +38,8 @@ class findWayItem extends StatelessWidget {
     final RegExp numberRegex = RegExp(r'\d+'); // 숫자에 해당하는 정규식
     final match = numberRegex.firstMatch(input);
     // 근데 여기에 환승하는 역 색상코드땜에 따로 함수 써야함(12.04)
-
+    // 만약 디비에 Line이 2개 이상이다? --> 그럼 ...음...
+    
     return match?.group(0) ?? ''; // 숫자가 없으면 빈 문자열 반환
   }
 
