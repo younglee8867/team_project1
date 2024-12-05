@@ -154,7 +154,7 @@ class _minimumDistanceState extends State<minimumDistance> {
         await fetchLineData(path); //경로에 해당하는 라인 정보를 담기 위해
     int transferCount = calculateTransfers(lineData); //라인정보로 환승횟수를 계산하기 위해
 
-    //UI위젯 함수에 값을 넘겨주기 위함
+    //UIDetail에서 환승정보에 대한 역 정보들을 가져와서 findway에 넘길 값 저장
     List<Map<String, dynamic>> uiDetails = await generateUIDetails(
       path,
       lineData,
@@ -174,13 +174,36 @@ class _minimumDistanceState extends State<minimumDistance> {
   Future<Map<String, List<int>>> fetchLineData(List<String> path) async {
     Map<String, List<int>> lineData = {};
 
-    for (var station in path) {
-      final stationData = await fetchStationData(station);
+    for (int i = 0; i < path.length; i++) {
+      final stationData = await fetchStationData(path[i]);
 
       if (stationData != null && stationData.containsKey('line')) {
-        lineData[station] = List<int>.from(stationData['line']);
+        List<int> currentLines = List<int>.from(stationData['line']);
+
+        if (i < path.length - 1) {
+          // 다음 역 데이터 가져오기
+          final nextStationData = await fetchStationData(path[i + 1]);
+
+          if (nextStationData != null && nextStationData.containsKey('line')) {
+            List<int> nextLines = List<int>.from(nextStationData['line']);
+            // 현재 라인과 다음 라인의 중복값 계산
+            List<int> commonLines =
+                currentLines.where((line) => nextLines.contains(line)).toList();
+
+            // 중복값이 있으면 중복값을 넣고 없으면 현재 라인을 추가
+            lineData[path[i]] =
+                commonLines.isNotEmpty ? commonLines : currentLines;
+          } else {
+            // 다음 역 데이터가 없는 경우 현재 라인을 그대로 추가
+            lineData[path[i]] = currentLines;
+          }
+        } else {
+          // 마지막 역일 경우 현재 라인을 그대로 추가
+          lineData[path[i]] = currentLines;
+        }
       } else {
-        lineData[station] = [];
+        // 현재 역 데이터가 없으면 빈 리스트로 설정
+        lineData[path[i]] = [];
       }
     }
 
@@ -239,11 +262,11 @@ class _minimumDistanceState extends State<minimumDistance> {
       if (currentLines
           .every((line) => !(lineData[path[i]] ?? []).contains(line))) {
         // 환승 전 도착역
-        final prevStationDetails = await fetchStationDetails(path[i - 1]);
+        final prevStationDetails = await fetchStationDetails(path[i]);
         uiDetails.add({
           "line":
               currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
-          "stationName": path[i - 1], // 환승 전 도착역
+          "stationName": path[i], // 환승 전 도착역
           "quickExit": "", // 중간 도착역에서는 빠른 하차 정보 없음
           "doorSide": prevStationDetails['facilityInfo']?['doorSide'] ?? "",
           "duration": currentSegmentDuration.toInt(), // 해당 구간의 duration
@@ -256,7 +279,7 @@ class _minimumDistanceState extends State<minimumDistance> {
         uiDetails.add({
           "line":
               currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
-          "stationName": path[i - 1], // 환승 후 출발역
+          "stationName": path[i], // 환승 후 출발역
           "quickExit": nextStationDetails['stationDetails']?['quickExit'] ?? "",
           "doorSide": "", // 출발역에서는 내리는 문 정보 없음
           "duration": "", // 환승 후 출발 시점에서는 duration 출력하지 않음
@@ -369,38 +392,35 @@ class _minimumDistanceState extends State<minimumDistance> {
               child: Padding(
                 padding: EdgeInsets.only(left: 20),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
                   children: [
+                    // 소요 시간 텍스트
                     Text(
                       "소요 시간",
                       style: TextStyle(fontSize: 18, color: Colors.grey),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        // 소요시간 값
-                        Text(
-                          "${(result['duration'] / 60).floor()}분 ${(result['duration'] % 60).toInt()}초",
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff4C4C4C),
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        //환승정보 비용정보 거리 출력
-                        Text(
-                          "환승 ${result['transferCount']}회 | 비용 ${result['cost']}원 | 거리 ${(result['distance'] / 1000).toStringAsFixed(2)}km",
-                          style: TextStyle(fontSize: 16, color: Colors.grey),
-                        ),
-                      ],
+                    // 소요 시간 값
+                    Text(
+                      "${(result['duration'] / 60).floor()}분 ${(result['duration'] % 60).toInt()}초",
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff4C4C4C),
+                      ),
+                    ),
+                    SizedBox(height: 5), // 항목 간의 간격
+
+                    // 환승 정보, 비용 정보, 거리 정보는 한 줄로 배치
+                    Text(
+                      "환승 ${result['transferCount']}회 | 비용 ${result['cost']}원 | 거리 ${(result['distance'] / 1000).toStringAsFixed(2)}km",
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                   ],
                 ),
               ),
             ),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 25),
           _buildTravelDetails(result['path']),
         ],
       ),

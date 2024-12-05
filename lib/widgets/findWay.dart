@@ -43,30 +43,40 @@ class findWay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      padding: const EdgeInsets.only(left: 10.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 동그라미 안에 호선 번호
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: SubwayColors.getColor(lineNumber), // 라인별로 색상 지정
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                lineNumber,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+          Column(
+            children: [
+              // 조건: quickExit.isNotEmpty일 경우 원 + 선 추가, 아니면 원만 추가
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: SubwayColors.getColor(lineNumber), // 라인별로 색상 지정
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    lineNumber,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
-            ),
+              if (quickExit.isNotEmpty)
+                Container(
+                  width: 8, // 세로선의 너비
+                  height: 60, // 세로선의 길이
+                  color: SubwayColors.getColor(lineNumber), // 선 색상 지정
+                ),
+            ],
           ),
           const SizedBox(width: 16),
-          // 역 정보
+          // 역 정보 (항상 출력)
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
@@ -80,17 +90,16 @@ class findWay extends StatelessWidget {
                     color: Color(0xff4C4C4C),
                   ),
                 ),
-                const SizedBox(height: 4), // 역 이름과 그 아래 정보들 사이 간격
-                // 소요 시간과 추가 정보 (빠른 하차 / 내리는 문)
+                const SizedBox(height: 4), // 역 이름과 아래 정보 간격
+                // 소요 시간 및 추가 정보
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start, // 왼쪽 정렬
                   children: [
-                    const SizedBox(width: 8), // 소요시간과 추가 정보 사이 간격
                     if (quickExit.isNotEmpty || doorSide.isNotEmpty)
                       Text(
                         [
                           if (quickExit.isNotEmpty) '빠른 하차: $quickExit',
-                          if (doorSide.isNotEmpty) '내리는 문: $doorSide',
+                          if (doorSide.isNotEmpty) '내리는 문: $doorSide | ',
                         ].join(' | '),
                         style: const TextStyle(
                           fontSize: 14,
