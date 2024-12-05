@@ -1,334 +1,220 @@
-// 최소환승 화면
-/* import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../util/firebaseUtil.dart';
 
-void main() {
-  runApp(FlutterApp());
-}
+class MinimumTransfer extends StatefulWidget {
+  final String startStation;
+  final String endStation;
 
-class FlutterApp extends StatefulWidget {
+  const MinimumTransfer({
+    Key? key,
+    required this.startStation,
+    required this.endStation,
+  }) : super(key: key);
+
   @override
-  _FlutterAppState createState() => _FlutterAppState();
+  _MinimumTransferState createState() => _MinimumTransferState();
 }
 
-class _FlutterAppState extends State<FlutterApp> {
-  bool _isDarkMode = true;
-  double _widthFactor = 1.0;
+class _MinimumTransferState extends State<MinimumTransfer> {
+  late Future<Map<String, dynamic>?> startStationData;
+  late Future<Map<String, dynamic>?> endStationData;
+  static Map<String, List<Map<String, dynamic>>> graph = {};
+  static bool graphBuilt = false;
+
+  @override
+  void initState() {
+    super.initState();
+    startStationData = fetchStationData(widget.startStation);
+    endStationData = fetchStationData(widget.endStation);
+
+    if (!graphBuilt) {
+      buildGraph();
+    }
+  }
+
+  Future<void> buildGraph() async {
+    if (graphBuilt) return;
+
+    try {
+      final stationsSnapshot =
+          await FirebaseFirestore.instance.collection('station').get();
+      for (var doc in stationsSnapshot.docs) {
+        final data = doc.data();
+        if (data.containsKey('routeInfo')) {
+          final routeInfo = data['routeInfo'];
+          String startStation = routeInfo['startStation'].toString();
+          String endStation = routeInfo['endStation'].toString();
+          int distance = routeInfo['distance'];
+          int duration = routeInfo['duration'];
+          int cost = routeInfo['cost'];
+
+          graph.putIfAbsent(startStation, () => []);
+          graph[startStation]!.add({
+            'station': endStation,
+            'distance': distance,
+            'duration': duration,
+            'cost': cost,
+          });
+
+          graph.putIfAbsent(endStation, () => []);
+          graph[endStation]!.add({
+            'station': startStation,
+            'distance': distance,
+            'duration': duration,
+            'cost': cost,
+          });
+        }
+      }
+
+      graphBuilt = true;
+    } catch (e) {
+      print("그래프를 생성하는 동안 오류 발생: $e");
+    }
+  }
+
+  Future<Map<String, dynamic>> dijkstra(
+      String startStation, String endStation) async {
+    if (!graph.containsKey(startStation) || !graph.containsKey(endStation)) {
+      return {};
+    }
+
+    Map<String, double> durations = {};
+    Map<String, String?> previousNodes = {};
+    Set<String> visited = {};
+
+    for (var station in graph.keys) {
+      durations[station] = double.infinity;
+      previousNodes[station] = null;
+    }
+
+    durations[startStation] = 0;
+
+    List<MapEntry<String, double>> queue = [];
+    queue.add(MapEntry(startStation, 0));
+
+    while (queue.isNotEmpty) {
+      queue.sort((a, b) => a.value.compareTo(b.value));
+      final current = queue.removeAt(0).key;
+
+      if (visited.contains(current)) continue;
+      visited.add(current);
+
+      for (var neighbor in graph[current] ?? []) {
+        String nextStation = neighbor['station'];
+        int edgeDuration = neighbor['duration'];
+
+        if (visited.contains(nextStation)) continue;
+
+        double newDuration = durations[current]! + edgeDuration;
+
+        if (newDuration < durations[nextStation]!) {
+          durations[nextStation] = newDuration;
+          previousNodes[nextStation] = current;
+          queue.add(MapEntry(nextStation, newDuration));
+        }
+      }
+    }
+
+    List<String> path = [];
+    String? currentNode = endStation;
+    while (currentNode != null) {
+      path.insert(0, currentNode);
+      currentNode = previousNodes[currentNode];
+    }
+
+    return {
+      "duration": durations[endStation]!,
+      "path": path,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: _isDarkMode ? ThemeData.dark() : ThemeData.light(),
-      debugShowCheckedModeBanner: false, // Optional: Remove debug banner
-      home: Scaffold(
-        appBar: AppBar(
-          actions: [
-            Switch(
-              value: _isDarkMode,
-              onChanged: (value) {
-                setState(() {
-                  _isDarkMode = value;
-                });
-              },
+    return Scaffold(
+      appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
+        ),
+        title: Text('최소 시간 길찾기').tr(),
+        backgroundColor: Colors.white,
+      ),
+      body: FutureBuilder(
+        future: Future.wait([startStationData, endStationData]),
+        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("데이터를 불러오는 중 오류가 발생했습니다."));
+          } else if (!snapshot.hasData || snapshot.data!.length < 2) {
+            return Center(
+              child: Text("출발역 또는 도착역 정보를 찾을 수 없습니다."),
+            );
+          }
+
+          final startData = snapshot.data![0] as Map<String, dynamic>;
+          final endData = snapshot.data![1] as Map<String, dynamic>;
+
+          return FutureBuilder(
+            future: dijkstra(
+              startData['routeInfo']['startStation'].toString(),
+              endData['routeInfo']['startStation'].toString(),
             ),
-            SizedBox(width: 10),
-            DropdownButton<double>(
-              value: _widthFactor,
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    _widthFactor = value;
-                  });
-                }
-              },
-              items: [
-                DropdownMenuItem(
-                  value: 0.5,
-                  child: Text('Size: 50%'),
+            builder:
+                (context, AsyncSnapshot<Map<String, dynamic>> dijkstraResult) {
+              if (dijkstraResult.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (dijkstraResult.hasError) {
+                return Center(child: Text("최단 시간 경로 계산 중 오류 발생."));
+              } else if (!dijkstraResult.hasData) {
+                return Center(
+                  child: Text("경로를 찾을 수 없습니다."),
+                );
+              }
+
+              final result = dijkstraResult.data!;
+              return _buildPageContent(result);
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildPageContent(Map<String, dynamic> result) {
+    return Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Column(
+              children: [
+                Text(
+                  "소요 시간",
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
                 ),
-                DropdownMenuItem(
-                  value: 0.75,
-                  child: Text('Size: 75%'),
+                Text(
+                  "${(result['duration'] / 60).floor()}분 ${(result['duration'] % 60).toInt()}초",
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xff4C4C4C),
+                  ),
                 ),
-                DropdownMenuItem(
-                  value: 1.0,
-                  child: Text('Size: 100%'),
+                Text(
+                  "경로: ${result['path'].join(' → ')}",
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
               ],
             ),
-            SizedBox(width: 10),
-          ],
-        ),
-        body: Center(
-          child: Container(
-            width: MediaQuery.of(context).size.width * _widthFactor,
-            child: TransferScreen(),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class TransferScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          AppHeader(),
-          SizedBox(height: 20),
-          TransferOptions(),
-          SizedBox(height: 20),
-          DurationDisplay(),
-          SizedBox(height: 20),
-          TransferDetails(),
-          SizedBox(height: 20),
-          Footer(),
         ],
       ),
     );
   }
 }
-
-class AppHeader extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Adjust background color based on theme
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      color: isDark ? Colors.grey[900] : Colors.white,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          TimeDisplay(),
-          StatusIndicator(),
-        ],
-      ),
-    );
-  }
-}
-
-class TimeDisplay extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      '9:41',
-      style: TextStyle(
-        color: Theme.of(context).textTheme.bodyText1?.color,
-        fontSize: 17,
-        // Removed fontFamily
-      ),
-    );
-  }
-}
-
-class StatusIndicator extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Placeholder content for StatusIndicator
-    return Row(
-      children: [
-        Icon(Icons.signal_wifi_4_bar, size: 16),
-        SizedBox(width: 5),
-        Icon(Icons.battery_full, size: 16),
-        // Add more status icons as needed
-      ],
-    );
-  }
-}
-
-class TransferOptions extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        TransferButton(
-          label: '최소 거리 순',
-          isSelected: false,
-        ),
-        TransferButton(
-          label: '최소 환승 순',
-          isSelected: true,
-        ),
-      ],
-    );
-  }
-}
-
-class TransferButton extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-
-  const TransferButton({
-    required this.label,
-    required this.isSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 90,
-      height: 30,
-      decoration: ShapeDecoration(
-        color: isSelected ? Color(0xFF397394) : Colors.white,
-        shape: RoundedRectangleBorder(
-          side: isSelected
-              ? BorderSide.none
-              : BorderSide(width: 2, color: Color(0xFF397394)),
-          borderRadius: BorderRadius.circular(28),
-        ),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        label,
-        style: TextStyle(
-          color: isSelected ? Colors.white : Color(0xFF397394),
-          fontSize: 11,
-          // Removed fontFamily
-          letterSpacing: 0.5,
-        ),
-      ),
-    );
-  }
-}
-
-class DurationDisplay extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          '소요 시간',
-          style: TextStyle(
-            color: Color(0xFF979797),
-            fontSize: 16,
-            // Removed fontFamily
-          ),
-        ),
-        SizedBox(height: 5),
-        Text(
-          '11 분',
-          style: TextStyle(
-            color: Color(0xFF4B4B4B),
-            fontSize: 45,
-            // Removed fontFamily
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class TransferDetails extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TransferStep(
-          lineColor: Color(0xFF856869),
-          lineHeight: 145,
-          stationNumber: '1',
-          stationName: '101',
-          direction: '190 방면 | 빠른 하차 5-2, 10-4',
-        ),
-        TransferStep(
-          lineColor: Color(0xFF128226),
-          lineHeight: 145,
-          stationNumber: '2',
-          stationName: '103',
-          direction: '190 방면 | 빠른 하차 5-2, 10-4',
-        ),
-        TransferStep(
-          lineColor: Color(0xFF128226),
-          lineHeight: 44,
-          stationNumber: '2',
-          stationName: '201',
-          direction: '내리는 문 오른쪽 | 하차 정보',
-        ),
-      ],
-    );
-  }
-}
-
-class TransferStep extends StatelessWidget {
-  final Color lineColor;
-  final double lineHeight;
-  final String stationNumber;
-  final String stationName;
-  final String direction;
-
-  const TransferStep({
-    required this.lineColor,
-    required this.lineHeight,
-    required this.stationNumber,
-    required this.stationName,
-    required this.direction,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Line indicator
-        Container(
-          width: 7,
-          height: lineHeight,
-          color: lineColor,
-        ),
-        SizedBox(width: 10),
-        // Station info
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                stationName,
-                style: TextStyle(
-                  color: Color(0xFF4B4B4B),
-                  fontSize: 32,
-                  // Removed fontFamily
-                ),
-              ),
-              Text(
-                direction,
-                style: TextStyle(
-                  color: Color(0xFF979797),
-                  fontSize: 12,
-                  // Removed fontFamily
-                ),
-              ),
-              SizedBox(height: 5),
-              Text(
-                '소요 시간 정보',
-                style: TextStyle(
-                  color: Color(0xFF4A4A4A),
-                  fontSize: 15,
-                  // Removed fontFamily
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class Footer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      '스마트 환승철',
-      style: TextStyle(
-        color: Color(0xFF387394),
-        fontSize: 14,
-        // Removed fontFamily
-        letterSpacing: 5,
-      ),
-    );
-  }
-}
- */

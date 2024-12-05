@@ -1,7 +1,15 @@
-// 최소거리 화면
+//최소 거리 길찾기 결과
+/* 12.05 결국 라인 교집합일때의 조건을 해결 못함
+거꾸로 갈때의 시간이 이상함
+
+해보려고 했지만 할 수 없음
+ */
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_application_1/FindWay/minimumTransfer.dart';
+import 'package:flutter_application_1/widgets/findWay.dart';
+
 import '../util/firebaseUtil.dart';
 
 class minimumDistance extends StatefulWidget {
@@ -21,17 +29,26 @@ class minimumDistance extends StatefulWidget {
 class _minimumDistanceState extends State<minimumDistance> {
   late Future<Map<String, dynamic>?> startStationData;
   late Future<Map<String, dynamic>?> endStationData;
-  late Map<String, List<Map<String, dynamic>>> graph;
+  static Map<String, List<Map<String, dynamic>>> graph = {};
+  static bool graphBuilt = false;
+
+  bool isMinDistanceSelected = true;
 
   @override
   void initState() {
     super.initState();
     startStationData = fetchStationData(widget.startStation);
     endStationData = fetchStationData(widget.endStation);
-    graph = {};
+
+    if (!graphBuilt) {
+      buildGraph();
+    }
   }
 
+  //그래프 생성 함수
   Future<void> buildGraph() async {
+    if (graphBuilt) return;
+
     try {
       final stationsSnapshot =
           await FirebaseFirestore.instance.collection('station').get();
@@ -39,186 +56,413 @@ class _minimumDistanceState extends State<minimumDistance> {
         final data = doc.data();
         if (data.containsKey('routeInfo')) {
           final routeInfo = data['routeInfo'];
-          String startStation = routeInfo['startStation'].toString(); // 문자열로 변환
-          String endStation = routeInfo['endStation'].toString(); // 문자열로 변환
+          String startStation = routeInfo['startStation'].toString();
+          String endStation = routeInfo['endStation'].toString();
           int distance = routeInfo['distance'];
+          int duration = routeInfo['duration'];
+          int cost = routeInfo['cost'];
 
-          // 단방향 경로 추가 (start -> end)
           graph.putIfAbsent(startStation, () => []);
-          graph[startStation]!
-              .add({'station': endStation, 'distance': distance});
+          graph[startStation]!.add({
+            'station': endStation,
+            'distance': distance,
+            'duration': duration,
+            'cost': cost,
+          });
 
-          // 역방향 경로 추가 (end -> start)
           graph.putIfAbsent(endStation, () => []);
-          graph[endStation]!
-              .add({'station': startStation, 'distance': distance});
-
-          print("그래프에 추가: $startStation <-> $endStation ($distance m)");
+          graph[endStation]!.add({
+            'station': startStation,
+            'distance': distance,
+            'duration': duration,
+            'cost': cost,
+          });
         }
       }
-      print("그래프 생성 완료: $graph");
+
+      graphBuilt = true;
     } catch (e) {
       print("그래프를 생성하는 동안 오류 발생: $e");
     }
   }
 
-  int dijkstra(String startStation, String endStation) {
-    // 1. 그래프와 역 정보를 확인
+  //다익스트라 알고리즘 함수
+  Future<Map<String, dynamic>> dijkstra(
+      String startStation, String endStation) async {
     if (!graph.containsKey(startStation) || !graph.containsKey(endStation)) {
-      print("경로 없음: 출발역 $startStation 또는 도착역 $endStation 이 그래프에 존재하지 않음.");
-      return -1;
+      return {};
     }
 
-    // 2. 거리 배열 초기화
-    Map<String, double> distances = {}; // distances만 double 사용
+    Map<String, double> distances = {};
+    Map<String, double> durations = {};
+    Map<String, double> costs = {};
     Map<String, String?> previousNodes = {};
     Set<String> visited = {};
 
-    // 모든 노드의 초기 거리를 무한대로 설정
     for (var station in graph.keys) {
-      distances[station] = double.infinity; // 무한대 값
+      distances[station] = double.infinity;
+      durations[station] = double.infinity;
+      costs[station] = double.infinity;
       previousNodes[station] = null;
     }
 
-    // 시작 노드의 거리는 0으로 설정
     distances[startStation] = 0;
+    durations[startStation] = 0;
+    costs[startStation] = 0;
 
-    // 3. 방문할 노드를 저장할 우선순위 큐(리스트 사용)
     List<MapEntry<String, double>> queue = [];
-    queue.add(MapEntry(startStation, 0.0));
+    queue.add(MapEntry(startStation, 0));
 
     while (queue.isNotEmpty) {
-      // 4. 우선순위 큐에서 최소 거리 노드를 선택
       queue.sort((a, b) => a.value.compareTo(b.value));
       final current = queue.removeAt(0).key;
 
-      // 5. 이미 방문한 노드는 건너뜀
       if (visited.contains(current)) continue;
       visited.add(current);
 
-      // 6. 현재 노드의 이웃을 탐색
       for (var neighbor in graph[current] ?? []) {
         String nextStation = neighbor['station'];
-        int edgeWeight = neighbor['distance'];
+        int edgeDistance = neighbor['distance'];
+        int edgeDuration = neighbor['duration'];
+        int edgeCost = neighbor['cost'];
 
         if (visited.contains(nextStation)) continue;
 
-        // 7. 새로운 거리 계산
-        double newDistance = distances[current]! + edgeWeight;
+        double newDistance = distances[current]! + edgeDistance;
+        double newDuration = durations[current]! + edgeDuration;
+        double newCost = costs[current]! + edgeCost;
 
-        // 8. 최단 거리 갱신
         if (newDistance < distances[nextStation]!) {
           distances[nextStation] = newDistance;
+          durations[nextStation] = newDuration;
+          costs[nextStation] = newCost;
           previousNodes[nextStation] = current;
-
-          // 9. 우선순위 큐에 추가
           queue.add(MapEntry(nextStation, newDistance));
         }
       }
     }
 
-    // 10. 결과 출력
-    if (distances[endStation] == double.infinity) {
-      print("경로를 찾을 수 없습니다.");
-      return -1;
+    //경로를 path에 담음
+    List<String> path = [];
+    String? currentNode = endStation;
+    while (currentNode != null) {
+      path.insert(0, currentNode);
+      currentNode = previousNodes[currentNode];
     }
 
-    print("최단 거리: ${distances[endStation]!.toInt()}");
-    return distances[endStation]!.toInt();
+    Map<String, List<int>> lineData =
+        await fetchLineData(path); //경로에 해당하는 라인 정보를 담기 위해
+    int transferCount = calculateTransfers(lineData); //라인정보로 환승횟수를 계산하기 위해
+
+    //UIDetail에서 환승정보에 대한 역 정보들을 가져와서 findway에 넘길 값 저장
+    List<Map<String, dynamic>> uiDetails = await generateUIDetails(
+      path,
+      lineData,
+      durations,
+    );
+
+    return {
+      "distance": distances[endStation]!,
+      "duration": durations[endStation]!,
+      "cost": costs[endStation]!,
+      "path": uiDetails,
+      "transferCount": transferCount,
+    };
+  }
+
+  //path에 담긴 경로에 해당하는 라인값을 lineData에 담음
+  Future<Map<String, List<int>>> fetchLineData(List<String> path) async {
+    Map<String, List<int>> lineData = {};
+
+    for (int i = 0; i < path.length; i++) {
+      final stationData = await fetchStationData(path[i]);
+
+      if (stationData != null && stationData.containsKey('line')) {
+        List<int> currentLines = List<int>.from(stationData['line']);
+
+        if (i < path.length - 1) {
+          // 다음 역 데이터 가져오기
+          final nextStationData = await fetchStationData(path[i + 1]);
+
+          if (nextStationData != null && nextStationData.containsKey('line')) {
+            List<int> nextLines = List<int>.from(nextStationData['line']);
+            // 현재 라인과 다음 라인의 중복값 계산
+            List<int> commonLines =
+                currentLines.where((line) => nextLines.contains(line)).toList();
+
+            // 중복값이 있으면 중복값을 넣고 없으면 현재 라인을 추가
+            lineData[path[i]] =
+                commonLines.isNotEmpty ? commonLines : currentLines;
+          } else {
+            // 다음 역 데이터가 없는 경우 현재 라인을 그대로 추가
+            lineData[path[i]] = currentLines;
+          }
+        } else {
+          // 마지막 역일 경우 현재 라인을 그대로 추가
+          lineData[path[i]] = currentLines;
+        }
+      } else {
+        // 현재 역 데이터가 없으면 빈 리스트로 설정
+        lineData[path[i]] = [];
+      }
+    }
+
+    return lineData;
+  }
+
+  //환승횟수세기
+  int calculateTransfers(Map<String, List<int>> lineData) {
+    int transferCount = 0;
+    List<int> currentLines = lineData.entries.first.value;
+
+    for (var entry in lineData.entries.skip(1)) {
+      if (currentLines.every((line) => !entry.value.contains(line))) {
+        transferCount++;
+        currentLines = entry.value;
+      }
+    }
+
+    return transferCount;
+  }
+
+//findWay에서 가져온 UI를 가져와서 출력
+  Future<List<Map<String, dynamic>>> generateUIDetails(
+    List<String> path,
+    Map<String, List<int>> lineData,
+    Map<String, double> durations, // duration 값을 받음
+  ) async {
+    List<Map<String, dynamic>> uiDetails = [];
+    List<int> currentLines = lineData[path.first] ?? [];
+
+    // Firebase에서 특정 역 정보 가져오는 함수
+    Future<Map<String, dynamic>> fetchStationDetails(String stationName) async {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('station')
+          .doc(stationName)
+          .get();
+      return snapshot.data() ?? {};
+    }
+
+    // 첫 출발역 추가
+    final firstStationDetails = await fetchStationDetails(path.first);
+    uiDetails.add({
+      "line": currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
+      "stationName": path.first,
+      "quickExit": firstStationDetails['stationDetails']?['quickExit'] ?? "",
+      "doorSide": "", // 첫 출발역에서는 내리는 문 정보 없음
+      "duration": "", // 초기값
+    });
+
+    // 경로 순회하면서 환승 정보를 추가
+    for (int i = 1; i < path.length; i++) {
+      // 해당 구간의 duration
+      double currentSegmentDuration = durations[path[i - 1]] ?? 0;
+
+      // 환승이 발생한 경우
+      if (currentLines
+          .every((line) => !(lineData[path[i]] ?? []).contains(line))) {
+        // 환승 전 도착역
+        final prevStationDetails = await fetchStationDetails(path[i]);
+        uiDetails.add({
+          "line":
+              currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
+          "stationName": path[i], // 환승 전 도착역
+          "quickExit": "", // 중간 도착역에서는 빠른 하차 정보 없음
+          "doorSide": prevStationDetails['facilityInfo']?['doorSide'] ?? "",
+          "duration": currentSegmentDuration.toInt(), // 해당 구간의 duration
+        });
+
+        currentLines = lineData[path[i]] ?? [];
+
+        // 환승 후 출발역
+        final nextStationDetails = await fetchStationDetails(path[i]);
+        uiDetails.add({
+          "line":
+              currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
+          "stationName": path[i], // 환승 후 출발역
+          "quickExit": nextStationDetails['stationDetails']?['quickExit'] ?? "",
+          "doorSide": "", // 출발역에서는 내리는 문 정보 없음
+          "duration": "", // 환승 후 출발 시점에서는 duration 출력하지 않음
+        });
+      }
+    }
+
+    // 최종 도착역 추가
+    final lastStationDetails = await fetchStationDetails(path.last);
+    uiDetails.add({
+      "line": currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
+      "stationName": path.last,
+      "quickExit": "", // 최종 도착역에서는 빠른 하차 정보 없음
+      "doorSide": lastStationDetails['facilityInfo']?['doorSide'] ?? "",
+      "duration":
+          durations[path[path.length - 2]]?.toInt() ?? 0, // 최종 구간의 duration
+    });
+
+    return uiDetails;
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          leading: GestureDetector(
-            onTap: () {
-              if (Navigator.canPop(context)) {
-                Navigator.pop(context);
-              } else {
-                print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음');
-              }
-            },
-            child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
-          ),
-          title: Text(
-            '길찾기',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Color(0xff22536F),
-            ),
-          ).tr(),
-          backgroundColor: Colors.white,
-          elevation: 0,
-        ),
-        body: FutureBuilder(
-          future: Future.wait([buildGraph()]),
-          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text("데이터를 불러오는 중 오류가 발생했습니다."));
-            } else if (!snapshot.hasData) {
-              return Center(
-                child: Text("출발역 또는 도착역 정보를 찾을 수 없습니다."),
-              );
-            }
-
-            // 다익스트라 호출
-            int shortestDistance =
-                dijkstra(widget.startStation, widget.endStation);
-            print("최단 거리 = $shortestDistance");
-
-            return ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              children: [
-                Text("출발역: ${widget.startStation}"),
-                Text("도착역: ${widget.endStation}"),
-                _buildTravelDetails(shortestDistance),
-              ],
-            );
+    return Scaffold(
+      appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
           },
+          child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
         ),
+        title: Text('길찾기').tr(),
+        backgroundColor: Colors.white,
       ),
-    );
-  }
+      body: FutureBuilder(
+        future: Future.wait([startStationData, endStationData]),
+        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("데이터를 불러오는 중 오류가 발생했습니다."));
+          } else if (!snapshot.hasData || snapshot.data!.length < 2) {
+            return Center(
+              child: Text("출발역 또는 도착역 정보를 찾을 수 없습니다."),
+            );
+          }
 
-  Widget _buildCircleWithText(String stationName) {
-    return Container(
-      width: 100,
-      height: 100,
-      decoration: BoxDecoration(
-        color: Colors.blue,
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: Text(
-          stationName,
-          style: TextStyle(color: Colors.white, fontSize: 20),
-        ),
-      ),
-    );
-  }
+          final startData = snapshot.data![0] as Map<String, dynamic>;
+          final endData = snapshot.data![1] as Map<String, dynamic>;
 
-  Widget _buildStationInfo(Map<String, dynamic>? data) {
-    return data == null
-        ? Text("역 정보를 가져올 수 없습니다.")
-        : Text(
-            "역 정보: ${data['stationDetails']['quickExit']}",
-            style: TextStyle(fontSize: 16),
+          return FutureBuilder(
+            future: dijkstra(
+              startData['routeInfo']['startStation'].toString(),
+              endData['routeInfo']['startStation'].toString(),
+            ),
+            builder:
+                (context, AsyncSnapshot<Map<String, dynamic>> dijkstraResult) {
+              if (dijkstraResult.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (dijkstraResult.hasError) {
+                return Center(child: Text("최단 경로 계산 중 오류 발생."));
+              } else if (!dijkstraResult.hasData) {
+                return Center(
+                  child: Text("경로를 찾을 수 없습니다."),
+                );
+              }
+
+              final result = dijkstraResult.data!;
+              return _buildPageContent(result, startData, endData);
+            },
           );
+        },
+      ),
+    );
   }
 
-  Widget _buildTravelDetails(int distance) {
+  Widget _buildPageContent(Map<String, dynamic> result,
+      Map<String, dynamic> startData, Map<String, dynamic> endData) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20),
-      child: Text(
-        distance == -1 ? "출발역에서 도착역으로 가는 경로를 찾을 수 없습니다." : "최소 거리: $distance m",
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      padding: EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              _buildButton('최소 거리 순', isMinDistanceSelected, () {
+                setState(() {
+                  isMinDistanceSelected = true;
+                });
+              }),
+              SizedBox(width: 10),
+              _buildButton('최소 환승 순', !isMinDistanceSelected, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MinimumTransfer(
+                      startStation: widget.startStation,
+                      endStation: widget.endStation,
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
+          SizedBox(height: 16),
+          Center(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.only(left: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
+                  children: [
+                    // 소요 시간 텍스트
+                    Text(
+                      "소요 시간",
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                    ),
+                    // 소요 시간 값
+                    Text(
+                      "${(result['duration'] / 60).floor()}분 ${(result['duration'] % 60).toInt()}초",
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff4C4C4C),
+                      ),
+                    ),
+                    SizedBox(height: 5), // 항목 간의 간격
+
+                    // 환승 정보, 비용 정보, 거리 정보는 한 줄로 배치
+                    Text(
+                      "환승 ${result['transferCount']}회 | 비용 ${result['cost']}원 | 거리 ${(result['distance'] / 1000).toStringAsFixed(2)}km",
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 25),
+          _buildTravelDetails(result['path']),
+        ],
       ),
+    );
+  }
+
+  Widget _buildButton(String text, bool isSelected, Function onPressed) {
+    return GestureDetector(
+      onTap: () => onPressed(),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+        decoration: BoxDecoration(
+          color: isSelected ? Color(0xff397394) : Colors.white,
+          border: Border.all(color: Color(0xff397394)),
+          borderRadius: BorderRadius.circular(28),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 16,
+            color: isSelected ? Colors.white : Color(0xff397394),
+          ),
+        ),
+      ),
+    );
+  }
+
+  //findway에 값을 넘겨주기 위함
+  Widget _buildTravelDetails(List<Map<String, dynamic>> uiDetails) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: uiDetails.map((detail) {
+        return findWay(
+          lineNumber: detail['line'].toString(),
+          stationName: detail['stationName'],
+          quickExit: detail['quickExit'] ?? "",
+          doorSide: detail['doorSide'] ?? "",
+          duration: detail['duration'] != ""
+              ? "${(detail['duration'] / 60).floor()}분 ${(detail['duration'] % 60).toInt()}초"
+              : "", // duration이 비어있을 경우 출력하지 않음
+        );
+      }).toList(),
     );
   }
 }

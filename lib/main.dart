@@ -29,7 +29,6 @@ Future<Map<String, dynamic>?> main() async {
   try {
     await Firebase.initializeApp();
     print('Firebase initialized successfully');
- 
   } catch (e) {
     print('failed: $e');
   }
@@ -52,7 +51,6 @@ Future<Map<String, dynamic>?> main() async {
     ),
   );
 }
-
 
 class SmartSubway extends StatelessWidget {
   const SmartSubway({super.key});
@@ -218,12 +216,12 @@ class _Home extends State<Home> {
                                 builder: (context) => SearchStationPage(),
                               ),
                             );
-                        },
-                      ),
-                    ],
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
                 // 노선도 이미지 추가
                 Expanded(
                   child: Stack(
@@ -290,6 +288,13 @@ class _Home extends State<Home> {
           ),
           
           if (_isMenuVisible) // 좌측 - 메뉴바 카테고리별 이동
+            ...[
+            GestureDetector(
+              onTap: _toggleMenuVisibility, // 배경 누르면 메뉴 닫힘
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+              ),
+            ),
             MenuOverlay(
               onClose: _toggleMenuVisibility,
               onSearchTap: () {
@@ -318,6 +323,7 @@ class _Home extends State<Home> {
                 );
               },
             ),
+          ],
         ],
       ),
             // 하단바
@@ -341,6 +347,7 @@ class _Home extends State<Home> {
           ),
         ),
       ),
+      
     );
   }
 }
