@@ -10,9 +10,19 @@ class SharedStationData {
   //앱 전체에서 공유되는 검색기록을 관리
   //모든 화면에서 공통적으로 참조되는 검색기록
   static void addSearchHistory(Map<String, dynamic> station) {
-    // 중복 항목 방지
-    searchHistory.removeWhere((item) => item['name'] == station['name']);
-    // 리스트의 맨 위에 삽입
+    // 기존 검색 기록에서 해당 역 찾기
+    final existingStation = searchHistory.firstWhere(
+      (item) => item['name'] == station['name'],
+      orElse: () => <String, dynamic>{}, // 빈 맵 반환
+    );
+
+    // 기존 즐겨찾기 상태 유지
+    if (existingStation.isNotEmpty) {
+      station['isFavorite'] = existingStation['isFavorite'];
+      searchHistory.remove(existingStation); // 기존 항목 삭제
+    }
+
+    // 새 검색 기록 추가
     searchHistory.insert(0, station);
   }
 

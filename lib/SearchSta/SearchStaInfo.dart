@@ -8,6 +8,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/FIndWay/WriteStation.dart';
+import 'package:flutter_application_1/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../util/firebaseUtil.dart';
 import 'package:flutter_application_1/util/firebaseGetPrev.dart';
@@ -28,42 +29,51 @@ class SearchStaInfo extends StatefulWidget {
 }
 
 class _SearchStaInfo extends State<SearchStaInfo> {
-  List<Map<String, dynamic>> _searchHistory = SharedStationData.searchHistory;
+  late List<Map<String, dynamic>> _searchHistory;
   late Future<Map<String, dynamic>?> stationData;
-  late Future<bool> isFavorite;
+  bool isFavorite = false;
+  late String _favImagePath;
 
- @override
-void initState() {
-  super.initState();
-  stationData = fetchStationData(widget.stationName);
-  isFavorite = _loadFavoriteStatus(widget.stationName);
-}
-
-  Future<bool> _loadFavoriteStatus(String stationName) async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(stationName) ?? false;
+  @override
+  void initState() {
+    super.initState();
+    stationData = fetchStationData(widget.stationName);
+    //isFavorite = SharedStationData.searchHistory.any(
+    //  (station) => station['name'] == widget.stationName && station['isFavorite'] == true,
+    //);
+    _loadSearchHistory();
+    //_loadFavoriteStatus();
   }
 
-  Future<void> _toggleFavorite(int index) async {
-    final prefs = await SharedPreferences.getInstance();
-    final currentStatus = await _loadFavoriteStatus(_searchHistory[index]['name']);
-    
-    
+  Future<void> _loadSearchHistory() async {
     setState(() {
-      isFavorite = Future.value(!currentStatus);
-      SharedStationData.toggleFavoriteStatus(widget.stationName);
+      _searchHistory = SharedStationData.searchHistory; // SharedStationData에서 최신 데이터 로드
     });
-
-    await prefs.setBool(widget.stationName, !currentStatus);
-    print('${widget.stationName} 즐겨찾기 상태: ${!currentStatus}');
   }
-  
 
-  /*void _toggleFavorite(int index) {
+  /*  void _toggleFavorite() {
     setState(() {
       SharedStationData.toggleFavoriteStatus(widget.stationName);
+      // 현재 상태를 반영
+      isFavorite = !isFavorite;
     });
   }*/
+
+  // 즐겨찾기 상태 로드
+  Future<void> _loadFavoriteStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isFavorite = prefs.getBool(widget.stationName) ?? false;
+    });
+  }
+
+  // 즐겨찾기 상태 토글
+  void _toggleFavImage(int index) {
+    setState(() {
+      SharedStationData.toggleFavoriteStatus(_searchHistory[index]['name']);
+    });
+  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -73,12 +83,23 @@ void initState() {
         leading: GestureDetector(
           onTap: () {
             if (Navigator.canPop(context)) {
-              Navigator.pop(context, true); // 데이터를 갱신하도록 플래그 전달
+              Navigator.pop(context);
+            } else {
+              print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음'); // 디버깅용 로그
             }
           },
-          child: const Icon(Icons.arrow_back, color: Color(0xff22536F)),
+          child: Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
         ),
-        backgroundColor: Colors.white,
+        title: Text(
+          '역검색',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            height: 60.0,
+            color: Color.fromARGB(255, 255, 255, 255),
+          ),
+        ).tr(),
+        backgroundColor: Color.fromARGB(204, 34, 83, 111),
         elevation: 0,
       ),
       body: FutureBuilder<Map<String, dynamic>?>(
@@ -130,10 +151,31 @@ void initState() {
             );
         },
       ),
+                  // 하단바
+      bottomNavigationBar: Container(
+        height: 60.0, // 높이 조절
+        color: const Color.fromARGB(204, 34, 83, 111), // 배경색 설정
+        child: Center(
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Home(), // Home()으로 이동
+                ),
+              );
+            },
+            child: Image.asset(
+              'assets/images/homeLight.png',
+              width: 35,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
-    // 지도 이미지
+// 지도 이미지
 Widget _buildMapImage() {
     return Container(
       width: double.infinity,
@@ -151,34 +193,12 @@ Widget _buildMapImage() {
     );
   }
 
-  // 동그라미(호선)와 역 이름
+// 동그라미(호선)와 역 이름
 Widget _buildCircleWithText(String stationName) {
-  bool isFavorite = false;
-
-  // 즐겨찾기 상태 로드
-  Future<void> _loadFavoriteStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isFavorite = prefs.getBool(stationName) ?? false;
-    });
-  }
-
-  // 즐겨찾기 상태 토글
-  Future<void> _toggleFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isFavorite = !isFavorite;
-    });
-    await prefs.setBool(stationName, isFavorite);
-    print('$stationName 즐겨찾기 상태: $isFavorite');
-  }
-
-  // 첫 로드 시 즐겨찾기 상태 가져오기
-  _loadFavoriteStatus();
 
   // 각 호선마다 색상 가져오기
   final color = SubwayColors.getColor(stationName.substring(0, 1));
-
+  
   return Column(
     children: [
       // 호선 색깔
@@ -225,22 +245,17 @@ Widget _buildCircleWithText(String stationName) {
                 textAlign: TextAlign.center, // 텍스트를 가운데 정렬
               ),
             ),
-
             // 즐겨찾기 아이콘
-            GestureDetector(
-              onTap: () async {
-                // 즐겨찾기 상태를 반전
-                await _toggleFavorite();
-              },
-              child: Image.asset(
-                isFavorite
-                    ? 'assets/images/favStarFill.png' // 즐겨찾기 상태일 때 채워진 별
-                    : 'assets/images/favStar.png',    // 즐겨찾기 상태가 아닐 때 빈 별
-                width: 24,
-                height: 24,
+            /*  GestureDetector(
+                onTap: _toggleFavorite,
+                child: Image.asset(
+                  isFavorite
+                      ? 'assets/images/favStarFill.png' // 즐겨찾기 상태일 때
+                      : 'assets/images/favStar.png',    // 즐겨찾기 상태가 아닐 때
+                  width: 24,
+                  height: 24,
               ),
-            ),
-
+            ),*/
           ],
         ),
       ),
@@ -252,12 +267,13 @@ Widget _buildCircleWithText(String stationName) {
 
 // 이전역, 다음역 및 출발역, 도착역 버튼
 Widget _buildStationNavigationAndButtons() {
-  
+  int current = int.parse(widget.stationName);
+
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween, // 아이템 간 간격 설정
     children: [
       // 이전역
-      _buildStationNavigation('이전역', false),
+      _buildStationNavigation((current-1).toString(), false),
 
       // 출발역과 도착역 (클릭시 해당 값과 함께 페이지 이동)
       Row(
@@ -318,17 +334,39 @@ Widget _buildStationNavigationAndButtons() {
       ),
 
       // 다음역
-      _buildStationNavigation('다음역', true),
+      _buildStationNavigation((current+1).toString(), true),
     ],
   );
 }
 
 // 이전역 다음역
 Widget _buildStationNavigation(String label, bool isNext) {
+  String displayText = "";
+  final number = int.tryParse(label) ?? 0;
+  if ((101 <= number && number <= 123) || // 1호선
+      (201 <= number && number <= 217) || // 2호선
+      (301 <= number && number <= 308) || // 3호선
+      (401 <= number && number <= 417) || // 4호선
+      (501 <= number && number <= 507) || // 5호선
+      (601 <= number && number <= 622) || // 6호선
+      (701 <= number && number <= 707) || // 7호선
+      (801 <= number && number <= 806) || // 8호선
+      (901 <= number && number <= 904)) { // 9호선
+    displayText = label; 
+  } else {
+    displayText = "종점"; 
+  }
     return Row(
       children: [
         if (!isNext)
-          Container(
+        GestureDetector(
+          onTap: () {
+            Navigator.push(context, 
+              MaterialPageRoute(builder: (context) =>
+              SearchStaInfo(stationName: displayText, searchHistory: _searchHistory))
+            );
+          },
+          child: Container(
             width: 24,
             height: 24,
             decoration: BoxDecoration(
@@ -338,18 +376,26 @@ Widget _buildStationNavigation(String label, bool isNext) {
               ),
             ),
           ),
+        ),
         SizedBox(width: 10),
         Text(
-          label,
+          displayText,
           style: TextStyle(
             color: Color(0xff676363),
             fontSize: 16,
           ),
         ),
         if (isNext)
-          Transform(
+        GestureDetector(
+          onTap: () {
+            Navigator.push(context, 
+              MaterialPageRoute(builder: (context) =>
+              SearchStaInfo(stationName: displayText, searchHistory: _searchHistory))
+            );
+          },
+          child: Transform(
             alignment: Alignment.center,
-            transform: Matrix4.rotationY(3.14159),
+            transform: Matrix4.rotationY(3.14159), // Y축 회전
             child: Container(
               width: 24,
               height: 24,
@@ -361,6 +407,7 @@ Widget _buildStationNavigation(String label, bool isNext) {
               ),
             ),
           ),
+        ),
       ],
     );
 }

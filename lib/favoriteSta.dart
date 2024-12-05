@@ -1,6 +1,7 @@
 // 즐겨찾기 화면
 //11.29 SharedStationData를 통해 favoriteOnly를 관리
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/SearchSta/SearchStaInfo.dart';
 import 'package:flutter_application_1/main.dart';
 import './util/util.dart';
 import './widgets//searchResultItem.dart';
@@ -31,6 +32,13 @@ class _FavoriteStaState extends State<FavoriteSta> {
     setState(() {
       SharedStationData.toggleFavoriteStatus(favoriteOnly[index]['name']);
     });
+  }
+
+      // 숫자만 추출하는 함수
+  String extractNumber(String input) {
+    final RegExp numberRegex = RegExp(r'\d+'); // 숫자에 해당하는 정규식
+    final match = numberRegex.firstMatch(input);
+    return match?.group(0) ?? ''; // 숫자가 없으면 빈 문자열 반환
   }
 
   @override
@@ -70,24 +78,43 @@ class _FavoriteStaState extends State<FavoriteSta> {
               ).tr(),
             )
           : ListView.builder(
-              // 리스트에 항목이 있을 때
-              padding: const EdgeInsets.all(8.0),
-              itemCount: favoriteOnly.length,
-              itemBuilder: (context, index) {
-                final record = favoriteOnly[index];
-                return SearchResultItem(
-                  stationName: record['name'] +" "+"역".tr(),
+            padding: const EdgeInsets.all(8.0),
+            itemCount: favoriteOnly.length,
+            itemBuilder: (context, index) {
+              final record = favoriteOnly[index];
+
+              return GestureDetector(
+                onTap: () {
+                  final stationNumber = extractNumber(record['name']); // 숫자 추출
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchStaInfo(
+                        stationName: stationNumber, // 숫자만 전달
+                        searchHistory: [],
+                      ),
+                    ),
+                  );
+                },
+                child: SearchResultItem(
+                  stationName: record['name'] + " " + "역".tr(),
                   favImagePath: record['isFavorite']
                       ? 'assets/images/favStarFill.png'
                       : 'assets/images/favStar.png',
-                  onToggleFav: () => _toggleFavorite(index), // 상태 변경
+                  onToggleFav: () {
+                    setState(() {
+                      SharedStationData.toggleFavoriteStatus(record['name']);
+                    });
+                  },
                   onSelect: () {
                     // 기록에 있는 역을 검색창으로
                     Navigator.pop(context, record['name']);
                   },
-                );
-              },
-            ),
+                ),
+              );
+            },
+          ),
+
           // 하단바
           bottomNavigationBar: Container(
             height: 60.0, // 높이 조절
