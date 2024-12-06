@@ -4,10 +4,12 @@
 
 해보려고 했지만 할 수 없음
  */
+//12.06 모든게 잘 나오는 듯 싶음
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/FindWay/minimumTransfer.dart';
+import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/widgets/findWay.dart';
 
 import '../util/firebaseUtil.dart';
@@ -183,28 +185,22 @@ class _minimumDistanceState extends State<minimumDistance> {
         List<int> currentLines = List<int>.from(stationData['line']);
 
         if (i < path.length - 1) {
-          // 다음 역 데이터 가져오기
           final nextStationData = await fetchStationData(path[i + 1]);
 
           if (nextStationData != null && nextStationData.containsKey('line')) {
             List<int> nextLines = List<int>.from(nextStationData['line']);
-            // 현재 라인과 다음 라인의 중복값 계산
             List<int> commonLines =
                 currentLines.where((line) => nextLines.contains(line)).toList();
 
-            // 중복값이 있으면 중복값을 넣고 없으면 현재 라인을 추가
             lineData[path[i]] =
                 commonLines.isNotEmpty ? commonLines : currentLines;
           } else {
-            // 다음 역 데이터가 없는 경우 현재 라인을 그대로 추가
             lineData[path[i]] = currentLines;
           }
         } else {
-          // 마지막 역일 경우 현재 라인을 그대로 추가
           lineData[path[i]] = currentLines;
         }
       } else {
-        // 현재 역 데이터가 없으면 빈 리스트로 설정
         lineData[path[i]] = [];
       }
     }
@@ -227,9 +223,8 @@ class _minimumDistanceState extends State<minimumDistance> {
     return transferCount;
   }
 
-//duration문제점 찾음: 지금까지 durations<--를 출력하고 자빠져있었삼;;
-//역의 duration을 가져와서 더해야함 ,, 바보멍청이 ㅋ
-//findWay에서 가져온 UI를 가져와서 출력
+//durations(누적 소요시간 값)을 그냥 받아와서 그 전 durations를 뺴는걸로...
+//findway에 값을 넘겨주기 위한 함수
   Future<List<Map<String, dynamic>>> generateUIDetails(
     List<String> path,
     Map<String, List<int>> lineData,
@@ -277,13 +272,13 @@ class _minimumDistanceState extends State<minimumDistance> {
         uiDetails.add({
           "line":
               currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
-          "stationName": path[i], // 환승 전 도착역
-          "quickExit": "", // 중간 도착역에서는 빠른 하차 정보 없음
+          "stationName": path[i],
+          "quickExit": "",
           "doorSide": prevStationDetails['facilityInfo']?['doorSide'] ?? "",
-          "duration": accumulatedDuration.toInt(), // 누적된 duration 출력
+          "duration": accumulatedDuration.toInt(),
         });
 
-        // 누적 duration 초기화 및 환승 지점 업데이트
+        // 누적 duration 초기화 및 환승 지점
         accumulatedDuration = 0;
         lastTransferIndex = i;
         currentLines = lineData[path[i]] ?? [];
@@ -293,10 +288,10 @@ class _minimumDistanceState extends State<minimumDistance> {
         uiDetails.add({
           "line":
               currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
-          "stationName": path[i], // 환승 후 출발역
+          "stationName": path[i],
           "quickExit": nextStationDetails['stationDetails']?['quickExit'] ?? "",
-          "doorSide": "", // 출발역에서는 내리는 문 정보 없음
-          "duration": "", // 환승 후 출발 시점에서는 duration 출력하지 않음
+          "doorSide": "",
+          "duration": "",
         });
       }
     }
@@ -306,9 +301,9 @@ class _minimumDistanceState extends State<minimumDistance> {
     uiDetails.add({
       "line": currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
       "stationName": path.last,
-      "quickExit": "", // 최종 도착역에서는 빠른 하차 정보 없음
+      "quickExit": "",
       "doorSide": lastStationDetails['facilityInfo']?['doorSide'] ?? "",
-      "duration": accumulatedDuration.toInt(), // 최종 누적 duration 출력
+      "duration": accumulatedDuration.toInt(),
     });
 
     return uiDetails;
@@ -365,6 +360,26 @@ class _minimumDistanceState extends State<minimumDistance> {
             },
           );
         },
+      ),
+      bottomNavigationBar: Container(
+        height: 60.0, // 높이 조절
+        color: const Color.fromARGB(204, 34, 83, 111), // 배경색 설정
+        child: Center(
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Home(), // Home()으로 이동
+                ),
+              );
+            },
+            child: Image.asset(
+              'assets/images/homeLight.png',
+              width: 35,
+            ),
+          ),
+        ),
       ),
     );
   }

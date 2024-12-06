@@ -326,7 +326,7 @@ class _Home extends State<Home> {
           ],
         ],
       ),
-            // 하단바
+      // 하단바
       bottomNavigationBar: Container(
         height: 60.0, // 높이 조절
         color: const Color.fromARGB(204, 34, 83, 111), // 배경색 설정
