@@ -274,7 +274,7 @@ class _Home extends State<Home> {
                             ].map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
-                                child: Text(value),
+                                child: Text(value).tr(),
                               );
                             }).toList(),
                           ),

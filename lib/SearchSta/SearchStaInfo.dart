@@ -91,7 +91,7 @@ class _SearchStaInfo extends State<SearchStaInfo> {
           child: Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
         ),
         title: Text(
-          '역검색',
+          '역 검색',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -298,7 +298,7 @@ Widget _buildStationNavigationAndButtons() {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                '출발역',
+                '출발역'.tr(),
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
@@ -325,7 +325,7 @@ Widget _buildStationNavigationAndButtons() {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                '도착역',
+                '도착역'.tr(),
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
@@ -418,17 +418,17 @@ Widget _buildStationInfo(Map<String, dynamic>? stationDetails) {
     if (stationDetails == null) return SizedBox();
 
     return _buildSection(
-      title: '역 정보',
+      title: '역 정보'.tr(),
       content: Row(
         children: [
-          _buildDetailText('배차시간', 
+          _buildDetailText('배차시간'.tr(), 
           stationDetails['schedule']?['interval'] != null
-            ? '${stationDetails['schedule']?['interval']}분'
+            ? '${stationDetails['schedule']?['interval']}' + " "+'분'.tr()
             : '정보 없음'),
           SizedBox(width: 20),
-          _buildDetailText_lastTime('막차', stationDetails['schedule']?['lastTrainTime']),
+          _buildDetailText_lastTime('막차'.tr(), stationDetails['schedule']?['lastTrainTime']),
           SizedBox(width: 50),
-          _buildDetailText('빠른하차', stationDetails['quickExit']),
+          _buildDetailText('빠른하차'.tr(), stationDetails['quickExit']),
         ],
       ),
     );
@@ -439,16 +439,16 @@ Widget _buildFacilityInfo(Map<String, dynamic>? facilityInfo) {
     if (facilityInfo == null) return SizedBox();
 
     return _buildSection(
-      title: '시설 정보',
+      title: '시설 정보'.tr(),
       content: Column(
         children: [
           Row(children: [
-          _buildDetailText('내리는문', facilityInfo['doorSide']),
+          _buildDetailText('내리는문'.tr(), facilityInfo['doorSide'].toString().tr()),
           SizedBox(width: 100),
-          _buildDetailText('화장실', facilityInfo['restrooms']),
+          _buildDetailText('화장실'.tr(), facilityInfo['restrooms']),
           ]),
           Row(children: [
-            _buildDetailText('플랫폼', facilityInfo['platformType']),
+            _buildDetailText('플랫폼'.tr(), facilityInfo['platformType'].toString().tr()),
           ]),
 
         ],
@@ -461,18 +461,18 @@ Widget _buildConvenienceInfo(Map<String, dynamic>? amenities) {
     if (amenities == null) return SizedBox();
 
     return _buildSection(
-      title: '편의 시설',
+      title: '편의 시설'.tr(),
       content: Column(
         children: [
           Row(children: [
-            _buildDetailTextAmenities('편의점 / 카페',amenities['store']),
+            _buildDetailTextAmenities('편의점 / 카페'.tr(),amenities['store']),
             SizedBox(width: 105),
-            _buildDetailTextAmenities('유실물센터', amenities['foundCenter']),
+            _buildDetailTextAmenities('유실물센터'.tr(), amenities['foundCenter']),
           ]),
           Row(children: [
-          _buildDetailTextAmenities('물품보관소', amenities['storageRoom']),
+          _buildDetailTextAmenities('물품보관소'.tr(), amenities['storageRoom']),
           SizedBox(width: 120),
-          _buildDetailTextAmenities('엘리베이터', amenities['elevator']),
+          _buildDetailTextAmenities('엘리베이터'.tr(), amenities['elevator']),
           ],)
         ],
       ),
@@ -484,7 +484,7 @@ Widget _buildWeatherInfo(Map<String, dynamic>? weatherInfo) {
   if (weatherInfo == null) return SizedBox();
 
   return _buildSection(
-    title: '날씨 정보',
+    title: '날씨 정보'.tr(),
     content: Center(
       child: Container(
         width: double.infinity, // 화면 너비에 맞춤
@@ -512,7 +512,7 @@ Widget _buildWeatherInfo(Map<String, dynamic>? weatherInfo) {
               ),
               SizedBox(width: 10),
               Text(
-                '${widget.stationName}' + " 역",
+                '${widget.stationName}' + " "+"역".tr(),
                 style: TextStyle(fontSize: 25, color: Color(0xff676363)),
               ),
               SizedBox(width: 50),
@@ -528,13 +528,13 @@ Widget _buildWeatherInfo(Map<String, dynamic>? weatherInfo) {
                       ),
                       SizedBox(width: 20),
                       Text(
-                        '${weatherInfo['condition']}',
+                        '${weatherInfo['condition'].toString().tr()}',
                         style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                   Text(
-                    '체감온도 : ${weatherInfo['perceivedTem']}°C / 습도 : ${weatherInfo['humidity']}%',
+                    '체감온도'.tr() +' : ' + '${weatherInfo['perceivedTem']}°C / ' + '습도'.tr()+' : '+'${weatherInfo['humidity']}%',
                     style: TextStyle(fontSize: 11),
                   ),
                 ],

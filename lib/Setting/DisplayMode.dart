@@ -29,7 +29,7 @@ class _DisplayModePageState extends State<DisplayModePage> {
           child: Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
         ),
         title: Text(
-          '화면모드',
+          '화면 모드',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,

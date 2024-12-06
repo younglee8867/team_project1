@@ -5,6 +5,20 @@ import 'package:flutter_application_1/killingTime/miniGame.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_application_1/main.dart';
 
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: KillingTimeGame(),
+    );
+  }
+}
+
+
 class KillingTimeGame extends StatefulWidget {
   @override
   _KillingTimeGame createState() => _KillingTimeGame();
