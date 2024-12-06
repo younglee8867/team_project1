@@ -4,6 +4,7 @@
 
 해보려고 했지만 할 수 없음
  */
+//12.06 모든게 잘 나오는 듯 싶음
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -150,6 +151,8 @@ class _minimumDistanceState extends State<minimumDistance> {
       currentNode = previousNodes[currentNode];
     }
 
+    print(path);
+
     Map<String, List<int>> lineData =
         await fetchLineData(path); //경로에 해당하는 라인 정보를 담기 위해
     int transferCount = calculateTransfers(lineData); //라인정보로 환승횟수를 계산하기 위해
@@ -181,28 +184,22 @@ class _minimumDistanceState extends State<minimumDistance> {
         List<int> currentLines = List<int>.from(stationData['line']);
 
         if (i < path.length - 1) {
-          // 다음 역 데이터 가져오기
           final nextStationData = await fetchStationData(path[i + 1]);
 
           if (nextStationData != null && nextStationData.containsKey('line')) {
             List<int> nextLines = List<int>.from(nextStationData['line']);
-            // 현재 라인과 다음 라인의 중복값 계산
             List<int> commonLines =
                 currentLines.where((line) => nextLines.contains(line)).toList();
 
-            // 중복값이 있으면 중복값을 넣고 없으면 현재 라인을 추가
             lineData[path[i]] =
                 commonLines.isNotEmpty ? commonLines : currentLines;
           } else {
-            // 다음 역 데이터가 없는 경우 현재 라인을 그대로 추가
             lineData[path[i]] = currentLines;
           }
         } else {
-          // 마지막 역일 경우 현재 라인을 그대로 추가
           lineData[path[i]] = currentLines;
         }
       } else {
-        // 현재 역 데이터가 없으면 빈 리스트로 설정
         lineData[path[i]] = [];
       }
     }
@@ -225,7 +222,8 @@ class _minimumDistanceState extends State<minimumDistance> {
     return transferCount;
   }
 
-//findWay에서 가져온 UI를 가져와서 출력
+//durations(누적 소요시간 값)을 그냥 받아와서 그 전 durations를 뺴는걸로...
+//findway에 값을 넘겨주기 위한 함수
   Future<List<Map<String, dynamic>>> generateUIDetails(
     List<String> path,
     Map<String, List<int>> lineData,
@@ -233,6 +231,8 @@ class _minimumDistanceState extends State<minimumDistance> {
   ) async {
     List<Map<String, dynamic>> uiDetails = [];
     List<int> currentLines = lineData[path.first] ?? [];
+    double accumulatedDuration = 0; // 누적 duration 저장 변수
+    int lastTransferIndex = 0; // 마지막 환승 발생 지점 인덱스 저장
 
     // Firebase에서 특정 역 정보 가져오는 함수
     Future<Map<String, dynamic>> fetchStationDetails(String stationName) async {
@@ -255,8 +255,13 @@ class _minimumDistanceState extends State<minimumDistance> {
 
     // 경로 순회하면서 환승 정보를 추가
     for (int i = 1; i < path.length; i++) {
-      // 해당 구간의 duration
-      double currentSegmentDuration = durations[path[i - 1]] ?? 0;
+      // 현재 구간의 누적 duration 계산
+      if (i > lastTransferIndex) {
+        accumulatedDuration =
+            durations[path[i]]! - durations[path[lastTransferIndex]]!;
+      } else {
+        accumulatedDuration += durations[path[i]]!;
+      }
 
       // 환승이 발생한 경우
       if (currentLines
@@ -266,12 +271,15 @@ class _minimumDistanceState extends State<minimumDistance> {
         uiDetails.add({
           "line":
               currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
-          "stationName": path[i], // 환승 전 도착역
-          "quickExit": "", // 중간 도착역에서는 빠른 하차 정보 없음
+          "stationName": path[i],
+          "quickExit": "",
           "doorSide": prevStationDetails['facilityInfo']?['doorSide'] ?? "",
-          "duration": currentSegmentDuration.toInt(), // 해당 구간의 duration
+          "duration": accumulatedDuration.toInt(),
         });
 
+        // 누적 duration 초기화 및 환승 지점
+        accumulatedDuration = 0;
+        lastTransferIndex = i;
         currentLines = lineData[path[i]] ?? [];
 
         // 환승 후 출발역
@@ -279,10 +287,10 @@ class _minimumDistanceState extends State<minimumDistance> {
         uiDetails.add({
           "line":
               currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
-          "stationName": path[i], // 환승 후 출발역
+          "stationName": path[i],
           "quickExit": nextStationDetails['stationDetails']?['quickExit'] ?? "",
-          "doorSide": "", // 출발역에서는 내리는 문 정보 없음
-          "duration": "", // 환승 후 출발 시점에서는 duration 출력하지 않음
+          "doorSide": "",
+          "duration": "",
         });
       }
     }
@@ -292,10 +300,9 @@ class _minimumDistanceState extends State<minimumDistance> {
     uiDetails.add({
       "line": currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
       "stationName": path.last,
-      "quickExit": "", // 최종 도착역에서는 빠른 하차 정보 없음
+      "quickExit": "",
       "doorSide": lastStationDetails['facilityInfo']?['doorSide'] ?? "",
-      "duration":
-          durations[path[path.length - 2]]?.toInt() ?? 0, // 최종 구간의 duration
+      "duration": accumulatedDuration.toInt(),
     });
 
     return uiDetails;
