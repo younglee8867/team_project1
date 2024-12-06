@@ -30,7 +30,7 @@ class MenuOverlay extends StatelessWidget {
             right: 0,
             child: Container(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
+              height: MediaQuery.of(context).size.height * 0.94,
               alignment: Alignment.topLeft,
               child: Stack(
                 children: [

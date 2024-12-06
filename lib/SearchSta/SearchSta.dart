@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/killingTime/killingTime.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_application_1/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // 위젯
 import '../widgets/searchBar.dart';
@@ -45,10 +47,14 @@ class _SearchStationPageState extends State<SearchStationPage> {
   @override
   void initState() {
     super.initState();
-    isFavorite = false;
-    _favImagePath = '../assets/images/favStar.png';
-    _searchHistory = SharedStationData.searchHistory; // SharedStationData 사용
+    _loadSearchHistory(); // SharedStationData 사용
   }
+
+  Future<void> _loadSearchHistory() async {
+  setState(() {
+    _searchHistory = SharedStationData.searchHistory; // SharedStationData에서 최신 데이터 로드
+  });
+}
 
   // 메뉴 표시/숨기기 토글
   void _toggleMenuVisibility() {
@@ -71,6 +77,7 @@ class _SearchStationPageState extends State<SearchStationPage> {
         "name": stationName,
         "isFavorite": false,
       });
+       _searchHistory = SharedStationData.searchHistory;
     });
   }
 
@@ -79,6 +86,14 @@ class _SearchStationPageState extends State<SearchStationPage> {
     setState(() {
       _searchHistory.clear();
     });
+  }
+
+
+    // 숫자만 추출하는 함수
+  String extractNumber(String input) {
+    final RegExp numberRegex = RegExp(r'\d+'); // 숫자에 해당하는 정규식
+    final match = numberRegex.firstMatch(input);
+    return match?.group(0) ?? ''; // 숫자가 없으면 빈 문자열 반환
   }
 
   @override
@@ -106,37 +121,53 @@ class _SearchStationPageState extends State<SearchStationPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                SearchStaInfo(searchHistory: _searchHistory, stationName: value,)),
-                      );
+                          builder: (context) => SearchStaInfo(
+                            searchHistory: _searchHistory,
+                            stationName: value,
+                          ),
+                        ),
+                      ); // 돌아오면 갱신
                     }
                   },
                   onMenuTap: _toggleMenuVisibility,
                   onDelete: _deleteSearchHistory,
                 ),
                 Expanded(
-                  // 가운데 - 검색기록 내역
                   child: ListView.builder(
                     itemCount: _searchHistory.length,
                     itemBuilder: (context, index) {
                       final record = _searchHistory[index];
-                      return SearchResultItem(
-                        stationName: record['name'] + " " +"역".tr(),
-                        favImagePath: record['isFavorite']
-                            ? 'assets/images/favStarFill.png'
-                            : 'assets/images/favStar.png', // 상태에 따라 이미지 선택
-                        onToggleFav: () => _toggleFavImage(index), // 인덱스를 전달
-                        onSelect: () {
-                          setState(() {
-                            // 기록에 있는 역을 검색창으로
-                            _searchController.text = record['name'];
-                          });
+                      return GestureDetector(
+                        onTap: () {
+                          final stationNumber = extractNumber(record['name']);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SearchStaInfo(
+                                stationName: stationNumber,
+                                searchHistory: _searchHistory,
+                              ),
+                            ),
+                          ); // 돌아오면 갱신
                         },
-                      
+                        child: SearchResultItem(
+                          stationName: record['name'] + " " + "역".tr(),
+                          favImagePath: record['isFavorite']
+                              ? 'assets/images/favStarFill.png'
+                              : 'assets/images/favStar.png', // 상태에 따라 이미지 선택
+                          onToggleFav: () =>  _toggleFavImage(index),
+                          onSelect: () {
+                            setState(() {
+                              // 기록에 있는 역을 검색창으로
+                              _searchController.text = record['name'];
+                            });
+                          },
+                        ),
                       );
                     },
                   ),
-                ),
+                )
+
               ],
             ),
           ),
@@ -171,6 +202,27 @@ class _SearchStationPageState extends State<SearchStationPage> {
               },
             ),
         ],
+      ),
+            // 하단바
+      bottomNavigationBar: Container(
+        height: 60.0, // 높이 조절
+        color: const Color.fromARGB(204, 34, 83, 111), // 배경색 설정
+        child: Center(
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Home(), // Home()으로 이동
+                ),
+              );
+            },
+            child: Image.asset(
+              'assets/images/homeLight.png',
+              width: 35,
+            ),
+          ),
+        ),
       ),
     );
   }

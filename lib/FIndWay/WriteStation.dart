@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_application_1/FIndWay/minimumDistance.dart';
+import 'package:flutter_application_1/main.dart';
 //import 'package:flutter_application_1/FindWay/minimumDistance.dart';
 
 import '../widgets/searchResultItem.dart';
@@ -119,36 +120,42 @@ class _WriteStationPageState extends State<WriteStationPage> {
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
-            Navigator.pop(context, {
-              'startStation': _startStationController.text,
-              'endStation': _endStationController.text,
-              'searchHistory': _searchHistory,
-            });
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음'); // 디버깅용 로그
+            }
           },
-          child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
+          child: Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
         ),
         title: Text(
           '길찾기',
           style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Color(0xff22536F),
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            height: 60.0,
+            color: Color.fromARGB(255, 255, 255, 255),
           ),
         ).tr(),
-        backgroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(204, 34, 83, 111),
         elevation: 0,
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            SizedBox(height: 15),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                IconButton(
-                  icon: Icon(Icons.swap_vert, color: Color(0xff386B88)),
-                  onPressed: _swapStations,
-                ),
+                  Container(
+                    alignment: Alignment.center, // 컨테이너 내부에서 가운데 정렬
+                    child: IconButton(
+                      icon: Icon(Icons.swap_vert, color: Color(0xff386B88)),
+                      onPressed: _swapStations,
+                    ),
+                  ),
                 Expanded(
                   child: Column(
                     children: [
@@ -268,6 +275,13 @@ class _WriteStationPageState extends State<WriteStationPage> {
                           }
                         },
                       ),
+                      TextButton(
+                        onPressed: _clearSearchHistory,
+                        style: TextButton.styleFrom(
+                          foregroundColor: Color(0xFFACACAC),
+                        ),
+                        child: Text('검색기록 삭제').tr(),
+                      ),
                     ],
                   ),
                 ),
@@ -307,14 +321,29 @@ class _WriteStationPageState extends State<WriteStationPage> {
                 },
               ),
             ),
-            TextButton(
-              onPressed: _clearSearchHistory,
-              style: TextButton.styleFrom(
-                foregroundColor: Color(0xFFACACAC),
-              ),
-              child: Text('검색기록 삭제').tr(),
-            ),
+
           ],
+        ),
+      ),
+      // 하단바
+      bottomNavigationBar: Container(
+        height: 60.0, // 높이 조절
+        color: const Color.fromARGB(204, 34, 83, 111), // 배경색 설정
+        child: Center(
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Home(), // Home()으로 이동
+                ),
+              );
+            },
+            child: Image.asset(
+              'assets/images/homeLight.png',
+              width: 35,
+            ),
+          ),
         ),
       ),
     );
