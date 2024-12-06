@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_application_1/constants/displayMode.dart';
 import 'package:flutter_application_1/main.dart';
+import 'package:provider/provider.dart';
+void main() {
+  runApp(const DisplayModePage());
+}
 
 class DisplayModePage extends StatefulWidget {
   const DisplayModePage({super.key});
@@ -13,11 +18,16 @@ class _DisplayModePageState extends State<DisplayModePage> {
   // 상태 변수
   bool isLightModeSelected = true;
 
-  @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+      backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38)
+          : Colors.white, // 배경 색상 설정
+        appBar: AppBar(
+        backgroundColor:
+            themeNotifier.isDarkMode ? Color.fromARGB(204, 34, 83, 111) : Color.fromARGB(204, 34, 83, 111),
         leading: GestureDetector(
           onTap: () {
             if (Navigator.canPop(context)) {
@@ -31,39 +41,66 @@ class _DisplayModePageState extends State<DisplayModePage> {
         title: Text(
           '화면 모드',
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            height: 60.0,
-            color: Color.fromARGB(255, 255, 255, 255),
+            color: themeNotifier.isDarkMode ? Colors.white : const Color.fromARGB(255, 255, 255, 255),
           ),
-        ).tr(),
-        backgroundColor: Color.fromARGB(204, 34, 83, 111),
-        elevation: 0,
+        ),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('라이트 모드'.tr()),
-            Radio<int>(
-              value: 1,
-              groupValue: isLightModeSelected ? 1 : 0,
-              onChanged: (value) {
-                setState(() {
-                  isLightModeSelected = value == 1;
-                });
-              },
+            Text(
+              '다크 모드 전환',
+              style: TextStyle(
+                fontSize: 18,
+                color: themeNotifier.isDarkMode ? Colors.white : Colors.black,
+              ),
             ),
-            const SizedBox(height: 20),
-            Text('다크 모드'.tr()),
-            Radio<int>(
-              value: 0,
-              groupValue: isLightModeSelected ? 1 : 0,
-              onChanged: (value) {
-                setState(() {
-                  isLightModeSelected = value == 1;
-                });
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    Radio<bool>(
+                      value: false,
+                      groupValue: themeNotifier.isDarkMode,
+                      onChanged: (value) {
+                        if (value != null) {
+                          themeNotifier.toggleTheme();
+                        }
+                      },
+                    ),
+                    Text(
+                      'Light Mode',
+                      style: TextStyle(
+                        color:
+                            themeNotifier.isDarkMode ? Colors.white : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 20),
+                Row(
+                  children: [
+                    Radio<bool>(
+                      value: true,
+                      groupValue: themeNotifier.isDarkMode,
+                      onChanged: (value) {
+                        if (value != null) {
+                          themeNotifier.toggleTheme();
+                        }
+                      },
+                    ),
+                    Text(
+                      'Dark Mode',
+                      style: TextStyle(
+                        color:
+                            themeNotifier.isDarkMode ? Colors.white : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_application_1/SearchSta/SearchStaInfo.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_application_1/constants/displayMode.dart';
 
 class SearchResultItem extends StatelessWidget {
   final String stationName;
@@ -18,6 +20,7 @@ class SearchResultItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Column(
@@ -39,9 +42,9 @@ class SearchResultItem extends StatelessWidget {
               GestureDetector(
                 child: Text(
                   stationName.tr(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
-                    color: Color(0xFF676363),
+                    color: themeNotifier.isDarkMode ?const Color.fromARGB(255, 229, 229, 229):Color(0xFF676363),
                   ),
                 ),
               ),

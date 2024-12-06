@@ -16,6 +16,10 @@ import 'package:easy_localization/easy_localization.dart';
 import '../util/util.dart';
 import '../constants/lineColor.dart';
 
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
+
+
 
 class SearchStaInfo extends StatefulWidget {
 
@@ -77,8 +81,11 @@ class _SearchStaInfo extends State<SearchStaInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+            backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
@@ -151,7 +158,7 @@ class _SearchStaInfo extends State<SearchStaInfo> {
             );
         },
       ),
-                  // 하단바
+      // 하단바
       bottomNavigationBar: Container(
         height: 60.0, // 높이 조절
         color: const Color.fromARGB(204, 34, 83, 111), // 배경색 설정

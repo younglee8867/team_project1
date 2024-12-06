@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_application_1/main.dart';
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
 
 class RegionSettingsPage extends StatefulWidget {
   const RegionSettingsPage({super.key});
@@ -12,8 +14,11 @@ class RegionSettingsPage extends StatefulWidget {
 class _RegionSettingsPage extends State<RegionSettingsPage> {
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+            backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
@@ -90,12 +95,13 @@ class RegionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return ListTile(
       title: Text(
         region.tr(), // 번역 키를 통해 다국어 적용
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 16,
-          color: Color(0xFF22536F),
+          color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFF22536F),
           fontFamily: 'Roboto',
         ),
       ).tr(),

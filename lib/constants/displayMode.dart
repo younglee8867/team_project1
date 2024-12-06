@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
 
 // 테마 데이터
 final Map<int, Color> colorMap = {
@@ -19,11 +21,15 @@ final MaterialColor customSwatch = MaterialColor(0xff397394, colorMap);
 final ThemeData lightTheme = ThemeData(
   primarySwatch: customSwatch,
   brightness: Brightness.light,
+  scaffoldBackgroundColor: Colors.white, // 라이트 모드 배경: 흰색
+
 );
 
 final ThemeData darkTheme = ThemeData(
   primarySwatch: customSwatch,
   brightness: Brightness.dark,
+  scaffoldBackgroundColor: const Color.fromARGB(255, 91, 91, 91), // 부드러운 다크 배경
+
 );
 
 // 테마모드 관리 클래스

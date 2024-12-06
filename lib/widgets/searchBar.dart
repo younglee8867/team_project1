@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
 
 class SearchTopBar extends StatelessWidget {
   final TextEditingController controller;
@@ -18,6 +20,7 @@ class SearchTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -26,7 +29,7 @@ class SearchTopBar extends StatelessWidget {
           Container(
             height: 56,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: themeNotifier.isDarkMode ? const Color.fromARGB(179, 211, 211, 211) : Colors.white,
               borderRadius: BorderRadius.circular(28),
               border: Border.all(
                 color: const Color.fromRGBO(0, 57, 115, 148),
@@ -55,7 +58,7 @@ class SearchTopBar extends StatelessWidget {
                     ],
                     decoration: InputDecoration(
                       hintText: '역 검색'.tr(),
-                      hintStyle: TextStyle(color: Color(0xFFABABAB)),
+                      hintStyle: TextStyle(color: themeNotifier.isDarkMode ? const Color.fromARGB(217, 31, 31, 31) : Color(0xFFABABAB)),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(horizontal: 8),
                     ),

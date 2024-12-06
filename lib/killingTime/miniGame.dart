@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
 
 void main() {
   runApp(MyApp());
@@ -196,18 +198,23 @@ class _AppleGameState extends State<AppleGame> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white,
       appBar: AppBar(
+          backgroundColor: themeNotifier.isDarkMode
+            ? Color.fromARGB(255, 38, 38, 38) // 다크 모드 색상
+            : const Color.fromARGB(255, 255, 255, 255), // 라이트 모드 색상
       leading: GestureDetector(
       onTap: () {
         if (Navigator.canPop(context)) {
           Navigator.pop(context);
         }
       },
-        child: Icon(Icons.arrow_back, color: Color(0xff978080)),
+        child: Icon(Icons.arrow_back, color: themeNotifier.isDarkMode? const Color.fromARGB(255, 255, 255, 255): Color(0xff978080)),
       ),
-        backgroundColor: Color.fromARGB(255, 255, 255, 255),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0), // 이미지 간 간격
@@ -247,12 +254,12 @@ class _AppleGameState extends State<AppleGame> {
               duration: Duration(milliseconds: 300),
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
-                color: const Color(0xff978080),
+                color: themeNotifier.isDarkMode? const Color.fromARGB(255, 226, 226, 226): Color(0xff978080),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 'Score: $_score',
-                style: TextStyle(fontSize: 30, color: Colors.white),
+                style: TextStyle(fontSize: 30, color: themeNotifier.isDarkMode? Color(0xff978080): Color.fromARGB(255, 226, 226, 226),),
               ),
             ),
           ),
@@ -267,7 +274,7 @@ class _AppleGameState extends State<AppleGame> {
                   padding: const EdgeInsets.only(right: 10.0), // 텍스트와 바 사이 간격
                   child: Text(
                     'Time: $_timeLeft',
-                    style: TextStyle(fontSize: 24, color: const Color.fromARGB(255, 98, 73, 73)),
+                    style: TextStyle(fontSize: 24, color: themeNotifier.isDarkMode? const Color.fromARGB(255, 226, 226, 226): Color(0xff978080)),
                   ),
                 ),
                 // 가로선 타이머
