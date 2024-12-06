@@ -14,6 +14,8 @@ import 'package:flutter_application_1/widgets/findWay.dart';
 import 'package:flutter_application_1/FindWay/WriteStation.dart';
 
 import '../util/firebaseUtil.dart';
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
 
 class minimumDistance extends StatefulWidget {
   final String startStation;
@@ -312,7 +314,11 @@ class _minimumDistanceState extends State<minimumDistance> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
+            backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white, 
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
@@ -398,6 +404,7 @@ class _minimumDistanceState extends State<minimumDistance> {
 
   Widget _buildPageContent(Map<String, dynamic> result,
       Map<String, dynamic> startData, Map<String, dynamic> endData) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Padding(
       padding: EdgeInsets.all(20),
       child: Column(
@@ -445,7 +452,9 @@ class _minimumDistanceState extends State<minimumDistance> {
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xff4C4C4C),
+                        color: themeNotifier.isDarkMode ?
+                          Colors.white
+                        : Color(0xff4C4C4C),
                       ),
                     ),
                     SizedBox(height: 5), // 항목 간의 간격

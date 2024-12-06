@@ -7,6 +7,8 @@ import 'package:flutter_application_1/main.dart';
 import '../widgets/searchResultItem.dart';
 import '../favoriteSta.dart';
 import '../util/util.dart';
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
 
 class WriteStationPage extends StatefulWidget {
   final String? initialStartStation;
@@ -103,13 +105,18 @@ class _WriteStationPageState extends State<WriteStationPage> {
   // 공통된 함수로 빼기
   Widget buildStationInputField(TextEditingController controller, String hint,
       Function(String) onSubmitted) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return TextField(
       controller: controller,
       decoration: InputDecoration(
         hintText: hint.tr(),
-        hintStyle: TextStyle(color: Color(0xFFABABAB)),
+        hintStyle: TextStyle(color: themeNotifier.isDarkMode?const Color.fromARGB(255, 27, 27, 27): Color(0xFFABABAB)),
         prefixIcon: Icon(Icons.search),
         prefixIconColor: Color(0xff386B88),
+        fillColor: themeNotifier.isDarkMode
+             ? const Color.fromARGB(179, 211, 211, 211)
+             :Colors.white, // 배경색 설정
+        filled: true, // 배경색 활성화
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
         ),
@@ -124,8 +131,11 @@ class _WriteStationPageState extends State<WriteStationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+            backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {

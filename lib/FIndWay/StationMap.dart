@@ -5,6 +5,8 @@ import 'package:flutter_application_1/main.dart';
 
 import '../util/util.dart';
 import 'WriteStation.dart';
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
 
 void main() => runApp(MyApp());
 
@@ -86,8 +88,11 @@ class _StationMapState extends State<StationMap> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+            backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
@@ -134,12 +139,18 @@ class _StationMapState extends State<StationMap> {
                             hintText: '출발역 입력'.tr(),
                             prefixIcon: Icon(Icons.search),
                             prefixIconColor: Color(0xff386B88),
+                            fillColor: themeNotifier.isDarkMode
+                                        ? const Color.fromARGB(179, 211, 211, 211)
+                                        :Colors.white, // 배경색 설정
+                            filled: true, // 배경색 활성화
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                               //borderSide: BorderSide(color: Color.fromRGBO(0, 57, 115, 148) )
                             ),
                             hintStyle: TextStyle(
-                              color: Color(0xFFABABAB),
+                              color: themeNotifier.isDarkMode
+                                    ?const Color.fromARGB(255, 27, 27, 27)
+                                    : Color(0xFFABABAB),
                             )),
                         onTap: () => _navigateToSearch(context),
                         readOnly: true, // 클릭 시에만 검색 페이지로 이동
@@ -151,10 +162,18 @@ class _StationMapState extends State<StationMap> {
                             hintText: '도착역 입력'.tr(),
                             prefixIcon: Icon(Icons.search),
                             prefixIconColor: Color(0xff386B88),
+                            fillColor: themeNotifier.isDarkMode
+                                        ? const Color.fromARGB(179, 211, 211, 211)
+                                        :Colors.white, // 배경색 설정
+                            filled: true, // 배경색 활성화                            
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
-                            hintStyle: TextStyle(color: Color(0xFFABABAB))),
+                            hintStyle: TextStyle(
+                              color: themeNotifier.isDarkMode
+                                    ?const Color.fromARGB(255, 27, 27, 27)
+                                    : Color(0xFFABABAB),     
+                            )),
                         onTap: () => _navigateToSearch(context),
                         readOnly: true, // 클릭 시에만 검색 페이지로 이동
                       ),
@@ -193,7 +212,9 @@ class _StationMapState extends State<StationMap> {
                         value: _selectedLine,
                         icon: Icon(Icons.arrow_drop_down,
                             color: Colors.white, size: 18),
-                        dropdownColor: Color.fromARGB(255, 128, 180, 210),
+                            dropdownColor: themeNotifier.isDarkMode
+                                ? Color.fromARGB(255, 68, 97, 113)
+                                : Color.fromARGB(255, 128, 180, 210),
                         style: TextStyle(color: Colors.white),
                         underline: SizedBox(),
                         onChanged: (String? newValue) {

@@ -11,6 +11,8 @@ import 'package:flutter_application_1/FIndWay/minimumDistance.dart';
 import 'package:flutter_application_1/FIndWay/WriteStation.dart';
 
 import '../util/firebaseUtil.dart';
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
 
 class MinimumTransfer extends StatefulWidget {
   final String startStation;
@@ -310,7 +312,11 @@ class _MinimumTransferState extends State<MinimumTransfer> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
+            backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white, 
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
@@ -396,6 +402,7 @@ class _MinimumTransferState extends State<MinimumTransfer> {
 
   Widget _buildPageContent(Map<String, dynamic> result,
       Map<String, dynamic> startData, Map<String, dynamic> endData) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Padding(
       padding: EdgeInsets.all(20),
       child: Column(
@@ -459,7 +466,9 @@ class _MinimumTransferState extends State<MinimumTransfer> {
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xff4C4C4C),
+                        color: themeNotifier.isDarkMode ?
+                          Colors.white
+                        : Color(0xff4C4C4C),
                       ),
                     ),
                     SizedBox(height: 5), // 항목 간의 간격
