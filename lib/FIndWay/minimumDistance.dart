@@ -150,6 +150,8 @@ class _minimumDistanceState extends State<minimumDistance> {
       currentNode = previousNodes[currentNode];
     }
 
+    print(path);
+
     Map<String, List<int>> lineData =
         await fetchLineData(path); //경로에 해당하는 라인 정보를 담기 위해
     int transferCount = calculateTransfers(lineData); //라인정보로 환승횟수를 계산하기 위해
@@ -225,6 +227,8 @@ class _minimumDistanceState extends State<minimumDistance> {
     return transferCount;
   }
 
+//duration문제점 찾음: 지금까지 durations<--를 출력하고 자빠져있었삼;;
+//역의 duration을 가져와서 더해야함 ,, 바보멍청이 ㅋ
 //findWay에서 가져온 UI를 가져와서 출력
   Future<List<Map<String, dynamic>>> generateUIDetails(
     List<String> path,
@@ -233,6 +237,8 @@ class _minimumDistanceState extends State<minimumDistance> {
   ) async {
     List<Map<String, dynamic>> uiDetails = [];
     List<int> currentLines = lineData[path.first] ?? [];
+    double accumulatedDuration = 0; // 누적 duration 저장 변수
+    int lastTransferIndex = 0; // 마지막 환승 발생 지점 인덱스 저장
 
     // Firebase에서 특정 역 정보 가져오는 함수
     Future<Map<String, dynamic>> fetchStationDetails(String stationName) async {
@@ -242,20 +248,6 @@ class _minimumDistanceState extends State<minimumDistance> {
           .get();
       return snapshot.data() ?? {};
     }
-
-    // 해당 구간의 duration을 누적하는 함수
-    double durationSum(List<String> path, Map<String, double> durations) {
-      double sum = 0;
-
-      // 경로를 순회하면서 누적
-      for (int i = 1; i < path.length; i++) {
-        // 이전 역의 duration 값을 가져와 누적
-        sum += durations[path[i - 1]] ?? 0;
-      }
-
-      return sum;
-    }
-
 
     // 첫 출발역 추가
     final firstStationDetails = await fetchStationDetails(path.first);
@@ -267,44 +259,47 @@ class _minimumDistanceState extends State<minimumDistance> {
       "duration": "", // 초기값
     });
 
-// 경로 순회하면서 환승 정보를 추가
-for (int i = 0; i <= path.length; i++) {
-  // 현재 구간의 duration
-  double currentSegmentDuration = durations[path[i]] ?? 0;
+    // 경로 순회하면서 환승 정보를 추가
+    for (int i = 1; i < path.length; i++) {
+      // 현재 구간의 누적 duration 계산
+      if (i > lastTransferIndex) {
+        accumulatedDuration =
+            durations[path[i]]! - durations[path[lastTransferIndex]]!;
+      } else {
+        accumulatedDuration += durations[path[i]]!;
+      }
 
-  // 누적 시간을 계산
-  double totalDuration = durationSum(path.sublist(0, i + 1), durations);
+      // 환승이 발생한 경우
+      if (currentLines
+          .every((line) => !(lineData[path[i]] ?? []).contains(line))) {
+        // 환승 전 도착역
+        final prevStationDetails = await fetchStationDetails(path[i]);
+        uiDetails.add({
+          "line":
+              currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
+          "stationName": path[i], // 환승 전 도착역
+          "quickExit": "", // 중간 도착역에서는 빠른 하차 정보 없음
+          "doorSide": prevStationDetails['facilityInfo']?['doorSide'] ?? "",
+          "duration": accumulatedDuration.toInt(), // 누적된 duration 출력
+        });
 
-  // 환승이 발생한 경우
-  if (currentLines
-      .every((line) => !(lineData[path[i]] ?? []).contains(line))) {
-    // 환승 전 도착역
-    final prevStationDetails = await fetchStationDetails(path[i]);
-    uiDetails.add({
-      "line":
-          currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
-      "stationName": path[i], // 환승 전 도착역
-      "quickExit": "", // 중간 도착역에서는 빠른 하차 정보 없음
-      "doorSide": prevStationDetails['facilityInfo']?['doorSide'] ?? "",
-      "duration": totalDuration.toInt() - currentSegmentDuration.toInt(), // 해당 구간의 duration만 빼기
-    });
+        // 누적 duration 초기화 및 환승 지점 업데이트
+        accumulatedDuration = 0;
+        lastTransferIndex = i;
+        currentLines = lineData[path[i]] ?? [];
 
-    // 현재 라인의 업데이트
-    currentLines = lineData[path[i]] ?? [];
-
-    // 환승 후 출발역
-    final nextStationDetails = await fetchStationDetails(path[i]);
-    uiDetails.add({
-      "line":
-          currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
-      "stationName": path[i], // 환승 후 출발역
-      "quickExit": nextStationDetails['stationDetails']?['quickExit'] ?? "",
-      "doorSide": "", // 출발역에서는 내리는 문 정보 없음
-      "duration": "", // 환승 후 출발 시점에서는 duration 출력하지 않음
-    });
-  }
-}
-
+        // 환승 후 출발역
+        final nextStationDetails = await fetchStationDetails(path[i]);
+        uiDetails.add({
+          "line":
+              currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
+          "stationName": path[i], // 환승 후 출발역
+          "quickExit": nextStationDetails['stationDetails']?['quickExit'] ?? "",
+          "doorSide": "", // 출발역에서는 내리는 문 정보 없음
+          "duration": "", // 환승 후 출발 시점에서는 duration 출력하지 않음
+        });
+      }
+    }
 
     // 최종 도착역 추가
     final lastStationDetails = await fetchStationDetails(path.last);
@@ -313,8 +308,7 @@ for (int i = 0; i <= path.length; i++) {
       "stationName": path.last,
       "quickExit": "", // 최종 도착역에서는 빠른 하차 정보 없음
       "doorSide": lastStationDetails['facilityInfo']?['doorSide'] ?? "",
-      "duration":
-          durations[path[path.length - 2]]?.toInt() ?? 0, // 최종 구간의 duration
+      "duration": accumulatedDuration.toInt(), // 최종 누적 duration 출력
     });
 
     return uiDetails;

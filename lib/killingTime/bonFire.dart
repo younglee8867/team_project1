@@ -40,15 +40,6 @@ class _BonFire extends State<BonFire> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Audio Player"),
-          actions: [
-            IconButton(
-              onPressed: _play,
-              icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-            ),
-          ],
-        ),
       body: Stack(
         children: [
           // 배경 GIF

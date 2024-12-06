@@ -87,10 +87,13 @@ class _AppleGameState extends State<AppleGame> {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_timeLeft == 0) {
         _endGame();
+        _timer?.cancel(); // 타이머 종료
       } else {
-        setState(() {
-          _timeLeft--;
-        });
+        if (mounted) { // 위젯이 여전히 트리에 존재하는지 확인
+          setState(() {
+            _timeLeft--;
+          });
+        }
       }
     });
   }
