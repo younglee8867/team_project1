@@ -35,7 +35,7 @@ Future<Map<String, dynamic>?> main() async {
 
   await EasyLocalization.ensureInitialized();
 
-   runApp(
+  runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -58,10 +58,12 @@ class SmartSubway extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        localizationsDelegates: context.localizationDelegates,
-        supportedLocales: context.supportedLocales,
-        locale: context.locale,
-        home: const SplashScreen());
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: const SplashScreen(),
+    );
   }
 }
 
@@ -100,13 +102,13 @@ class Home extends StatefulWidget {
 
 // 홈화면
 class _Home extends State<Home> {
-  
   final TextEditingController _searchController = TextEditingController();
   late List<Map<String, dynamic>> _searchHistory;
   bool _isMenuVisible = false;
   String? _selectedLine = '전체';
   String _currentMapPath = 'assets/images/station/StationMap.jpg'; // 초기 노선도 경로
-  String _currentMapPathTodark = 'assets/images/station/StationMap_dartk.png'; // 다크모드 노선도
+  String _currentMapPathTodark =
+      'assets/images/station/StationMap_dartk.png'; // 다크모드 노선도
 
   void _toggleMenuVisibility() {
     setState(() {
@@ -129,7 +131,7 @@ class _Home extends State<Home> {
     ThemeNotifier themeNotifier = Provider.of<ThemeNotifier>(context);
 
     return Scaffold(
-            backgroundColor: themeNotifier.isDarkMode
+      backgroundColor: themeNotifier.isDarkMode
           ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
           : Colors.white,
 
@@ -145,56 +147,62 @@ class _Home extends State<Home> {
             },
             child: Column(
               children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Container(
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: themeNotifier.isDarkMode ? const Color.fromARGB(179, 211, 211, 211) : Colors.white,
-                    borderRadius: BorderRadius.circular(28),
-                    border: Border.all(
-                      color: const Color.fromRGBO(0, 57, 115, 148),
-                      width: 2,
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Container(
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: themeNotifier.isDarkMode
+                          ? const Color.fromARGB(179, 211, 211, 211)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(28),
+                      border: Border.all(
+                        color: const Color.fromRGBO(0, 57, 115, 148),
+                        width: 2,
+                      ),
                     ),
-                  ),
-                 
-                  child: Row(
-                    children: [
-                      // 메뉴 아이콘
-                      GestureDetector(
-                        onTap: _toggleMenuVisibility,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Image.asset(
-                            'assets/images/menu.png',
-                            width: 40,
-                            height: 40,
+                    child: Row(
+                      children: [
+                        // 메뉴 아이콘
+                        GestureDetector(
+                          onTap: _toggleMenuVisibility,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset(
+                              'assets/images/menu.png',
+                              width: 40,
+                              height: 40,
+                            ),
                           ),
                         ),
-                      ),
-                      // 검색 텍스트 필드
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: '역 검색'.tr(),
-                            hintStyle: TextStyle(color: themeNotifier.isDarkMode ? const Color.fromARGB(217, 31, 31, 31) : Color(0xFFABABAB)),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                        // 검색 텍스트 필드
+                        Expanded(
+                          child: TextField(
+                            decoration: InputDecoration(
+                              hintText: '역 검색'.tr(),
+                              hintStyle: TextStyle(
+                                  color: themeNotifier.isDarkMode
+                                      ? const Color.fromARGB(217, 31, 31, 31)
+                                      : Color(0xFFABABAB)),
+                              border: InputBorder.none,
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 8),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SearchStationPage(),
+                                ),
+                              );
+                            },
                           ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SearchStationPage(),
-                              ),
-                            );
-                          },
                         ),
-                      ),
-                      // 검색 버튼
-                      IconButton(
-                        icon: const Icon(Icons.search, color: Color(0xFF386B88)),
-                        onPressed: () {
+                        // 검색 버튼
+                        IconButton(
+                          icon: const Icon(Icons.search,
+                              color: Color(0xFF386B88)),
+                          onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -218,11 +226,9 @@ class _Home extends State<Home> {
                         maxScale: 4.0,
                         child: Container(
                           child: Center(
-                            child: Image.asset(
-                            themeNotifier.isDarkMode
-                              ? _currentMapPathTodark
-                              : _currentMapPath
-                            ),
+                            child: Image.asset(themeNotifier.isDarkMode
+                                ? _currentMapPathTodark
+                                : _currentMapPath),
                           ),
                         ),
                       ),
@@ -241,7 +247,9 @@ class _Home extends State<Home> {
                             value: _selectedLine,
                             icon: Icon(Icons.arrow_drop_down,
                                 color: Colors.white, size: 18),
-                            dropdownColor: themeNotifier.isDarkMode ?Color.fromARGB(255, 68, 97, 113):Color.fromARGB(255, 128, 180, 210),
+                            dropdownColor: themeNotifier.isDarkMode
+                                ? Color.fromARGB(255, 68, 97, 113)
+                                : Color.fromARGB(255, 128, 180, 210),
                             style: TextStyle(color: Colors.white),
                             underline: SizedBox(),
                             onChanged: (String? newValue) {
@@ -275,7 +283,6 @@ class _Home extends State<Home> {
               ],
             ),
           ),
-          
           if (_isMenuVisible) // 좌측 - 메뉴바 카테고리별 이동
             ...[
             GestureDetector(
@@ -336,7 +343,6 @@ class _Home extends State<Home> {
           ),
         ),
       ),
-      
     );
   }
 }

@@ -11,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/FindWay/minimumTransfer.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/widgets/findWay.dart';
+import 'package:flutter_application_1/FindWay/WriteStation.dart';
 
 import '../util/firebaseUtil.dart';
 
@@ -315,51 +316,62 @@ class _minimumDistanceState extends State<minimumDistance> {
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
-            Navigator.pop(context);
+            Navigator.popUntil(context, ModalRoute.withName('/writeStation'));
           },
-          child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
+          child:
+              Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
         ),
-        title: Text('길찾기').tr(),
-        backgroundColor: Colors.white,
+        title: Text(
+          '길찾기',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            height: 60.0,
+            color: Color.fromARGB(255, 255, 255, 255),
+          ),
+        ).tr(),
+        backgroundColor: const Color.fromARGB(204, 34, 83, 111),
       ),
-      body: FutureBuilder(
-        future: Future.wait([startStationData, endStationData]),
-        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("데이터를 불러오는 중 오류가 발생했습니다."));
-          } else if (!snapshot.hasData || snapshot.data!.length < 2) {
-            return Center(
-              child: Text("출발역 또는 도착역 정보를 찾을 수 없습니다."),
+      body: SingleChildScrollView(
+        child: FutureBuilder(
+          future: Future.wait([startStationData, endStationData]),
+          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text("데이터를 불러오는 중 오류가 발생했습니다."));
+            } else if (!snapshot.hasData || snapshot.data!.length < 2) {
+              return Center(
+                child: Text("출발역 또는 도착역 정보를 찾을 수 없습니다."),
+              );
+            }
+
+            final startData = snapshot.data![0] as Map<String, dynamic>;
+            final endData = snapshot.data![1] as Map<String, dynamic>;
+
+            return FutureBuilder(
+              future: dijkstra(
+                startData['routeInfo']['startStation'].toString(),
+                endData['routeInfo']['startStation'].toString(),
+              ),
+              builder: (context,
+                  AsyncSnapshot<Map<String, dynamic>> dijkstraResult) {
+                if (dijkstraResult.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (dijkstraResult.hasError) {
+                  return Center(child: Text("최단 경로 계산 중 오류 발생."));
+                } else if (!dijkstraResult.hasData) {
+                  return Center(
+                    child: Text("경로를 찾을 수 없습니다."),
+                  );
+                }
+
+                final result = dijkstraResult.data!;
+                return _buildPageContent(result, startData, endData);
+              },
             );
-          }
-
-          final startData = snapshot.data![0] as Map<String, dynamic>;
-          final endData = snapshot.data![1] as Map<String, dynamic>;
-
-          return FutureBuilder(
-            future: dijkstra(
-              startData['routeInfo']['startStation'].toString(),
-              endData['routeInfo']['startStation'].toString(),
-            ),
-            builder:
-                (context, AsyncSnapshot<Map<String, dynamic>> dijkstraResult) {
-              if (dijkstraResult.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (dijkstraResult.hasError) {
-                return Center(child: Text("최단 경로 계산 중 오류 발생."));
-              } else if (!dijkstraResult.hasData) {
-                return Center(
-                  child: Text("경로를 찾을 수 없습니다."),
-                );
-              }
-
-              final result = dijkstraResult.data!;
-              return _buildPageContent(result, startData, endData);
-            },
-          );
-        },
+          },
+        ),
       ),
       bottomNavigationBar: Container(
         height: 60.0, // 높이 조절
@@ -400,8 +412,8 @@ class _minimumDistanceState extends State<minimumDistance> {
                 });
               }),
               SizedBox(width: 10),
-              _buildButton('최소 환승 순', !isMinDistanceSelected, () {
-                Navigator.push(
+              _buildButton('최소 시간 순', !isMinDistanceSelected, () {
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => MinimumTransfer(

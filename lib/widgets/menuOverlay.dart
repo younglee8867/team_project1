@@ -38,9 +38,9 @@ class MenuOverlay extends StatelessWidget {
               child: Stack(
                 children: [
                   Image.asset(
-                    themeNotifier.isDarkMode ?
-                    'assets/images/menuBar/menuBar_dark.png': 
-                    'assets/images/menuBar/menuBar.png',
+                    themeNotifier.isDarkMode
+                        ? 'assets/images/menuBar/menuBar_dark.png'
+                        : 'assets/images/menuBar/menuBar.png',
                     fit: BoxFit.contain,
                   ),
                   SizedBox(height: 100),
@@ -57,7 +57,10 @@ class MenuOverlay extends StatelessWidget {
                                 child: Text(
                                   '길찾기',
                                   style: TextStyle(
-                                    color: themeNotifier.isDarkMode ? const Color.fromARGB(228, 242, 242, 242) : Color(0xff22536F),
+                                    color: themeNotifier.isDarkMode
+                                        ? const Color.fromARGB(
+                                            228, 242, 242, 242)
+                                        : Color(0xff22536F),
                                     fontSize: 16,
                                   ),
                                 ).tr(),
@@ -74,7 +77,10 @@ class MenuOverlay extends StatelessWidget {
                                 child: Text(
                                   '즐겨찾기',
                                   style: TextStyle(
-                                    color: themeNotifier.isDarkMode ? const Color.fromARGB(228, 242, 242, 242) : Color(0xff22536F),
+                                    color: themeNotifier.isDarkMode
+                                        ? const Color.fromARGB(
+                                            228, 242, 242, 242)
+                                        : Color(0xff22536F),
                                     fontSize: 16,
                                   ),
                                 ).tr(),
@@ -91,7 +97,10 @@ class MenuOverlay extends StatelessWidget {
                                 child: Text(
                                   '킬링타임',
                                   style: TextStyle(
-                                    color: themeNotifier.isDarkMode ? const Color.fromARGB(228, 242, 242, 242) : Color(0xff22536F),
+                                    color: themeNotifier.isDarkMode
+                                        ? const Color.fromARGB(
+                                            228, 242, 242, 242)
+                                        : Color(0xff22536F),
                                     fontSize: 16,
                                   ),
                                 ).tr(),
@@ -110,55 +119,62 @@ class MenuOverlay extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10, left: 30),
-                    child:Column(
-                    mainAxisAlignment: MainAxisAlignment.end, // 아래쪽 정렬
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => Home()),
-                              );
-                            },
-                            child: Image.asset(
-                              themeNotifier.isDarkMode ?
-                              'assets/images/menuBar/homeButton_dark.png' :
-                              'assets/images/menuBar/homeButton.png',
-                              width: 28,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end, // 아래쪽 정렬
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Home()),
+                                );
+                              },
+                              child: Image.asset(
+                                themeNotifier.isDarkMode
+                                    ? 'assets/images/menuBar/homeButton_dark.png'
+                                    : 'assets/images/menuBar/homeButton.png',
+                                width: 28,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 20),                         
-                          GestureDetector(
-                            onTap: onSettingsTap,
-                            child: Image.asset(
-                              themeNotifier.isDarkMode ?
-                              'assets/images/menuBar/settings_button_dark.png' :
-                              'assets/images/menuBar/settings_button.png',
-                              width: 28,
+                            SizedBox(width: 20),
+                            GestureDetector(
+                              onTap: onSettingsTap,
+                              child: Image.asset(
+                                themeNotifier.isDarkMode
+                                    ? 'assets/images/menuBar/settings_button_dark.png'
+                                    : 'assets/images/menuBar/settings_button.png',
+                                width: 28,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 20),
-                          GestureDetector(
-                            onTap: () {
-                              context.setLocale(
-                                context.locale.languageCode == 'ko' ? Locale('en') : Locale('ko'),
-                              );
-                            },
-                            child: Image.asset(
-                              themeNotifier.isDarkMode ?
-                              'assets/images/menuBar/en_button_dark.png' :
-                              'assets/images/menuBar/en_button.png',
-                              width: 20,
+                            SizedBox(width: 20),
+                            GestureDetector(
+                              onTap: () {
+                                context.setLocale(
+                                  context.locale.languageCode == 'ko'
+                                      ? Locale('en')
+                                      : Locale('ko'),
+                                );
+                              },
+                              child: Image.asset(
+                                context.locale.languageCode == 'ko'
+                                    ? (themeNotifier.isDarkMode
+                                        ? 'assets/images/menuBar/en_button_dark.png'
+                                        : 'assets/images/menuBar/en_button.png')
+                                    : (themeNotifier.isDarkMode
+                                        ? 'assets/images/menuBar/ko_button_dark.png'
+                                        : 'assets/images/menuBar/ko_button.png'),
+                                width: 20,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 30),
-                    ],
-                  ),
+                          ],
+                        ),
+                        SizedBox(height: 30),
+                      ],
+                    ),
                   )
                 ],
               ),

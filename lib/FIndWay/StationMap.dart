@@ -54,6 +54,7 @@ class _StationMapState extends State<StationMap> {
           initialEndStation: _endStation,
           searchHistory: _searchHistory, // 검색 기록 전달
         ),
+        settings: RouteSettings(name: '/writeStation'), // 라우트 이름 설정
       ),
     );
 
@@ -96,7 +97,8 @@ class _StationMapState extends State<StationMap> {
               print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음'); // 디버깅용 로그
             }
           },
-          child: Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
+          child:
+              Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
         ),
         title: Text(
           '길찾기',

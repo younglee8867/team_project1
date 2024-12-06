@@ -54,10 +54,11 @@ class _SearchStationPageState extends State<SearchStationPage> {
   }
 
   Future<void> _loadSearchHistory() async {
-  setState(() {
-    _searchHistory = SharedStationData.searchHistory; // SharedStationData에서 최신 데이터 로드
-  });
-}
+    setState(() {
+      _searchHistory =
+          SharedStationData.searchHistory; // SharedStationData에서 최신 데이터 로드
+    });
+  }
 
   // 메뉴 표시/숨기기 토글
   void _toggleMenuVisibility() {
@@ -80,7 +81,7 @@ class _SearchStationPageState extends State<SearchStationPage> {
         "name": stationName,
         "isFavorite": false,
       });
-       _searchHistory = SharedStationData.searchHistory;
+      _searchHistory = SharedStationData.searchHistory;
     });
   }
 
@@ -91,8 +92,7 @@ class _SearchStationPageState extends State<SearchStationPage> {
     });
   }
 
-
-    // 숫자만 추출하는 함수
+  // 숫자만 추출하는 함수
   String extractNumber(String input) {
     final RegExp numberRegex = RegExp(r'\d+'); // 숫자에 해당하는 정규식
     final match = numberRegex.firstMatch(input);
@@ -103,7 +103,7 @@ class _SearchStationPageState extends State<SearchStationPage> {
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-            backgroundColor: themeNotifier.isDarkMode
+      backgroundColor: themeNotifier.isDarkMode
           ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
           : Colors.white,
       body: Stack(
@@ -161,7 +161,7 @@ class _SearchStationPageState extends State<SearchStationPage> {
                           favImagePath: record['isFavorite']
                               ? 'assets/images/favStarFill.png'
                               : 'assets/images/favStar.png', // 상태에 따라 이미지 선택
-                          onToggleFav: () =>  _toggleFavImage(index),
+                          onToggleFav: () => _toggleFavImage(index),
                           onSelect: () {
                             setState(() {
                               // 기록에 있는 역을 검색창으로
@@ -173,7 +173,6 @@ class _SearchStationPageState extends State<SearchStationPage> {
                     },
                   ),
                 )
-
               ],
             ),
           ),
@@ -209,7 +208,7 @@ class _SearchStationPageState extends State<SearchStationPage> {
             ),
         ],
       ),
-            // 하단바
+      // 하단바
       bottomNavigationBar: Container(
         height: 60.0, // 높이 조절
         color: const Color.fromARGB(204, 34, 83, 111), // 배경색 설정

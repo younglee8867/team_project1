@@ -8,7 +8,6 @@ import '../widgets/searchResultItem.dart';
 import '../favoriteSta.dart';
 import '../util/util.dart';
 
-
 class WriteStationPage extends StatefulWidget {
   final String? initialStartStation;
   final String? initialEndStation;
@@ -43,24 +42,34 @@ class _WriteStationPageState extends State<WriteStationPage> {
   }
 
   void _navigateToMinimumDistance() {
-    if (_startStationController.text.isNotEmpty &&
-        _endStationController.text.isNotEmpty) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => minimumDistance(
-            startStation: _startStationController.text,
-            endStation: _endStationController.text,
-          ),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('출발역과 도착역을 입력하세요.')),
-      );
-    }
-  }
+    String startStation = _startStationController.text.trim();
+    String endStation = _endStationController.text.trim();
 
+    if (startStation.isEmpty || endStation.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('출발역과 도착역을 모두 입력하세요.')),
+      );
+      return;
+    }
+
+    if (startStation == endStation) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('출발역과 도착역은 서로 달라야 합니다.')),
+      );
+      return;
+    }
+
+    // 모든 조건 통과 시 페이지 이동
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => minimumDistance(
+          startStation: startStation,
+          endStation: endStation,
+        ),
+      ),
+    );
+  }
 
   void _addSearchRecord(String stationName) {
     setState(() {
@@ -126,7 +135,8 @@ class _WriteStationPageState extends State<WriteStationPage> {
               print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음'); // 디버깅용 로그
             }
           },
-          child: Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
+          child:
+              Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
         ),
         title: Text(
           '길찾기',
@@ -149,13 +159,13 @@ class _WriteStationPageState extends State<WriteStationPage> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                  Container(
-                    alignment: Alignment.center, // 컨테이너 내부에서 가운데 정렬
-                    child: IconButton(
-                      icon: Icon(Icons.swap_vert, color: Color(0xff386B88)),
-                      onPressed: _swapStations,
-                    ),
+                Container(
+                  alignment: Alignment.center, // 컨테이너 내부에서 가운데 정렬
+                  child: IconButton(
+                    icon: Icon(Icons.swap_vert, color: Color(0xff386B88)),
+                    onPressed: _swapStations,
                   ),
+                ),
                 Expanded(
                   child: Column(
                     children: [
@@ -293,16 +303,10 @@ class _WriteStationPageState extends State<WriteStationPage> {
                 itemCount: _searchHistory.length,
                 itemBuilder: (context, index) {
                   final record = _searchHistory[index];
-                  return SearchResultItem(
-                    stationName: record['name'] + " " + "역".tr(),
-                    favImagePath: record['isFavorite']
-                        ? 'assets/images/favStarFill.png'
-                        : 'assets/images/favStar.png', // 상태에 따라 이미지 선택
-                    onToggleFav: () => _toggleFavorite(index), // 인덱스를 전달
-                    onSelect: () {
+                  return GestureDetector(
+                    onTap: () {
+                      // 항목 클릭 시 검색 필드에 값 설정
                       setState(() {
-                        // 기록에 있는 역을 검색창으로
-                        // 현재 입력 포커스를 확인
                         if (_startStationController.selection.baseOffset !=
                             -1) {
                           // 출발역에 포커스가 있는 경우
@@ -317,11 +321,35 @@ class _WriteStationPageState extends State<WriteStationPage> {
                         }
                       });
                     },
+                    child: SearchResultItem(
+                      stationName: record['name'] + " " + "역".tr(),
+                      favImagePath: record['isFavorite']
+                          ? 'assets/images/favStarFill.png'
+                          : 'assets/images/favStar.png',
+                      onToggleFav: () => _toggleFavorite(index),
+                      onSelect: () {
+                        // 텍스트 클릭 시 동작
+                        setState(() {
+                          if (_startStationController.selection.baseOffset !=
+                              -1) {
+                            // 출발역에 포커스가 있는 경우
+                            _startStationController.text = record['name'];
+                          } else if (_endStationController
+                                  .selection.baseOffset !=
+                              -1) {
+                            // 도착역에 포커스가 있는 경우
+                            _endStationController.text = record['name'];
+                          } else {
+                            // 기본적으로 출발역에 입력
+                            _startStationController.text = record['name'];
+                          }
+                        });
+                      },
+                    ),
                   );
                 },
               ),
             ),
-
           ],
         ),
       ),
