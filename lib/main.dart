@@ -19,6 +19,7 @@ import 'util/util.dart';
 import 'favoriteSta.dart';
 import 'killingTime/killingTime.dart';
 
+
 Future<Map<String, dynamic>?> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -58,6 +59,7 @@ class SmartSubway extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
         locale: context.locale,

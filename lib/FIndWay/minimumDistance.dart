@@ -11,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/FindWay/minimumTransfer.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/widgets/findWay.dart';
+import 'package:flutter_application_1/FindWay/WriteStation.dart';
 
 import '../util/firebaseUtil.dart';
 
@@ -315,51 +316,72 @@ class _minimumDistanceState extends State<minimumDistance> {
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
-            Navigator.pop(context);
-          },
-          child: Icon(Icons.arrow_back, color: Color(0xff22536F)),
-        ),
-        title: Text('길찾기').tr(),
-        backgroundColor: Colors.white,
-      ),
-      body: FutureBuilder(
-        future: Future.wait([startStationData, endStationData]),
-        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("데이터를 불러오는 중 오류가 발생했습니다."));
-          } else if (!snapshot.hasData || snapshot.data!.length < 2) {
-            return Center(
-              child: Text("출발역 또는 도착역 정보를 찾을 수 없습니다."),
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => WriteStationPage(
+                  initialStartStation:
+                      widget.startStation, // 전달할 startStation 값
+                  initialEndStation: widget.endStation, // 전달할 endStation 값
+                  searchHistory: [], // 필요한 경우 검색 기록 전달
+                ),
+              ),
             );
-          }
+          },
+          child:
+              Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
+        ),
+        title: Text(
+          '길찾기',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            height: 60.0,
+            color: Color.fromARGB(255, 255, 255, 255),
+          ),
+        ).tr(),
+        backgroundColor: const Color.fromARGB(204, 34, 83, 111),
+      ),
+      body: SingleChildScrollView(
+        child: FutureBuilder(
+          future: Future.wait([startStationData, endStationData]),
+          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text("데이터를 불러오는 중 오류가 발생했습니다."));
+            } else if (!snapshot.hasData || snapshot.data!.length < 2) {
+              return Center(
+                child: Text("출발역 또는 도착역 정보를 찾을 수 없습니다."),
+              );
+            }
 
-          final startData = snapshot.data![0] as Map<String, dynamic>;
-          final endData = snapshot.data![1] as Map<String, dynamic>;
+            final startData = snapshot.data![0] as Map<String, dynamic>;
+            final endData = snapshot.data![1] as Map<String, dynamic>;
 
-          return FutureBuilder(
-            future: dijkstra(
-              startData['routeInfo']['startStation'].toString(),
-              endData['routeInfo']['startStation'].toString(),
-            ),
-            builder:
-                (context, AsyncSnapshot<Map<String, dynamic>> dijkstraResult) {
-              if (dijkstraResult.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (dijkstraResult.hasError) {
-                return Center(child: Text("최단 경로 계산 중 오류 발생."));
-              } else if (!dijkstraResult.hasData) {
-                return Center(
-                  child: Text("경로를 찾을 수 없습니다."),
-                );
-              }
+            return FutureBuilder(
+              future: dijkstra(
+                startData['routeInfo']['startStation'].toString(),
+                endData['routeInfo']['startStation'].toString(),
+              ),
+              builder: (context,
+                  AsyncSnapshot<Map<String, dynamic>> dijkstraResult) {
+                if (dijkstraResult.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (dijkstraResult.hasError) {
+                  return Center(child: Text("최단 경로 계산 중 오류 발생."));
+                } else if (!dijkstraResult.hasData) {
+                  return Center(
+                    child: Text("경로를 찾을 수 없습니다."),
+                  );
+                }
 
-              final result = dijkstraResult.data!;
-              return _buildPageContent(result, startData, endData);
-            },
-          );
-        },
+                final result = dijkstraResult.data!;
+                return _buildPageContent(result, startData, endData);
+              },
+            );
+          },
+        ),
       ),
       bottomNavigationBar: Container(
         height: 60.0, // 높이 조절
