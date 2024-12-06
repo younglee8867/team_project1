@@ -49,18 +49,15 @@ class _DisplayModePageState extends State<DisplayModePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              '다크 모드 전환',
-              style: TextStyle(
-                fontSize: 18,
-                color: themeNotifier.isDarkMode ? Colors.white : Colors.black,
-              ),
-            ),
-            Row(
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Row(
+                Column(
                   children: [
+                    Image.asset(
+                      'assets/images/settings/displayLight.png',
+                      width: 200,
+                    ),
                     Radio<bool>(
                       value: false,
                       groupValue: themeNotifier.isDarkMode,
@@ -79,9 +76,13 @@ class _DisplayModePageState extends State<DisplayModePage> {
                     ),
                   ],
                 ),
-                SizedBox(width: 20),
-                Row(
+                SizedBox(height: 50),
+                Column(
                   children: [
+                     Image.asset(
+                      'assets/images/settings/displayDark.png',
+                      width: 200,
+                    ),
                     Radio<bool>(
                       value: true,
                       groupValue: themeNotifier.isDarkMode,
