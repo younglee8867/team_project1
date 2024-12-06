@@ -5,6 +5,8 @@ import 'package:flutter_application_1/SearchSta/SearchStaInfo.dart';
 import 'package:flutter_application_1/main.dart';
 import './util/util.dart';
 import './widgets//searchResultItem.dart';
+import 'package:provider/provider.dart';
+import './constants/displayMode.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class FavoriteSta extends StatefulWidget {
@@ -43,8 +45,11 @@ class _FavoriteStaState extends State<FavoriteSta> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
@@ -74,7 +79,7 @@ class _FavoriteStaState extends State<FavoriteSta> {
               // 리스트에 항목이 없을 때
               child: Text(
                 '즐겨찾기 항목이 없습니다.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                style: TextStyle(fontSize: 16, color: themeNotifier.isDarkMode ? Colors.white70 : Colors.black87),
               ).tr(),
             )
           : ListView.builder(

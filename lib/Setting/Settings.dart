@@ -10,6 +10,9 @@ import 'LocalServiceTerms.dart';
 import 'PrivacyPolicy.dart'; 
 import 'TermsOfService.dart';
 
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
+
 void main() {
   runApp(const MaterialApp(
     home: settings(),
@@ -64,8 +67,11 @@ class _Settings extends State<settings> {
   }
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+            backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
@@ -104,8 +110,8 @@ class _Settings extends State<settings> {
                       onTap: () => onItemTap(context, option['page']!),
                       title: Text(
                         option['title']!,
-                        style: const TextStyle(
-                          color: Color(0xFF22536F),
+                        style: TextStyle(
+                          color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFF22536F),
                           fontSize: 16,
                         ),
                       ).tr(),

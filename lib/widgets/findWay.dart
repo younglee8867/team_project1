@@ -8,22 +8,6 @@ import 'package:flutter_application_1/constants/lineColor.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../util/firebaseUtil.dart';
 
-/* void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Find Way Widget',
-      home: const findWayItem(stationName: '101'),
-    );
-  }
-} */
-
 class findWay extends StatelessWidget {
   final String lineNumber;
   final String stationName;

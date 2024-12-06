@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_application_1/main.dart';
 
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
+
 class TermsOfServicePage extends StatefulWidget {
   const TermsOfServicePage({super.key});
 
@@ -14,8 +17,11 @@ class _TermsOfServicePage extends State<TermsOfServicePage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+            backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
@@ -50,7 +56,7 @@ class _TermsOfServicePage extends State<TermsOfServicePage> {
                       TextSpan(
                         text: '제1조 (목적)'.tr() +'\n',
                         style: TextStyle(
-                          color: Color(0xFFA0A0A0),
+                          color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                           fontSize: 14,
                           fontFamily: 'Roboto',
                           fontWeight: FontWeight.bold,
@@ -60,7 +66,7 @@ class _TermsOfServicePage extends State<TermsOfServicePage> {
                         text: '\n'+'스마트환승철(이하 “회사”라 합니다)는 회사가 제공하는 지하철 서비스에 대한 약관을 마련하였습니다.'.tr() +' ' +
                         '본 약관은 회사와 회원의 권리와 의무, 책임관계, 기타 필요한 사항을 규정하고 있습니다.'.tr()+'\n\n',
                         style: TextStyle(
-                          color: Color(0xFFA0A0A0),
+                          color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                           fontSize: 14,
                           fontFamily: 'Roboto',
                         ),
@@ -68,7 +74,7 @@ class _TermsOfServicePage extends State<TermsOfServicePage> {
                       TextSpan(
                         text: '제2조 (정의)'.tr() +'\n',
                         style: TextStyle(
-                          color: Color(0xFFA0A0A0),
+                          color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                           fontSize: 14,
                           fontFamily: 'Roboto',
                           fontWeight: FontWeight.bold,
@@ -80,7 +86,7 @@ class _TermsOfServicePage extends State<TermsOfServicePage> {
                         '스마트환승철 서비스: 스마트환승철을 통해서 제공하는 일체의 서비스를 의미합니다.'.tr() +'\n'+ 
                         '회원: 본 약관에 동의하고, 회사가 제공하는 스마트환승철 서비스 전체를 이용하는 고객을 말합니다.'.tr()+'('+'회원이 아니어도 정보제공 서비스는 이용할 수 있습니다.'.tr()+')' +'\n\n',
                         style: TextStyle(
-                          color: Color(0xFFA0A0A0),
+                          color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                           fontSize: 14,
                           fontFamily: 'Roboto',
                         ),
@@ -88,7 +94,7 @@ class _TermsOfServicePage extends State<TermsOfServicePage> {
                       TextSpan(
                         text: '제3조 (약관의 효력 및 변경)'.tr()+'\n',
                         style: TextStyle(
-                          color: Color(0xFFA0A0A0),
+                          color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                           fontSize: 14,
                           fontFamily: 'Roboto',
                           fontWeight: FontWeight.bold,
@@ -100,7 +106,7 @@ class _TermsOfServicePage extends State<TermsOfServicePage> {
                         '회사가 본 약관을 변경할 경우에는 적용일자, 변경사유를 명시하여 적용일자 7일 전부터 공지하거나, 회원에게 개별 통지합니다.'.tr()+
                         '회원에게 불리한 약관의 변경인 경우에는 그 적용일자 30일 전부터 공지하거나, 회원에게 개별 통지합니다.'.tr()+'\n',
                         style: TextStyle(
-                          color: Color(0xFFA0A0A0),
+                          color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                           fontSize: 14,
                           fontFamily: 'Roboto',
                         ),

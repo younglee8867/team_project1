@@ -6,6 +6,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
+
 // 위젯
 import '../widgets/searchBar.dart';
 import '../widgets/searchResultItem.dart';
@@ -98,8 +101,11 @@ class _SearchStationPageState extends State<SearchStationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+            backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white,
       body: Stack(
         children: [
           GestureDetector(

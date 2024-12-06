@@ -4,6 +4,8 @@ import 'package:flutter_application_1/killingTime/bonFire.dart';
 import 'package:flutter_application_1/killingTime/miniGame.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_application_1/main.dart';
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,8 +29,11 @@ class KillingTimeGame extends StatefulWidget {
 class _KillingTimeGame extends State<KillingTimeGame> {
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
@@ -77,7 +82,7 @@ class _KillingTimeGame extends State<KillingTimeGame> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Color(0xff978080),
+                color: themeNotifier.isDarkMode? const Color.fromARGB(255, 226, 226, 226): Color(0xff978080),
               ),
             ).tr(),
             SizedBox(height: 100),
@@ -101,7 +106,7 @@ class _KillingTimeGame extends State<KillingTimeGame> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Color(0xff978080),
+                color: themeNotifier.isDarkMode? const Color.fromARGB(255, 226, 226, 226): Color(0xff978080),
               ),
             ).tr(),
           ],

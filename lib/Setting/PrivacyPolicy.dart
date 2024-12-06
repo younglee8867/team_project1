@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_application_1/main.dart';
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
+
 void main() {
   runApp(
     MaterialApp(
@@ -20,8 +23,11 @@ class PrivacyPolicyPage extends StatefulWidget {
 class _PrivacyPolicyPage extends State<PrivacyPolicyPage> {
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+            backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
@@ -57,7 +63,7 @@ class _PrivacyPolicyPage extends State<PrivacyPolicyPage> {
                  '이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여 다음과 같이 '.tr()+
                  '개인정보 처리방침을 수립·공개합니다.'.tr()+'\n\n',
                       style: TextStyle(
-                        color: Color(0xFFA0A0A0),
+                        color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                         fontSize: 14,
                         fontFamily: 'Roboto',
                       ),
@@ -67,7 +73,7 @@ class _PrivacyPolicyPage extends State<PrivacyPolicyPage> {
                   '주요 개인정보 처리 표시', // 텍스트 내용
                   style: TextStyle(
                             fontSize: 23, // 텍스트 크기
-                            color: Color(0xFF22536F), // 텍스트 색상
+                            color: themeNotifier.isDarkMode ? Colors.white70 : Color.fromARGB(204, 34, 83, 111), // 텍스트 색상
                             fontWeight: FontWeight.bold,
                 ),
              ).tr(),
@@ -97,7 +103,7 @@ class _PrivacyPolicyPage extends State<PrivacyPolicyPage> {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Color(0xFFA0A0A0),
+                                  color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                                   fontWeight: FontWeight.normal,
                                 ),
                               ).tr(),
@@ -120,7 +126,7 @@ class _PrivacyPolicyPage extends State<PrivacyPolicyPage> {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Color(0xFFA0A0A0),
+                                  color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                                   fontWeight: FontWeight.normal,
                                 ),
                               ).tr(),
@@ -150,7 +156,7 @@ class _PrivacyPolicyPage extends State<PrivacyPolicyPage> {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Color(0xFFA0A0A0),
+                                  color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                                   fontWeight: FontWeight.normal,
                                 ),
                               ).tr(),
@@ -173,7 +179,7 @@ class _PrivacyPolicyPage extends State<PrivacyPolicyPage> {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Color(0xFFA0A0A0),
+                                  color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                                   fontWeight: FontWeight.normal,
                                 ),
                               ).tr(),
@@ -203,7 +209,7 @@ class _PrivacyPolicyPage extends State<PrivacyPolicyPage> {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Color(0xFFA0A0A0),
+                                  color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                                   fontWeight: FontWeight.normal,
                                 ),
                               ).tr(),
@@ -226,7 +232,7 @@ class _PrivacyPolicyPage extends State<PrivacyPolicyPage> {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Color(0xFFA0A0A0),
+                                  color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                                   fontWeight: FontWeight.normal,
                                 ),
                               ).tr(),
@@ -268,70 +274,3 @@ class _PrivacyPolicyPage extends State<PrivacyPolicyPage> {
     );
   }
 }
-
-/*                    TextSpan(
-                      text: '주요 개인정보 처리 표시\n\n'.tr(),
-                      style: TextStyle(
-                        color: Color(0xFF22536F),
-                        fontSize: 20,
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '일반 개인정보의 수집\n'.tr(),
-                      style: TextStyle(
-                        color: Color(0xFF22536F),
-                        fontSize: 16,
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '개인정보 처리 목적\n'.tr(),
-                      style: TextStyle(
-                        color: Color(0xFF22536F),
-                        fontSize: 16,
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '개인정보의 제공\n'.tr(),
-                      style: TextStyle(
-                        color: Color(0xFF22536F),
-                        fontSize: 16,
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '개인정보의 파기\n'.tr(),
-                      style: TextStyle(
-                        color: Color(0xFF22536F),
-                        fontSize: 16,
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '개인정보의 보유 기간\n'.tr(),
-                      style: TextStyle(
-                        color: Color(0xFF22536F),
-                        fontSize: 16,
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '민감정보 수집\n'.tr(),
-                      style: TextStyle(
-                        color: Color(0xFF22536F),
-                        fontSize: 16,
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                textAlign: TextAlign.justify, */

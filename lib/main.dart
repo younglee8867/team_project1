@@ -106,6 +106,7 @@ class _Home extends State<Home> {
   bool _isMenuVisible = false;
   String? _selectedLine = '전체';
   String _currentMapPath = 'assets/images/station/StationMap.jpg'; // 초기 노선도 경로
+  String _currentMapPathTodark = 'assets/images/station/StationMap_dartk.png'; // 다크모드 노선도
 
   void _toggleMenuVisibility() {
     setState(() {
@@ -125,29 +126,13 @@ class _Home extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-        ThemeNotifier themeNotifier = Provider.of<ThemeNotifier>(context);
+    ThemeNotifier themeNotifier = Provider.of<ThemeNotifier>(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      /*appBar: AppBar(
-        title: Text(
-          themeNotifier.isDarkMode ? "Dark Mode" : "Light Mode",
-          style: TextStyle(
-              color: themeNotifier.isDarkMode
-                  ? Colors.white
-                  : Colors.grey.shade900),
-        ),
-        actions: [
-          Switch(
-            value: themeNotifier.isDarkMode,
-            onChanged: (value) {
-              themeNotifier.toggleTheme();
-            },
-            activeTrackColor: Colors.lightBlueAccent,
-            activeColor: Colors.blue,
-          ),
-        ],
-      ),*/
+            backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white,
+
       body: Stack(
         children: [
           GestureDetector(
@@ -165,7 +150,7 @@ class _Home extends State<Home> {
                 child: Container(
                   height: 56,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: themeNotifier.isDarkMode ? const Color.fromARGB(179, 211, 211, 211) : Colors.white,
                     borderRadius: BorderRadius.circular(28),
                     border: Border.all(
                       color: const Color.fromRGBO(0, 57, 115, 148),
@@ -192,7 +177,7 @@ class _Home extends State<Home> {
                         child: TextField(
                           decoration: InputDecoration(
                             hintText: '역 검색'.tr(),
-                            hintStyle: TextStyle(color: Color(0xFFABABAB)),
+                            hintStyle: TextStyle(color: themeNotifier.isDarkMode ? const Color.fromARGB(217, 31, 31, 31) : Color(0xFFABABAB)),
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.symmetric(horizontal: 8),
                           ),
@@ -233,7 +218,11 @@ class _Home extends State<Home> {
                         maxScale: 4.0,
                         child: Container(
                           child: Center(
-                            child: Image.asset(_currentMapPath),
+                            child: Image.asset(
+                            themeNotifier.isDarkMode
+                              ? _currentMapPathTodark
+                              : _currentMapPath
+                            ),
                           ),
                         ),
                       ),
@@ -252,7 +241,7 @@ class _Home extends State<Home> {
                             value: _selectedLine,
                             icon: Icon(Icons.arrow_drop_down,
                                 color: Colors.white, size: 18),
-                            dropdownColor: Color.fromARGB(255, 128, 180, 210),
+                            dropdownColor: themeNotifier.isDarkMode ?Color.fromARGB(255, 68, 97, 113):Color.fromARGB(255, 128, 180, 210),
                             style: TextStyle(color: Colors.white),
                             underline: SizedBox(),
                             onChanged: (String? newValue) {

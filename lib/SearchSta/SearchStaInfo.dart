@@ -1,9 +1,4 @@
-/*
-[12.02] 데베 연동 성공
-수정사항 1. 화면 UI
-수정사항 2. 즐찾기능 추가
-수정사항 3. 출발역, 도착역 클릭시 -> 길찾기로(해당역)
-*/
+// 역검색 결과화면
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +10,10 @@ import 'package:flutter_application_1/util/firebaseGetPrev.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../util/util.dart';
 import '../constants/lineColor.dart';
+
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
+
 
 
 class SearchStaInfo extends StatefulWidget {
@@ -77,8 +76,11 @@ class _SearchStaInfo extends State<SearchStaInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+            backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
@@ -151,7 +153,7 @@ class _SearchStaInfo extends State<SearchStaInfo> {
             );
         },
       ),
-                  // 하단바
+      // 하단바
       bottomNavigationBar: Container(
         height: 60.0, // 높이 조절
         color: const Color.fromARGB(204, 34, 83, 111), // 배경색 설정
@@ -198,6 +200,7 @@ Widget _buildCircleWithText(String stationName) {
 
   // 각 호선마다 색상 가져오기
   final color = SubwayColors.getColor(stationName.substring(0, 1));
+  final themeNotifier = Provider.of<ThemeNotifier>(context);
   
   return Column(
     children: [
@@ -216,7 +219,7 @@ Widget _buildCircleWithText(String stationName) {
           stationName.isNotEmpty
               ? stationName.substring(0, 1)
               : '0',
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.black,
             fontSize: 50,
             fontWeight: FontWeight.bold,
@@ -235,8 +238,8 @@ Widget _buildCircleWithText(String stationName) {
                 stationName.isNotEmpty
                     ? stationName + " " + "역".tr()
                     : '알 수 없음',
-                style: const TextStyle(
-                  color: Colors.black,
+                style: TextStyle(
+                  color: themeNotifier.isDarkMode ? Colors.white : Colors.black,
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Roboto',
@@ -341,6 +344,7 @@ Widget _buildStationNavigationAndButtons() {
 
 // 이전역 다음역
 Widget _buildStationNavigation(String label, bool isNext) {
+  final themeNotifier = Provider.of<ThemeNotifier>(context);
   String displayText = "";
   final number = int.tryParse(label) ?? 0;
   if ((101 <= number && number <= 123) || // 1호선
@@ -381,7 +385,7 @@ Widget _buildStationNavigation(String label, bool isNext) {
         Text(
           displayText,
           style: TextStyle(
-            color: Color(0xff676363),
+            color: themeNotifier.isDarkMode ? Colors.white : Color(0xff676363),
             fontSize: 16,
           ),
         ),
@@ -415,6 +419,7 @@ Widget _buildStationNavigation(String label, bool isNext) {
 
 // 역 정보
 Widget _buildStationInfo(Map<String, dynamic>? stationDetails) {
+  final themeNotifier = Provider.of<ThemeNotifier>(context);
     if (stationDetails == null) return SizedBox();
 
     return _buildSection(
@@ -576,12 +581,15 @@ Widget _buildWeatherInfo(Map<String, dynamic>? weatherInfo) {
 
 // 공통 위젯
 Widget _buildSection({required String title, required Widget content}) {
+  final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, 
+          color: themeNotifier.isDarkMode ? Colors.white : Colors.black
+          )),
           SizedBox(height: 10),
           content,
           Divider(thickness: 1),
@@ -592,12 +600,13 @@ Widget _buildSection({required String title, required Widget content}) {
 
 // 기본 시설 위젯
 Widget _buildDetailText(String label, String value, {TextStyle? style}) {
+  final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: RichText(
         text: TextSpan(
           text: "$label  ",
-          style: TextStyle(color: Colors.black, fontSize: 16),
+          style: TextStyle(color: themeNotifier.isDarkMode ? const Color.fromARGB(238, 255, 255, 255) : Colors.black, fontSize: 16),
           children: [
             TextSpan(
               text: value,
@@ -611,10 +620,11 @@ Widget _buildDetailText(String label, String value, {TextStyle? style}) {
 
 // 편의시설 위젯
 Widget _buildDetailTextAmenities(String label, bool value) {
+  final themeNotifier = Provider.of<ThemeNotifier>(context);
   // 조건에 따라 텍스트 스타일 설정
   final textValue = value
-      ? TextStyle(color: Colors.black, fontSize: 16) // true일 때
-      : TextStyle(color: Color.fromARGB(255, 207, 207, 207), fontSize: 16); // false일 때
+      ? TextStyle(color: themeNotifier.isDarkMode ? const Color.fromARGB(238, 255, 255, 255) : Colors.black, fontSize: 16) // true일 때
+      : TextStyle(color: themeNotifier.isDarkMode ? const Color.fromARGB(240, 173, 173, 173) : Color.fromARGB(255, 207, 207, 207), fontSize: 16); // false일 때
 
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 4.0),

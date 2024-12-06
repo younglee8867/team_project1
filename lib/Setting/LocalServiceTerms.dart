@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_application_1/main.dart';
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
 
 class LocalServiceTermsPage extends StatefulWidget {
   const LocalServiceTermsPage({super.key});
@@ -13,10 +15,14 @@ class LocalServiceTermsPage extends StatefulWidget {
 
 class _LocalServiceTermsPage extends State<LocalServiceTermsPage> {
 
+
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+            backgroundColor: themeNotifier.isDarkMode
+          ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
+          : Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
@@ -51,7 +57,7 @@ class _LocalServiceTermsPage extends State<LocalServiceTermsPage> {
                       TextSpan(
                         text: '제1조 (목적)'.tr()+'\n',
                         style: TextStyle(
-                          color: Color(0xFFA0A0A0),
+                          color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                           fontSize: 14,
                           fontFamily: 'Roboto',
                           fontWeight: FontWeight.bold,
@@ -63,7 +69,7 @@ class _LocalServiceTermsPage extends State<LocalServiceTermsPage> {
                             '(이하 “서비스”라고 합니다)를 이용함에 있어 회사와 회원의 권리•의무 및 책임사항을'.tr()+
                             '규정함을 목적으로 합니다.'.tr()+'\n\n',
                         style: TextStyle(
-                          color: Color(0xFFA0A0A0),
+                          color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                           fontSize: 14,
                           fontFamily: 'Roboto',
                         ),
@@ -71,7 +77,7 @@ class _LocalServiceTermsPage extends State<LocalServiceTermsPage> {
                       TextSpan(
                         text: '제2조 (약관의 효력 및 변경)'.tr()+'\n',
                         style: TextStyle(
-                          color: Color(0xFFA0A0A0),
+                          color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                           fontSize: 14,
                           fontFamily: 'Roboto',
                           fontWeight: FontWeight.bold,
@@ -89,7 +95,7 @@ class _LocalServiceTermsPage extends State<LocalServiceTermsPage> {
                             '표시하지 아니하면 승인한 것으로 본다는 뜻을 명확하게 고지하였음에도 불구하고 거부의 의사표시가 없는 경우에는 변경된 약관에 '.tr()+
                             '승인한 것으로 봅니다. 회원이 개정약관에 동의하지 않을 경우 회원은 이용계약을 해지할 수 있습니다.'.tr()+'\n\n',
                         style: TextStyle(
-                          color: Color(0xFFA0A0A0),
+                          color: themeNotifier.isDarkMode ? Colors.white70 : Color(0xFFA0A0A0),
                           fontSize: 14,
                           fontFamily: 'Roboto',
                         ),
