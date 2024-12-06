@@ -44,7 +44,9 @@ class SearchResultItem extends StatelessWidget {
                   stationName.tr(),
                   style: TextStyle(
                     fontSize: 20,
-                    color: themeNotifier.isDarkMode ?const Color.fromARGB(255, 229, 229, 229):Color(0xFF676363),
+                    color: themeNotifier.isDarkMode
+                        ? const Color.fromARGB(255, 229, 229, 229)
+                        : Color(0xFF676363),
                   ),
                 ),
               ),

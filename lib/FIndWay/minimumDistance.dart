@@ -316,17 +316,7 @@ class _minimumDistanceState extends State<minimumDistance> {
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => WriteStationPage(
-                  initialStartStation:
-                      widget.startStation, // 전달할 startStation 값
-                  initialEndStation: widget.endStation, // 전달할 endStation 값
-                  searchHistory: [], // 필요한 경우 검색 기록 전달
-                ),
-              ),
-            );
+            Navigator.popUntil(context, ModalRoute.withName('/writeStation'));
           },
           child:
               Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
@@ -422,8 +412,8 @@ class _minimumDistanceState extends State<minimumDistance> {
                 });
               }),
               SizedBox(width: 10),
-              _buildButton('최소 환승 순', !isMinDistanceSelected, () {
-                Navigator.push(
+              _buildButton('최소 시간 순', !isMinDistanceSelected, () {
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => MinimumTransfer(

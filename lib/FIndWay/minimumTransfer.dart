@@ -1,5 +1,6 @@
 //최소 시간 길찾기
 // 정욱이가 처음부터 끝까지 다함
+//지랄하지마셈
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -313,17 +314,7 @@ class _MinimumTransferState extends State<MinimumTransfer> {
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => WriteStationPage(
-                  initialStartStation:
-                      widget.startStation, // 전달할 startStation 값
-                  initialEndStation: widget.endStation, // 전달할 endStation 값
-                  searchHistory: [], // 필요한 경우 검색 기록 전달
-                ),
-              ),
-            );
+            Navigator.popUntil(context, ModalRoute.withName('/writeStation'));
           },
           child:
               Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
@@ -419,7 +410,7 @@ class _MinimumTransferState extends State<MinimumTransfer> {
                 });
 
                 // minimumDistance 페이지로 이동
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => minimumDistance(
