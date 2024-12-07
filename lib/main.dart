@@ -108,7 +108,7 @@ class _Home extends State<Home> {
   String? _selectedLine = '전체';
   String _currentMapPath = 'assets/images/station/StationMap.jpg'; // 초기 노선도 경로
   String _currentMapPathTodark =
-      'assets/images/station/StationMap_dartk.png'; // 다크모드 노선도
+      'assets/images/station/StationMap_dark_.jpg'; // 다크모드 노선도
 
   void _toggleMenuVisibility() {
     setState(() {
@@ -226,7 +226,10 @@ class _Home extends State<Home> {
                         maxScale: 4.0,
                         child: Container(
                           child: Center(
-                            child: Image.asset(_currentMapPath),
+                            child: Image.asset(
+                              themeNotifier.isDarkMode
+                              ?_currentMapPathTodark
+                              :_currentMapPath),
                           ),
                         ),
                       ),

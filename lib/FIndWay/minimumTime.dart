@@ -277,9 +277,9 @@ class _MinimumTransferState extends State<MinimumTransfer> {
           "quickExit": "",
           "doorSide": prevStationDetails['facilityInfo']?['doorSide'] != null
               ? (prevStationDetails['facilityInfo']['doorSide'] == "왼쪽"
-                  ? "Left"
+                  ? "왼쪽"
                   : prevStationDetails['facilityInfo']['doorSide'] == "오른쪽"
-                      ? "Right"
+                      ? "오른쪽"
                       : prevStationDetails['facilityInfo']['doorSide'])
               : "",
           "duration": accumulatedDuration.toInt(),
@@ -311,9 +311,9 @@ class _MinimumTransferState extends State<MinimumTransfer> {
       "quickExit": "",
       "doorSide": lastStationDetails['facilityInfo']?['doorSide'] != null
           ? (lastStationDetails['facilityInfo']['doorSide'] == "왼쪽"
-              ? "Left"
+              ? "왼쪽"
               : lastStationDetails['facilityInfo']['doorSide'] == "오른쪽"
-                  ? "Right"
+                  ? "오른쪽"
                   : lastStationDetails['facilityInfo']['doorSide'])
           : "",
       "duration": accumulatedDuration.toInt(),
