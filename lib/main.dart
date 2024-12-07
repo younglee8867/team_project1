@@ -226,9 +226,7 @@ class _Home extends State<Home> {
                         maxScale: 4.0,
                         child: Container(
                           child: Center(
-                            child: Image.asset(themeNotifier.isDarkMode
-                                ? _currentMapPathTodark
-                                : _currentMapPath),
+                            child: Image.asset(_currentMapPath),
                           ),
                         ),
                       ),

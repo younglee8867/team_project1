@@ -11,7 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_application_1/Setting/RegionSettings.dart';
 import 'package:flutter_application_1/FindWay/StationMap.dart';
 import 'package:flutter_application_1/FindWay/WriteStation.dart';
-import 'package:flutter_application_1/FIndWay/minimumTransfer.dart';
+import 'package:flutter_application_1/FIndWay/minimumTime.dart';
 import 'package:flutter_application_1/FIndWay/minimumDistance.dart';
 import 'package:flutter_application_1/Setting/TermsOfService.dart';
 import 'package:flutter_application_1/Setting/PrivacyPolicy.dart';

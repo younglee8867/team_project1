@@ -12,7 +12,7 @@ class _BonFire extends State<BonFire> {
 
 
   // 오디오 재생
-  void _play() async{
+  /*void _play() async{
     if(isPlaying){
       await audioPlayer.pause();
     }else{
@@ -28,12 +28,12 @@ class _BonFire extends State<BonFire> {
     setState(() {
       isPlaying = false;
     });
-  }
+  }*/
 
   @override
   void dispose() {
-    audioPlayer.stop();
-    audioPlayer.dispose();
+    //audioPlayer.stop();
+    //audioPlayer.dispose();
     super.dispose();
   }
 
@@ -53,10 +53,10 @@ class _BonFire extends State<BonFire> {
               ),
             ),
           ),
-          IconButton(
-            onPressed: _play, 
+          /*IconButton(
+            //onPressed: _play, 
             icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-          ),
+          ),*/
 
           // 뒤로가기 버튼
           Positioned(

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:assets_audio_player/assets_audio_player.dart';
+//import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:provider/provider.dart';
 import '../constants/displayMode.dart';
 
@@ -27,7 +27,7 @@ class AppleGame extends StatefulWidget {
 }
 
 class _AppleGameState extends State<AppleGame> {
-  late AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer.newPlayer();
+  //late AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer.newPlayer();
 
   List<Apple> _apples = []; // 사과 리스트
   List<Apple> _selectedApples = []; // 선택된 사과 리스트
@@ -45,7 +45,7 @@ class _AppleGameState extends State<AppleGame> {
   void initState() {
     super.initState();
     _startTimer();
-        _assetsAudioPlayer.open(
+    /*    _assetsAudioPlayer.open(
       Audio("assets/appleGame.mp3"),
       loopMode: LoopMode.single, //반복 여부 (LoopMode.none : 없음)
       autoStart: false, //자동 시작 여부
@@ -54,6 +54,7 @@ class _AppleGameState extends State<AppleGame> {
     _assetsAudioPlayer.play(); //재생
     _assetsAudioPlayer.pause(); //멈춤
     _assetsAudioPlayer.stop(); //정지
+    */
   }
 
 

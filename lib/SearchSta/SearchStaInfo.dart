@@ -6,7 +6,6 @@ import 'package:flutter_application_1/FIndWay/WriteStation.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../util/firebaseUtil.dart';
-import 'package:flutter_application_1/util/firebaseGetPrev.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../util/util.dart';
 import '../constants/lineColor.dart';
@@ -37,11 +36,7 @@ class _SearchStaInfo extends State<SearchStaInfo> {
   void initState() {
     super.initState();
     stationData = fetchStationData(widget.stationName);
-    //isFavorite = SharedStationData.searchHistory.any(
-    //  (station) => station['name'] == widget.stationName && station['isFavorite'] == true,
-    //);
     _loadSearchHistory();
-    //_loadFavoriteStatus();
   }
 
   Future<void> _loadSearchHistory() async {
@@ -49,30 +44,7 @@ class _SearchStaInfo extends State<SearchStaInfo> {
       _searchHistory =
           SharedStationData.searchHistory; // SharedStationData에서 최신 데이터 로드
     });
-  }
-
-  /*  void _toggleFavorite() {
-    setState(() {
-      SharedStationData.toggleFavoriteStatus(widget.stationName);
-      // 현재 상태를 반영
-      isFavorite = !isFavorite;
-    });
-  }*/
-
-  // 즐겨찾기 상태 로드
-  Future<void> _loadFavoriteStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isFavorite = prefs.getBool(widget.stationName) ?? false;
-    });
-  }
-
-  // 즐겨찾기 상태 토글
-  void _toggleFavImage(int index) {
-    setState(() {
-      SharedStationData.toggleFavoriteStatus(_searchHistory[index]['name']);
-    });
-  }
+  }  
 
   @override
   Widget build(BuildContext context) {
@@ -84,10 +56,17 @@ class _SearchStaInfo extends State<SearchStaInfo> {
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
+            // 특정 조건 (예: 사용자 권한, 페이지 상태 등)
+            bool shouldNavigateBack = true; // 원하는 조건으로 설정
+
+            if (shouldNavigateBack) {
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              } else {
+                print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음'); // 디버깅용 로그
+              }
             } else {
-              print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음'); // 디버깅용 로그
+              print('뒤로가기 동작이 허용되지 않음'); // 조건에 따라 무시
             }
           },
           child:
@@ -199,58 +178,60 @@ class _SearchStaInfo extends State<SearchStaInfo> {
   }
 
 // 동그라미(호선)와 역 이름
-  Widget _buildCircleWithText(String stationName) {
-    // 각 호선마다 색상 가져오기
-    final color = SubwayColors.getColor(stationName.substring(0, 1));
-    final themeNotifier = Provider.of<ThemeNotifier>(context);
+Widget _buildCircleWithText(String stationName) {
 
-    return Column(
-      children: [
-        // 호선 색깔
-        Container(
-          width: 125,
-          height: 125,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            border: Border.all(color: color, width: 10), // 색 지정
-          ),
-          alignment: Alignment.center,
-          // 호선 번호 (ex. 1,2,3..)
-          child: Text(
-            stationName.isNotEmpty ? stationName.substring(0, 1) : '0',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 50,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
+  // 각 호선마다 색상 가져오기
+  final color = SubwayColors.getColor(stationName.substring(0, 1));
+  final themeNotifier = Provider.of<ThemeNotifier>(context);
+  
+  return Column(
+    children: [
+      // 호선 색깔
+      Container(
+        width: 125,
+        height: 125,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+          border: Border.all(color: color, width: 10), // 색 지정
         ),
-        const SizedBox(height: 10),
-        Center(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center, // 세로 정렬 중앙
-            children: [
-              // 역 이름을 가로 중앙에 배치
-              Expanded(
-                child: Text(
-                  stationName.isNotEmpty
-                      ? stationName + " " + "역".tr()
-                      : '알 수 없음',
-                  style: TextStyle(
-                    color:
-                        themeNotifier.isDarkMode ? Colors.white : Colors.black,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Roboto',
-                    height: 1.5,
-                  ),
-                  textAlign: TextAlign.center, // 텍스트를 가운데 정렬
+        alignment: Alignment.center,
+        // 호선 번호 (ex. 1,2,3..)
+        child: Text(
+          stationName.isNotEmpty
+              ? stationName.substring(0, 1)
+              : '0',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 50,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      const SizedBox(height: 10),
+      Center(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center, // 세로 정렬 중앙
+          children: [
+            // 역 이름을 가로 중앙에 배치
+            Expanded(
+              child: Text(
+                stationName.isNotEmpty
+                    ? stationName + " " + "역".tr()
+                    : '알 수 없음',
+                style: TextStyle(
+                  color: themeNotifier.isDarkMode ? Colors.white : Colors.black,
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Roboto',
+                  height: 1.5,
                 ),
+                textAlign: TextAlign.center, // 텍스트를 가운데 정렬
               ),
-              // 즐겨찾기 아이콘
-              /*  GestureDetector(
+            ),
+            // 즐겨찾기 아이콘
+            /*  GestureDetector(
                 onTap: _toggleFavorite,
                 child: Image.asset(
                   isFavorite
@@ -260,12 +241,14 @@ class _SearchStaInfo extends State<SearchStaInfo> {
                   height: 24,
               ),
             ),*/
-            ],
-          ),
+          ],
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
+
+
 
 // 이전역, 다음역 및 출발역, 도착역 버튼
   Widget _buildStationNavigationAndButtons() {
@@ -342,36 +325,81 @@ class _SearchStaInfo extends State<SearchStaInfo> {
   }
 
 // 이전역 다음역
-  Widget _buildStationNavigation(String label, bool isNext) {
-    final themeNotifier = Provider.of<ThemeNotifier>(context);
-    String displayText = "";
-    final number = int.tryParse(label) ?? 0;
-    if ((101 <= number && number <= 123) || // 1호선
-        (201 <= number && number <= 217) || // 2호선
-        (301 <= number && number <= 308) || // 3호선
-        (401 <= number && number <= 417) || // 4호선
-        (501 <= number && number <= 507) || // 5호선
-        (601 <= number && number <= 622) || // 6호선
-        (701 <= number && number <= 707) || // 7호선
-        (801 <= number && number <= 806) || // 8호선
-        (901 <= number && number <= 904)) {
-      // 9호선
-      displayText = label;
-    } else {
-      displayText = "종점".tr();
-    }
+Widget _buildStationNavigation(String label, bool isNext) {
+  final themeNotifier = Provider.of<ThemeNotifier>(context);
+  String displayText = "";
+  final number = int.tryParse(label) ?? 0;
+  if ((101 <= number && number <= 123) || // 1호선
+      (201 <= number && number <= 217) || // 2호선
+      (301 <= number && number <= 308) || // 3호선
+      (401 <= number && number <= 417) || // 4호선
+      (501 <= number && number <= 507) || // 5호선
+      (601 <= number && number <= 622) || // 6호선
+      (701 <= number && number <= 707) || // 7호선
+      (801 <= number && number <= 806) || // 8호선
+      (901 <= number && number <= 904)) { // 9호선
+    displayText = label; 
+  } else {
+    displayText = "종점".tr(); 
+  }
     return Row(
       children: [
         if (!isNext)
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => SearchStaInfo(
-                          stationName: displayText,
-                          searchHistory: _searchHistory)));
-            },
+        GestureDetector(
+        onTap: () async {
+          final result = await Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SearchStaInfo(
+                stationName: displayText,
+                searchHistory: _searchHistory,
+              ),
+            ),
+            (route) => route.isFirst, // 첫 번째 스택만 유지
+          );
+          if (result != null) {
+            // result를 활용한 후 처리
+          }
+        },
+          child: Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/Chevron_left_right.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 10),
+        Text(
+          displayText,
+          style: TextStyle(
+            color: themeNotifier.isDarkMode ? Colors.white : Color(0xff676363),
+            fontSize: 16,
+          ),
+        ),
+        if (isNext)
+        GestureDetector(
+          onTap: () async {
+            final result = await Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SearchStaInfo(
+                  stationName: displayText,
+                  searchHistory: _searchHistory,
+                ),
+              ),
+              (route) => route.isFirst, // 첫 번째 스택만 유지
+            );
+            if (result != null) {
+              // result를 활용한 후 처리
+            }
+          },
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.rotationY(3.14159), // Y축 회전
             child: Container(
               width: 24,
               height: 24,
@@ -383,39 +411,7 @@ class _SearchStaInfo extends State<SearchStaInfo> {
               ),
             ),
           ),
-        SizedBox(width: 10),
-        Text(
-          displayText,
-          style: TextStyle(
-            color: themeNotifier.isDarkMode ? Colors.white : Color(0xff676363),
-            fontSize: 16,
-          ),
         ),
-        if (isNext)
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => SearchStaInfo(
-                          stationName: displayText,
-                          searchHistory: _searchHistory)));
-            },
-            child: Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.rotationY(3.14159), // Y축 회전
-              child: Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/Chevron_left_right.png'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-          ),
       ],
     );
   }

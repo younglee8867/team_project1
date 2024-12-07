@@ -7,6 +7,8 @@ import 'package:flutter_application_1/constants/lineColor.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../util/firebaseUtil.dart';
+import 'package:provider/provider.dart';
+import '../constants/displayMode.dart';
 
 class findWay extends StatelessWidget {
   final String lineNumber;
@@ -26,6 +28,7 @@ class findWay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Padding(
       padding: const EdgeInsets.only(left: 10.0),
       child: Row(
@@ -68,10 +71,12 @@ class findWay extends StatelessWidget {
                 // 역 이름
                 Text(
                   stationName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xff4C4C4C),
+                    color: themeNotifier.isDarkMode?
+                      Colors.white
+                    : Color(0xff4C4C4C),
                   ),
                 ),
                 const SizedBox(height: 4), // 역 이름과 아래 정보 간격
@@ -82,10 +87,8 @@ class findWay extends StatelessWidget {
                     if (quickExit.isNotEmpty || doorSide.isNotEmpty)
                       Text(
                         [
-                          if (quickExit.isNotEmpty)
-                            "${'빠른 하차'.tr()}: $quickExit",
-                          if (doorSide.isNotEmpty)
-                            "${'내리는 문'.tr()}: $doorSide | ",
+                          if (quickExit.isNotEmpty) '빠른 하차'.tr()+':'+ '$quickExit',
+                          if (doorSide.isNotEmpty) '내리는 문'.tr()+':'+ '$doorSide'.tr()+ ' | ',
                         ].join(' | '),
                         style: const TextStyle(
                           fontSize: 14,
