@@ -273,9 +273,9 @@ class _minimumDistanceState extends State<minimumDistance> {
           "quickExit": "",
           "doorSide": prevStationDetails['facilityInfo']?['doorSide'] != null
               ? (prevStationDetails['facilityInfo']['doorSide'] == "왼쪽"
-                  ? "Left"
+                  ? "왼쪽"
                   : prevStationDetails['facilityInfo']['doorSide'] == "오른쪽"
-                      ? "Right"
+                      ? "오른쪽"
                       : prevStationDetails['facilityInfo']['doorSide'])
               : "",
           "duration": accumulatedDuration.toInt(),
@@ -307,9 +307,9 @@ class _minimumDistanceState extends State<minimumDistance> {
       "quickExit": "",
       "doorSide": lastStationDetails['facilityInfo']?['doorSide'] != null
           ? (lastStationDetails['facilityInfo']['doorSide'] == "왼쪽"
-              ? "Left"
+              ? "왼쪽"
               : lastStationDetails['facilityInfo']['doorSide'] == "오른쪽"
-                  ? "Right"
+                  ? "오른쪽"
                   : lastStationDetails['facilityInfo']['doorSide'])
           : "",
       "duration": accumulatedDuration.toInt(),
@@ -513,7 +513,7 @@ class _minimumDistanceState extends State<minimumDistance> {
           lineNumber: detail['line'].toString(),
           stationName: detail['stationName'],
           quickExit: detail['quickExit'] ?? "",
-          doorSide: (detail['doorSide'] ?? ""),
+          doorSide: detail['doorSide'] ?? "",
           duration: detail['duration'] != ""
               ? "${(detail['duration'] / 60).floor()} "+"분".tr()+ " ${(detail['duration'] % 60).toInt()} "+"초".tr()
               : "", // duration이 비어있을 경우 출력하지 않음
