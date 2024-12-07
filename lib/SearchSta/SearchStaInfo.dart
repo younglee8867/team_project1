@@ -6,7 +6,6 @@ import 'package:flutter_application_1/FIndWay/WriteStation.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../util/firebaseUtil.dart';
-import 'package:flutter_application_1/util/firebaseGetPrev.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../util/util.dart';
 import '../constants/lineColor.dart';
