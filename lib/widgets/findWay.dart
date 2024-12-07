@@ -82,8 +82,10 @@ class findWay extends StatelessWidget {
                     if (quickExit.isNotEmpty || doorSide.isNotEmpty)
                       Text(
                         [
-                          if (quickExit.isNotEmpty) '빠른 하차: $quickExit',
-                          if (doorSide.isNotEmpty) '내리는 문: $doorSide | ',
+                          if (quickExit.isNotEmpty)
+                            "${'빠른 하차'.tr()}: $quickExit",
+                          if (doorSide.isNotEmpty)
+                            "${'내리는 문'.tr()}: $doorSide | ",
                         ].join(' | '),
                         style: const TextStyle(
                           fontSize: 14,

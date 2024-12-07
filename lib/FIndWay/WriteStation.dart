@@ -196,8 +196,8 @@ class _WriteStationPageState extends State<WriteStationPage> {
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                    title: Text("오류"),
-                                    content: Text("유효하지 않은 역 번호입니다."),
+                                    title: Text("오류".tr()),
+                                    content: Text("유효하지 않은 역 번호입니다.".tr()),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -254,8 +254,8 @@ class _WriteStationPageState extends State<WriteStationPage> {
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                    title: Text("오류"),
-                                    content: Text("유효하지 않은 역 번호입니다."),
+                                    title: Text("오류".tr()),
+                                    content: Text("유효하지 않은 역 번호입니다.".tr()),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -270,13 +270,13 @@ class _WriteStationPageState extends State<WriteStationPage> {
                               showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: Text("오류"),
-                                  content: Text("숫자 세 자리를 입력해주세요."),
+                                  title: Text("오류".tr()),
+                                  content: Text("숫자 세 자리를 입력해주세요.".tr()),
                                   actions: [
                                     TextButton(
                                       onPressed: () =>
                                           Navigator.of(context).pop(),
-                                      child: Text("확인"),
+                                      child: Text("확인".tr()),
                                     ),
                                   ],
                                 ),
@@ -290,7 +290,7 @@ class _WriteStationPageState extends State<WriteStationPage> {
                         style: TextButton.styleFrom(
                           foregroundColor: Color(0xFFACACAC),
                         ),
-                        child: Text('검색기록 삭제').tr(),
+                        child: Text('검색기록 삭제'.tr()).tr(),
                       ),
                     ],
                   ),

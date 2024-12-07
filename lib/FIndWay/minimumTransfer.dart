@@ -273,7 +273,13 @@ class _MinimumTransferState extends State<MinimumTransfer> {
               currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
           "stationName": path[i],
           "quickExit": "",
-          "doorSide": prevStationDetails['facilityInfo']?['doorSide'] ?? "",
+          "doorSide": prevStationDetails['facilityInfo']?['doorSide'] != null
+              ? (prevStationDetails['facilityInfo']['doorSide'] == "왼쪽"
+                  ? "Left"
+                  : prevStationDetails['facilityInfo']['doorSide'] == "오른쪽"
+                      ? "Right"
+                      : prevStationDetails['facilityInfo']['doorSide'])
+              : "",
           "duration": accumulatedDuration.toInt(),
         });
 
@@ -301,7 +307,13 @@ class _MinimumTransferState extends State<MinimumTransfer> {
       "line": currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
       "stationName": path.last,
       "quickExit": "",
-      "doorSide": lastStationDetails['facilityInfo']?['doorSide'] ?? "",
+      "doorSide": lastStationDetails['facilityInfo']?['doorSide'] != null
+          ? (lastStationDetails['facilityInfo']['doorSide'] == "왼쪽"
+              ? "Left"
+              : lastStationDetails['facilityInfo']['doorSide'] == "오른쪽"
+                  ? "Right"
+                  : lastStationDetails['facilityInfo']['doorSide'])
+          : "",
       "duration": accumulatedDuration.toInt(),
     });
 
@@ -320,7 +332,7 @@ class _MinimumTransferState extends State<MinimumTransfer> {
               Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
         ),
         title: Text(
-          '길찾기',
+          '길찾기'.tr(),
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -337,10 +349,10 @@ class _MinimumTransferState extends State<MinimumTransfer> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Center(child: Text("데이터를 불러오는 중 오류가 발생했습니다."));
+              return Center(child: Text("데이터를 불러오는 중 오류가 발생했습니다.".tr()));
             } else if (!snapshot.hasData || snapshot.data!.length < 2) {
               return Center(
-                child: Text("출발역 또는 도착역 정보를 찾을 수 없습니다."),
+                child: Text("출발역 또는 도착역 정보를 찾을 수 없습니다.".tr()),
               );
             }
 
@@ -357,10 +369,10 @@ class _MinimumTransferState extends State<MinimumTransfer> {
                 if (dijkstraResult.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 } else if (dijkstraResult.hasError) {
-                  return Center(child: Text("최단 경로 계산 중 오류 발생."));
+                  return Center(child: Text("최단 경로 계산 중 오류 발생.".tr()));
                 } else if (!dijkstraResult.hasData) {
                   return Center(
-                    child: Text("경로를 찾을 수 없습니다."),
+                    child: Text("경로를 찾을 수 없습니다.".tr()),
                   );
                 }
 
@@ -404,7 +416,7 @@ class _MinimumTransferState extends State<MinimumTransfer> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              _buildButton('최소 거리 순', isMinDistanceSelected, () {
+              _buildButton('최소 거리 순'.tr(), isMinDistanceSelected, () {
                 setState(() {
                   isMinDistanceSelected = false;
                 });
@@ -421,7 +433,7 @@ class _MinimumTransferState extends State<MinimumTransfer> {
                 );
               }),
               SizedBox(width: 10),
-              _buildButton('최소 시간 순', !isMinDistanceSelected, () {
+              _buildButton('최소 시간 순'.tr(), !isMinDistanceSelected, () {
                 setState(() {
                   isMinDistanceSelected = true;
                 });
@@ -450,12 +462,12 @@ class _MinimumTransferState extends State<MinimumTransfer> {
                   children: [
                     // 소요 시간 텍스트
                     Text(
-                      "소요 시간",
+                      "소요 시간".tr(),
                       style: TextStyle(fontSize: 18, color: Colors.grey),
                     ),
                     // 소요 시간 값
                     Text(
-                      "${(result['duration'] / 60).floor()}분 ${(result['duration'] % 60).toInt()}초",
+                      "${(result['duration'] / 60).floor()}${'분'.tr()} ${(result['duration'] % 60).toInt()}${'초'.tr()}",
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -466,7 +478,13 @@ class _MinimumTransferState extends State<MinimumTransfer> {
 
                     // 환승 정보, 비용 정보, 거리 정보는 한 줄로 배치
                     Text(
-                      "환승 ${result['transferCount']}회 | 비용 ${result['cost']}원 | 거리 ${(result['distance'] / 1000).toStringAsFixed(2)}km",
+                      "환승 {transferCount}회 | 비용 {cost}원 | 거리 {distance}km"
+                          .tr(namedArgs: {
+                        'transferCount': result['transferCount'].toString(),
+                        'cost': result['cost'].toString(),
+                        'distance':
+                            (result['distance'] / 1000).toStringAsFixed(2),
+                      }),
                       style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                   ],
@@ -513,7 +531,7 @@ class _MinimumTransferState extends State<MinimumTransfer> {
           quickExit: detail['quickExit'] ?? "",
           doorSide: detail['doorSide'] ?? "",
           duration: detail['duration'] != ""
-              ? "${(detail['duration'] / 60).floor()}분 ${(detail['duration'] % 60).toInt()}초"
+              ? "${(detail['duration'] / 60).floor()}${'분'.tr()} ${(detail['duration'] % 60).toInt()}${'초'.tr()}"
               : "", // duration이 비어있을 경우 출력하지 않음
         );
       }).toList(),
