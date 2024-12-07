@@ -81,7 +81,7 @@ class _minimumDistanceState extends State<minimumDistance> {
 
       graphBuilt = true;
     } catch (e) {
-      print("그래프를 생성하는 동안 오류 발생: $e");
+      print("그래프를 생성하는 동안 오류 발생: $e".tr());
     }
   }
 
@@ -271,7 +271,13 @@ class _minimumDistanceState extends State<minimumDistance> {
               currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
           "stationName": path[i],
           "quickExit": "",
-          "doorSide": prevStationDetails['facilityInfo']?['doorSide'] ?? "",
+          "doorSide": prevStationDetails['facilityInfo']?['doorSide'] != null
+              ? (prevStationDetails['facilityInfo']['doorSide'] == "왼쪽"
+                  ? "Left"
+                  : prevStationDetails['facilityInfo']['doorSide'] == "오른쪽"
+                      ? "Right"
+                      : prevStationDetails['facilityInfo']['doorSide'])
+              : "",
           "duration": accumulatedDuration.toInt(),
         });
 
@@ -299,7 +305,13 @@ class _minimumDistanceState extends State<minimumDistance> {
       "line": currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
       "stationName": path.last,
       "quickExit": "",
-      "doorSide": lastStationDetails['facilityInfo']?['doorSide'] ?? "",
+      "doorSide": lastStationDetails['facilityInfo']?['doorSide'] != null
+          ? (lastStationDetails['facilityInfo']['doorSide'] == "왼쪽"
+              ? "Left"
+              : lastStationDetails['facilityInfo']['doorSide'] == "오른쪽"
+                  ? "Right"
+                  : lastStationDetails['facilityInfo']['doorSide'])
+          : "",
       "duration": accumulatedDuration.toInt(),
     });
 
@@ -322,7 +334,7 @@ class _minimumDistanceState extends State<minimumDistance> {
               Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
         ),
         title: Text(
-          '길찾기',
+          '길찾기'.tr(),
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -407,13 +419,13 @@ class _minimumDistanceState extends State<minimumDistance> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              _buildButton('최소 거리 순', isMinDistanceSelected, () {
+              _buildButton('최소 거리 순'.tr(), isMinDistanceSelected, () {
                 setState(() {
                   isMinDistanceSelected = true;
                 });
               }),
               SizedBox(width: 10),
-              _buildButton('최소 시간 순', !isMinDistanceSelected, () {
+              _buildButton('최소 시간 순'.tr(), !isMinDistanceSelected, () {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(

@@ -308,7 +308,7 @@ class _WriteStationPageState extends State<WriteStationPage> {
                         style: TextButton.styleFrom(
                           foregroundColor: Color(0xFFACACAC),
                         ),
-                        child: Text('검색기록 삭제').tr(),
+                        child: Text('검색기록 삭제'.tr()).tr(),
                       ),
                     ],
                   ),

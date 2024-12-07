@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_application_1/constants/displayMode.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:provider/provider.dart';
+
 void main() {
   runApp(const DisplayModePage());
 }
@@ -25,9 +26,10 @@ class _DisplayModePageState extends State<DisplayModePage> {
       backgroundColor: themeNotifier.isDarkMode
           ? const Color.fromARGB(255, 38, 38, 38)
           : Colors.white, // 배경 색상 설정
-        appBar: AppBar(
-        backgroundColor:
-            themeNotifier.isDarkMode ? Color.fromARGB(204, 34, 83, 111) : Color.fromARGB(204, 34, 83, 111),
+      appBar: AppBar(
+        backgroundColor: themeNotifier.isDarkMode
+            ? Color.fromARGB(204, 34, 83, 111)
+            : Color.fromARGB(204, 34, 83, 111),
         leading: GestureDetector(
           onTap: () {
             if (Navigator.canPop(context)) {
@@ -36,12 +38,15 @@ class _DisplayModePageState extends State<DisplayModePage> {
               print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음'); // 디버깅용 로그
             }
           },
-          child: Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
+          child:
+              Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
         ),
         title: Text(
-          '화면 모드',
+          '화면 모드'.tr(),
           style: TextStyle(
-            color: themeNotifier.isDarkMode ? Colors.white : const Color.fromARGB(255, 255, 255, 255),
+            color: themeNotifier.isDarkMode
+                ? Colors.white
+                : const Color.fromARGB(255, 255, 255, 255),
           ),
         ),
       ),
@@ -70,8 +75,9 @@ class _DisplayModePageState extends State<DisplayModePage> {
                     Text(
                       'Light Mode',
                       style: TextStyle(
-                        color:
-                            themeNotifier.isDarkMode ? Colors.white : Colors.black,
+                        color: themeNotifier.isDarkMode
+                            ? Colors.white
+                            : Colors.black,
                       ),
                     ),
                   ],
@@ -79,7 +85,7 @@ class _DisplayModePageState extends State<DisplayModePage> {
                 SizedBox(height: 50),
                 Column(
                   children: [
-                     Image.asset(
+                    Image.asset(
                       'assets/images/settings/displayDark.png',
                       width: 200,
                     ),
@@ -95,8 +101,9 @@ class _DisplayModePageState extends State<DisplayModePage> {
                     Text(
                       'Dark Mode',
                       style: TextStyle(
-                        color:
-                            themeNotifier.isDarkMode ? Colors.white : Colors.black,
+                        color: themeNotifier.isDarkMode
+                            ? Colors.white
+                            : Colors.black,
                       ),
                     ),
                   ],
