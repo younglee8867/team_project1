@@ -322,9 +322,9 @@ class _minimumDistanceState extends State<minimumDistance> {
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-            backgroundColor: themeNotifier.isDarkMode
+      backgroundColor: themeNotifier.isDarkMode
           ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
-          : Colors.white, 
+          : Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
@@ -454,21 +454,32 @@ class _minimumDistanceState extends State<minimumDistance> {
                     ),
                     // 소요 시간 값
                     Text(
-                      "${(result['duration'] / 60).floor()} "+"분".tr()+ " ${(result['duration'] % 60).toInt()} "+"초".tr(),
+                      "${(result['duration'] / 60).floor()} " +
+                          "분".tr() +
+                          " ${(result['duration'] % 60).toInt()} " +
+                          "초".tr(),
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
-                        color: themeNotifier.isDarkMode ?
-                          Colors.white
-                        : Color(0xff4C4C4C),
+                        color: themeNotifier.isDarkMode
+                            ? Colors.white
+                            : Color(0xff4C4C4C),
                       ),
                     ),
                     SizedBox(height: 5), // 항목 간의 간격
 
                     // 환승 정보, 비용 정보, 거리 정보는 한 줄로 배치
                     Text(
-                      "환승".tr()+ " ${result['transferCount']}"+"회".tr()+" | "+"비용".tr()+" ${result['cost']}"+"원".tr()+
-                      " | " + "거리".tr()+" ${(result['distance'] / 1000).toStringAsFixed(2)}km",
+                      "환승".tr() +
+                          " ${result['transferCount']}" +
+                          "회".tr() +
+                          " | " +
+                          "비용".tr() +
+                          " ${result['cost']}" +
+                          "원".tr() +
+                          " | " +
+                          "거리".tr() +
+                          " ${(result['distance'] / 1000).toStringAsFixed(2)}km",
                       style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                   ],
@@ -483,21 +494,38 @@ class _minimumDistanceState extends State<minimumDistance> {
     );
   }
 
-  Widget _buildButton(String text, bool isSelected, Function onPressed) {
+  Widget _buildButton(
+    String text,
+    bool isSelected,
+    Function onPressed,
+  ) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return GestureDetector(
       onTap: () => onPressed(),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
         decoration: BoxDecoration(
-          color: isSelected ? Color(0xff397394) : Colors.white,
-          border: Border.all(color: Color(0xff397394)),
+          color: isSelected
+              ? (themeNotifier.isDarkMode
+                  ? Color.fromARGB(255, 68, 97, 113)
+                  : Color(0xff386B88))
+              : Colors.white,
+          border: Border.all(
+            color: themeNotifier.isDarkMode
+                ? Color.fromARGB(255, 68, 97, 113)
+                : Color(0xff386B88),
+          ),
           borderRadius: BorderRadius.circular(28),
         ),
         child: Text(
           text.tr(),
           style: TextStyle(
             fontSize: 16,
-            color: isSelected ? Colors.white : Color(0xff397394),
+            color: isSelected
+                ? Colors.white
+                : (themeNotifier.isDarkMode
+                    ? Color.fromARGB(255, 68, 97, 113)
+                    : Color(0xff386B88)),
           ),
         ),
       ),
@@ -515,7 +543,10 @@ class _minimumDistanceState extends State<minimumDistance> {
           quickExit: detail['quickExit'] ?? "",
           doorSide: (detail['doorSide'] ?? ""),
           duration: detail['duration'] != ""
-              ? "${(detail['duration'] / 60).floor()} "+"분".tr()+ " ${(detail['duration'] % 60).toInt()} "+"초".tr()
+              ? "${(detail['duration'] / 60).floor()} " +
+                  "분".tr() +
+                  " ${(detail['duration'] % 60).toInt()} " +
+                  "초".tr()
               : "", // duration이 비어있을 경우 출력하지 않음
         );
       }).toList(),

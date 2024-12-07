@@ -51,7 +51,7 @@ class _WriteStationPageState extends State<WriteStationPage> {
     // 1. 빈 입력값 확인
     if (startStation.isEmpty || endStation.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('출발역과 도착역을 모두 입력하세요.').tr()),
+        SnackBar(content: Text('출발역과 도착역을 모두 입력하세요.')),
       );
       return;
     }
@@ -59,32 +59,39 @@ class _WriteStationPageState extends State<WriteStationPage> {
     // 2. 동일 역 입력 확인
     if (startStation == endStation) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('출발역과 도착역은 서로 달라야 합니다.').tr()),
+        SnackBar(content: Text('출발역과 도착역은 서로 달라야 합니다.')),
       );
       return;
     }
 
-    // 3. 3자리 숫자인지 확인
-    if (startStation.length != 3 || endStation.length != 3) {
-      _showErrorDialog("숫자 세 자리를 입력해주세요.");
-      return;
-    }
-
-    // 4. 범위 검사
+    // 3. 숫자인지 확인
     final startNumber = int.tryParse(startStation);
     final endNumber = int.tryParse(endStation);
 
     if (startNumber == null || endNumber == null) {
-      _showErrorDialog("숫자만 입력해주세요.");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('숫자만 입력해주세요.')),
+      );
       return;
     }
 
+    // 4. 세 자리인지 확인
+    if (startStation.length != 3 || endStation.length != 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('숫자 세 자리를 입력해주세요.')),
+      );
+      return;
+    }
+
+    // 5. 유효한 역 번호인지 확인
     if (!_isStationInRange(startNumber) || !_isStationInRange(endNumber)) {
-      _showErrorDialog("입력된 역 번호가 유효하지 않습니다.");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('입력된 역 번호가 유효하지 않습니다.')),
+      );
       return;
     }
 
-    // 모든 조건 통과 시 페이지 이동
+    // 모든 조건을 통과한 경우 페이지 이동
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -96,36 +103,18 @@ class _WriteStationPageState extends State<WriteStationPage> {
     );
   }
 
-  // 유효한 역 번호인지 검사
+// 유효한 역 번호인지 확인하는 함수
   bool _isStationInRange(int number) {
     return (101 <= number && number <= 123) ||
-          (201 <= number && number <= 217) ||
-          (301 <= number && number <= 308) ||
-          (401 <= number && number <= 417) ||
-          (501 <= number && number <= 507) ||
-          (601 <= number && number <= 622) ||
-          (701 <= number && number <= 707) ||
-          (801 <= number && number <= 806) ||
-          (901 <= number && number <= 904);
+        (201 <= number && number <= 217) ||
+        (301 <= number && number <= 308) ||
+        (401 <= number && number <= 417) ||
+        (501 <= number && number <= 507) ||
+        (601 <= number && number <= 622) ||
+        (701 <= number && number <= 707) ||
+        (801 <= number && number <= 806) ||
+        (901 <= number && number <= 904);
   }
-
-  // 오류 다이얼로그 표시
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("오류").tr(),
-        content: Text(message).tr(),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text("확인").tr(),
-          ),
-        ],
-      ),
-    );
-  }
-
 
   void _addSearchRecord(String stationName) {
     setState(() {
@@ -156,61 +145,6 @@ class _WriteStationPageState extends State<WriteStationPage> {
     });
   }
 
-  // 개별 역검색 유효성 검사 함수
-  void _validateStationInput(String value, bool isStart){
-    final controller = isStart ? _startStationController : _endStationController;
-     if (value.isNotEmpty) {
-        if (value.length == 3) {
-           final number = int.tryParse(value) ?? 0;
-            if ((101 <= number && number <= 123) ||
-                (201 <= number && number <= 217) ||
-                (301 <= number && number <= 308) ||
-                (401 <= number && number <= 417) ||
-                (501 <= number && number <= 507) ||
-                (601 <= number && number <= 622) ||
-                (701 <= number && number <= 707) ||
-                (801 <= number && number <= 806) ||
-                (901 <= number && number <= 904)) {
-                  _addSearchRecord(value);
-                  _endStationController.value = TextEditingValue(
-                  text: "$value",
-                );
-            } else {
-              _endStationController.clear();
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                title: Text("오류").tr(),
-                content: Text("유효하지 않은 역 번호입니다.").tr(),
-                actions: [
-                TextButton(
-                 onPressed: () =>
-                  Navigator.of(context).pop(),
-                  child: Text("확인").tr(),
-                 ),
-                ],
-                ),
-              );
-           }
-        } else {
-        showDialog(
-         context: context,
-           builder: (context) => AlertDialog(
-           title: Text("오류").tr(),
-            content: Text("숫자 세 자리를 입력해주세요.").tr(),
-            actions: [
-            TextButton(
-            onPressed: () =>
-                Navigator.of(context).pop(),
-                child: Text("확인").tr(),
-             ),
-          ],
-        ),
-      );
-    }
-  }
-}
-
   // 공통된 함수로 빼기
   Widget buildStationInputField(TextEditingController controller, String hint,
       Function(String) onSubmitted) {
@@ -219,12 +153,15 @@ class _WriteStationPageState extends State<WriteStationPage> {
       controller: controller,
       decoration: InputDecoration(
         hintText: hint.tr(),
-        hintStyle: TextStyle(color: themeNotifier.isDarkMode?const Color.fromARGB(255, 27, 27, 27): Color(0xFFABABAB)),
+        hintStyle: TextStyle(
+            color: themeNotifier.isDarkMode
+                ? const Color.fromARGB(255, 27, 27, 27)
+                : Color(0xFFABABAB)),
         prefixIcon: Icon(Icons.search),
         prefixIconColor: Color(0xff386B88),
         fillColor: themeNotifier.isDarkMode
-             ? const Color.fromARGB(179, 211, 211, 211)
-             :Colors.white, // 배경색 설정
+            ? const Color.fromARGB(179, 211, 211, 211)
+            : Colors.white, // 배경색 설정
         filled: true, // 배경색 활성화
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
@@ -242,7 +179,7 @@ class _WriteStationPageState extends State<WriteStationPage> {
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-            backgroundColor: themeNotifier.isDarkMode
+      backgroundColor: themeNotifier.isDarkMode
           ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
           : Colors.white,
       appBar: AppBar(
@@ -291,24 +228,125 @@ class _WriteStationPageState extends State<WriteStationPage> {
                       // 출발역 입력 필드
                       buildStationInputField(
                         _startStationController,
-                        '출발역 입력'.tr(),
-                        (value) => _validateStationInput(value, true),
+                        '출발역 입력',
+                        (value) {
+                          if (value.isNotEmpty) {
+                            if (value.length == 3) {
+                              final number = int.tryParse(value) ?? 0;
+                              if ((101 <= number && number <= 123) ||
+                                  (201 <= number && number <= 217) ||
+                                  (301 <= number && number <= 308) ||
+                                  (401 <= number && number <= 417) ||
+                                  (501 <= number && number <= 507) ||
+                                  (601 <= number && number <= 622) ||
+                                  (701 <= number && number <= 707) ||
+                                  (801 <= number && number <= 806) ||
+                                  (901 <= number && number <= 904)) {
+                                _addSearchRecord(value);
+                                _startStationController.value =
+                                    TextEditingValue(
+                                  text: "$value",
+                                );
+                              } else {
+                                _startStationController.clear();
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text("오류"),
+                                    content: Text("유효하지 않은 역 번호입니다."),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: Text("확인"),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text("오류"),
+                                  content: Text("숫자 세 자리를 입력해주세요."),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      child: Text("확인"),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          }
+                        },
                       ),
                       SizedBox(height: 8),
                       // 도착역 입력 필드
                       buildStationInputField(
                         _endStationController,
-                        '도착역 입력'.tr(),
-                       (value) => _validateStationInput(value, false),
+                        '도착역 입력',
+                        (value) {
+                          if (value.isNotEmpty) {
+                            if (value.length == 3) {
+                              final number = int.tryParse(value) ?? 0;
+                              if ((101 <= number && number <= 123) ||
+                                  (201 <= number && number <= 217) ||
+                                  (301 <= number && number <= 308) ||
+                                  (401 <= number && number <= 417) ||
+                                  (501 <= number && number <= 507) ||
+                                  (601 <= number && number <= 622) ||
+                                  (701 <= number && number <= 707) ||
+                                  (801 <= number && number <= 806) ||
+                                  (901 <= number && number <= 904)) {
+                                _addSearchRecord(value);
+                                _endStationController.value = TextEditingValue(
+                                  text: "$value",
+                                );
+                              } else {
+                                _endStationController.clear();
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text("오류"),
+                                    content: Text("유효하지 않은 역 번호입니다."),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: Text("확인"),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text("오류"),
+                                  content: Text("숫자 세 자리를 입력해주세요."),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      child: Text("확인"),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          }
+                        },
                       ),
-
-                      
                       TextButton(
                         onPressed: _clearSearchHistory,
                         style: TextButton.styleFrom(
                           foregroundColor: Color(0xFFACACAC),
                         ),
-                        child: Text('검색기록 삭제'.tr()).tr(),
+                        child: Text('검색기록 삭제').tr(),
                       ),
                     ],
                   ),
