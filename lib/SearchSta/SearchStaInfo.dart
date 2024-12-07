@@ -37,42 +37,14 @@ class _SearchStaInfo extends State<SearchStaInfo> {
   void initState() {
     super.initState();
     stationData = fetchStationData(widget.stationName);
-    //isFavorite = SharedStationData.searchHistory.any(
-    //  (station) => station['name'] == widget.stationName && station['isFavorite'] == true,
-    //);
     _loadSearchHistory();
-    //_loadFavoriteStatus();
   }
 
   Future<void> _loadSearchHistory() async {
     setState(() {
       _searchHistory = SharedStationData.searchHistory; // SharedStationData에서 최신 데이터 로드
     });
-  }
-
-  /*  void _toggleFavorite() {
-    setState(() {
-      SharedStationData.toggleFavoriteStatus(widget.stationName);
-      // 현재 상태를 반영
-      isFavorite = !isFavorite;
-    });
-  }*/
-
-  // 즐겨찾기 상태 로드
-  Future<void> _loadFavoriteStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isFavorite = prefs.getBool(widget.stationName) ?? false;
-    });
-  }
-
-  // 즐겨찾기 상태 토글
-  void _toggleFavImage(int index) {
-    setState(() {
-      SharedStationData.toggleFavoriteStatus(_searchHistory[index]['name']);
-    });
-  }
-  
+  }  
 
   @override
   Widget build(BuildContext context) {
@@ -84,10 +56,17 @@ class _SearchStaInfo extends State<SearchStaInfo> {
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
+            // 특정 조건 (예: 사용자 권한, 페이지 상태 등)
+            bool shouldNavigateBack = true; // 원하는 조건으로 설정
+
+            if (shouldNavigateBack) {
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              } else {
+                print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음'); // 디버깅용 로그
+              }
             } else {
-              print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음'); // 디버깅용 로그
+              print('뒤로가기 동작이 허용되지 않음'); // 조건에 따라 무시
             }
           },
           child: Icon(Icons.arrow_back, color: Color.fromARGB(255, 255, 255, 255)),
@@ -248,17 +227,6 @@ Widget _buildCircleWithText(String stationName) {
                 textAlign: TextAlign.center, // 텍스트를 가운데 정렬
               ),
             ),
-            // 즐겨찾기 아이콘
-            /*  GestureDetector(
-                onTap: _toggleFavorite,
-                child: Image.asset(
-                  isFavorite
-                      ? 'assets/images/favStarFill.png' // 즐겨찾기 상태일 때
-                      : 'assets/images/favStar.png',    // 즐겨찾기 상태가 아닐 때
-                  width: 24,
-                  height: 24,
-              ),
-            ),*/
           ],
         ),
       ),
@@ -364,12 +332,21 @@ Widget _buildStationNavigation(String label, bool isNext) {
       children: [
         if (!isNext)
         GestureDetector(
-          onTap: () {
-            Navigator.push(context, 
-              MaterialPageRoute(builder: (context) =>
-              SearchStaInfo(stationName: displayText, searchHistory: _searchHistory))
-            );
-          },
+        onTap: () async {
+          final result = await Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SearchStaInfo(
+                stationName: displayText,
+                searchHistory: _searchHistory,
+              ),
+            ),
+            (route) => route.isFirst, // 첫 번째 스택만 유지
+          );
+          if (result != null) {
+            // result를 활용한 후 처리
+          }
+        },
           child: Container(
             width: 24,
             height: 24,
@@ -391,11 +368,20 @@ Widget _buildStationNavigation(String label, bool isNext) {
         ),
         if (isNext)
         GestureDetector(
-          onTap: () {
-            Navigator.push(context, 
-              MaterialPageRoute(builder: (context) =>
-              SearchStaInfo(stationName: displayText, searchHistory: _searchHistory))
+          onTap: () async {
+            final result = await Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SearchStaInfo(
+                  stationName: displayText,
+                  searchHistory: _searchHistory,
+                ),
+              ),
+              (route) => route.isFirst, // 첫 번째 스택만 유지
             );
+            if (result != null) {
+              // result를 활용한 후 처리
+            }
           },
           child: Transform(
             alignment: Alignment.center,
