@@ -358,7 +358,7 @@ Widget _buildStationNavigation(String label, bool isNext) {
       (901 <= number && number <= 904)) { // 9호선
     displayText = label; 
   } else {
-    displayText = "종점"; 
+    displayText = "종점".tr(); 
   }
     return Row(
       children: [

@@ -4,7 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_application_1/FindWay/minimumTransfer.dart';
+import 'package:flutter_application_1/FindWay/minimumTime.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/widgets/findWay.dart';
 import 'package:flutter_application_1/FIndWay/minimumDistance.dart';
