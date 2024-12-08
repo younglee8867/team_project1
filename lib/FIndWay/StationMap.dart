@@ -30,8 +30,7 @@ class _StationMapState extends State<StationMap> {
   List<Map<String, dynamic>> _searchHistory = []; // 검색 기록 리스트
   String? _selectedLine = '전체'; // 드롭다운의 초기 선택값 설정
   String _currentMapPath = 'assets/images/station/StationMap.jpg'; // 초기 노선도 경로
-  String _currentMapPathTodark = 'assets/images/station/StationMap_dark_.jpg';
-
+  String _currentMapPathTodark = 'assets/images/station/stationMap_dark_.jpg';
   // 출발역과 도착역을 교환하는 메서드
   void _swapStations() {
     setState(() {
@@ -79,16 +78,19 @@ class _StationMapState extends State<StationMap> {
 
   // 드롭박스 값 변경 시 노선도 업데이트
   void _updateMap(String line) {
-    final themeNotifier = Provider.of<ThemeNotifier>(context, listen: false);
-    final stationMap =
-        themeNotifier.isDarkMode ? getStationMapDark() : getStationMapLight();
+  final themeNotifier = Provider.of<ThemeNotifier>(context, listen: false);
+  final stationMap = themeNotifier.isDarkMode ? getStationMapDark() : getStationMapLight();
 
-    setState(() {
-      _currentMapPath =
-          stationMap[line] ?? 'assets/images/station/StationMap.jpg';
-      _selectedLine = line;
-    });
-  }
+  setState(() {
+    _currentMapPath = stationMap[line] ??
+        (themeNotifier.isDarkMode
+            ? 'assets/images/station/StationMap_dark.jpg'
+            : 'assets/images/station/StationMap.jpg');
+    _selectedLine = line;
+
+  });
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -197,9 +199,12 @@ class _StationMapState extends State<StationMap> {
                     maxScale: 4.0,
                     child: Container(
                       child: Center(
-                        child: Image.asset(themeNotifier.isDarkMode
-                            ? _currentMapPathTodark
-                            : _currentMapPath),
+                        child: Image.asset(
+                        _currentMapPath ?? (
+                          themeNotifier.isDarkMode
+                                ? _currentMapPathTodark
+                                : _currentMapPath),
+                        ),
                       ),
                     ),
                   ),

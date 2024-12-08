@@ -107,8 +107,6 @@ class _Home extends State<Home> {
   bool _isMenuVisible = false;
   String? _selectedLine = '전체';
   String _currentMapPath = 'assets/images/station/StationMap.jpg'; // 초기 노선도 경로
-  String _currentMapPathTodark =
-      'assets/images/station/stationMap_dark_.jpg'; // 다크모드 노선도
 
   void _toggleMenuVisibility() {
     setState(() {
@@ -118,20 +116,19 @@ class _Home extends State<Home> {
 
   // 드롭박스 값 변경 시 노선도 업데이트
   void _updateMap(String line) {
-    final themeNotifier = Provider.of<ThemeNotifier>(context, listen: false);
-    final stationMap =
-        themeNotifier.isDarkMode ? getStationMapDark() : getStationMapLight();
+  final themeNotifier = Provider.of<ThemeNotifier>(context, listen: false);
+  final stationMap = themeNotifier.isDarkMode ? getStationMapDark() : getStationMapLight();
 
-    setState(() {
-      themeNotifier.isDarkMode
-          ? _currentMapPath =
-              stationMap[line] ?? 'assets/images/station/StationMap_dark_.jpg'
-          : _currentMapPath =
-              stationMap[line] ?? 'assets/images/station/StationMap.jpg';
+  setState(() {
+    _currentMapPath = stationMap[line] ??
+        (themeNotifier.isDarkMode
+            ? 'assets/images/station/StationMap_dark.jpg'
+            : 'assets/images/station/StationMap.jpg');
+    _selectedLine = line;
 
-      _selectedLine = line;
-    });
-  }
+  });
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -233,9 +230,11 @@ class _Home extends State<Home> {
                         maxScale: 4.0,
                         child: Container(
                           child: Center(
-                            child: Image.asset(themeNotifier.isDarkMode
-                                ? _currentMapPathTodark
-                                : _currentMapPath),
+                        child: Image.asset(
+                        _currentMapPath ?? (themeNotifier.isDarkMode
+                          ? 'assets/images/station/StationMap_dark.jpg'
+                          : 'assets/images/station/StationMap.jpg'),
+                        ),
                           ),
                         ),
                       ),
@@ -261,9 +260,13 @@ class _Home extends State<Home> {
                             underline: SizedBox(),
                             onChanged: (String? newValue) {
                               if (newValue != null) {
+                                print('드롭다운 선택 값: $newValue');
+                                final themeNotifier = Provider.of<ThemeNotifier>(context, listen: false);
+                                print('현재 모드 (다크모드 여부): ${themeNotifier.isDarkMode}');
                                 _updateMap(newValue);
                               }
                             },
+
                             items: <String>[
                               '전체',
                               '1호선',
