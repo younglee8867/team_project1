@@ -1,15 +1,13 @@
 // 역검색 결과화면
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/FIndWay/WriteStation.dart';
+import 'package:flutter_application_1/FindWay/WriteStation.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../util/firebaseUtil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../util/util.dart';
 import '../constants/lineColor.dart';
-
 import 'package:provider/provider.dart';
 import '../constants/displayMode.dart';
 
@@ -230,17 +228,6 @@ Widget _buildCircleWithText(String stationName) {
                 textAlign: TextAlign.center, // 텍스트를 가운데 정렬
               ),
             ),
-            // 즐겨찾기 아이콘
-            /*  GestureDetector(
-                onTap: _toggleFavorite,
-                child: Image.asset(
-                  isFavorite
-                      ? 'assets/images/favStarFill.png' // 즐겨찾기 상태일 때
-                      : 'assets/images/favStar.png',    // 즐겨찾기 상태가 아닐 때
-                  width: 24,
-                  height: 24,
-              ),
-            ),*/
           ],
         ),
       ),

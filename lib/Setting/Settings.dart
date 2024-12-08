@@ -4,7 +4,6 @@ import 'package:flutter_application_1/killingTime/killingTime.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_application_1/main.dart';
 
-import 'RegionSettings.dart';
 import 'DisplayMode.dart'; 
 import 'LocalServiceTerms.dart'; 
 import 'PrivacyPolicy.dart'; 
@@ -28,7 +27,6 @@ class settings extends StatefulWidget {
 
 class _Settings extends State<settings> {
   final List<Map<String, String>> settingsOptions = [
-    {'title': '지역 설정', 'page': 'RegionSettings'},
     {'title': '화면 모드', 'page': 'DisplayMode'},
     {'title': '위치기반 서비스 이용 약관', 'page': 'LocalServiceTerms'},
     {'title': '개인정보 처리 방침', 'page': 'PrivacyPolicy'},
@@ -38,12 +36,7 @@ class _Settings extends State<settings> {
  // 리스트 항목 클릭 시 이동할 함수
   void onItemTap(BuildContext context, String pageName) {
     // 선택된 항목에 맞는 페이지로 이동
-    if (pageName == 'RegionSettings') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => RegionSettingsPage()),
-      );
-    } else if (pageName == 'DisplayMode') {
+    if (pageName == 'DisplayMode') {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => DisplayModePage()),

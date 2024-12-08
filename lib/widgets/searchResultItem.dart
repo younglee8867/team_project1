@@ -1,3 +1,4 @@
+// 역 검색기록 위젯
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_application_1/SearchSta/SearchStaInfo.dart';

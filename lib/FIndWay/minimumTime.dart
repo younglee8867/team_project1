@@ -1,14 +1,12 @@
 //최소 시간 길찾기
-// 정욱이가 처음부터 끝까지 다함
-//지랄하지마셈
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/FindWay/minimumTime.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/widgets/findWay.dart';
-import 'package:flutter_application_1/FIndWay/minimumDistance.dart';
-import 'package:flutter_application_1/FIndWay/WriteStation.dart';
+import 'package:flutter_application_1/FindWay/minimumDistance.dart';
+import 'package:flutter_application_1/FindWay/WriteStation.dart';
 
 import '../util/firebaseUtil.dart';
 import 'package:provider/provider.dart';
@@ -224,7 +222,6 @@ class _MinimumTransferState extends State<MinimumTransfer> {
     return transferCount;
   }
 
-//durations(누적 소요시간 값)을 그냥 받아와서 그 전 durations를 뺴는걸로...
 //findway에 값을 넘겨주기 위한 함수
   Future<List<Map<String, dynamic>>> generateUIDetails(
     List<String> path,

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_application_1/FIndWay/minimumDistance.dart';
 import 'package:flutter_application_1/main.dart';
-//import 'package:flutter_application_1/FindWay/minimumDistance.dart';
+import 'package:flutter_application_1/FindWay/minimumDistance.dart';
 
 import '../widgets/searchResultItem.dart';
 import '../favoriteSta.dart';

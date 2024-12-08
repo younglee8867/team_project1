@@ -1,4 +1,4 @@
-// 스플래시 화면
+// 스플래시 화면 + 메인 화면
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -95,12 +95,12 @@ class SplashScreen extends StatelessWidget {
   }
 }
 
+// 홈화면
 class Home extends StatefulWidget {
   @override
   _Home createState() => _Home();
 }
 
-// 홈화면
 class _Home extends State<Home> {
   final TextEditingController _searchController = TextEditingController();
   late List<Map<String, dynamic>> _searchHistory;
