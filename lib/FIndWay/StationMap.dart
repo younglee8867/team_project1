@@ -31,6 +31,33 @@ class _StationMapState extends State<StationMap> {
   String? _selectedLine = '전체'; // 드롭다운의 초기 선택값 설정
   String _currentMapPath = 'assets/images/station/StationMap.jpg'; // 초기 노선도 경로
   String _currentMapPathTodark = 'assets/images/station/stationMap_dark_.jpg';
+      @override
+    void didChangeDependencies() {
+      super.didChangeDependencies();
+      final themeNotifier = Provider.of<ThemeNotifier>(context);
+      
+      // 다크모드 여부 확인
+      print('다크모드 상태 변경: ${themeNotifier.isDarkMode}');
+      print('현재 _currentMapPath: $_currentMapPath');
+
+      setState(() {
+        // 다크모드에 따라 _currentMapPath 업데이트
+        _currentMapPath = _getCurrentMapPath(themeNotifier.isDarkMode);
+      });
+
+      // 업데이트 후 _currentMapPath 출력
+      print('업데이트된 _currentMapPath: $_currentMapPath');
+  }
+
+  String _getCurrentMapPath(bool isDarkMode) {
+    final stationMap = isDarkMode ? getStationMapDark() : getStationMapLight();
+    return stationMap[_selectedLine] ??
+        (isDarkMode
+            ? 'assets/images/station/StationMap_dark.jpg'
+            : 'assets/images/station/StationMap.jpg');
+  }
+
+  
   // 출발역과 도착역을 교환하는 메서드
   void _swapStations() {
     setState(() {
@@ -200,10 +227,9 @@ class _StationMapState extends State<StationMap> {
                     child: Container(
                       child: Center(
                         child: Image.asset(
-                        _currentMapPath ?? (
-                          themeNotifier.isDarkMode
-                                ? _currentMapPathTodark
-                                : _currentMapPath),
+                          _currentMapPath ?? (themeNotifier.isDarkMode
+                              ? 'assets/images/station/StationMap_dark.jpg'
+                              : 'assets/images/station/StationMap.jpg'),
                         ),
                       ),
                     ),
