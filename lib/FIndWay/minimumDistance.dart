@@ -271,12 +271,8 @@ class _minimumDistanceState extends State<minimumDistance> {
               currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
           "stationName": path[i],
           "quickExit": "",
-          "doorSide": prevStationDetails['facilityInfo']?['doorSide'] != null
-              ? (prevStationDetails['facilityInfo']['doorSide'] == "왼쪽"
-                  ? "왼쪽"
-                  : prevStationDetails['facilityInfo']['doorSide'] == "오른쪽"
-                      ? "오른쪽"
-                      : prevStationDetails['facilityInfo']['doorSide'])
+          "doorSide": prevStationDetails['facilityInfo']?['doorSide'] is String
+              ? prevStationDetails['facilityInfo']['doorSide'].toString().tr()
               : "",
           "duration": accumulatedDuration.toInt(),
         });
@@ -305,12 +301,8 @@ class _minimumDistanceState extends State<minimumDistance> {
       "line": currentLines.isNotEmpty ? currentLines.first.toString() : "N/A",
       "stationName": path.last,
       "quickExit": "",
-      "doorSide": lastStationDetails['facilityInfo']?['doorSide'] != null
-          ? (lastStationDetails['facilityInfo']['doorSide'] == "왼쪽"
-              ? "왼쪽"
-              : lastStationDetails['facilityInfo']['doorSide'] == "오른쪽"
-                  ? "오른쪽"
-                  : lastStationDetails['facilityInfo']['doorSide'])
+      "doorSide": lastStationDetails['facilityInfo']?['doorSide'] is String
+          ? lastStationDetails['facilityInfo']['doorSide'].toString().tr()
           : "",
       "duration": accumulatedDuration.toInt(),
     });
