@@ -114,6 +114,33 @@ class _Home extends State<Home> {
     });
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+    
+    // 다크모드 여부 확인
+    print('다크모드 상태 변경: ${themeNotifier.isDarkMode}');
+    print('현재 _currentMapPath: $_currentMapPath');
+
+    setState(() {
+      // 다크모드에 따라 _currentMapPath 업데이트
+      _currentMapPath = _getCurrentMapPath(themeNotifier.isDarkMode);
+    });
+
+    // 업데이트 후 _currentMapPath 출력
+    print('업데이트된 _currentMapPath: $_currentMapPath');
+}
+
+String _getCurrentMapPath(bool isDarkMode) {
+  final stationMap = isDarkMode ? getStationMapDark() : getStationMapLight();
+  return stationMap[_selectedLine] ??
+      (isDarkMode
+          ? 'assets/images/station/StationMap_dark.jpg'
+          : 'assets/images/station/StationMap.jpg');
+}
+
+
   // 드롭박스 값 변경 시 노선도 업데이트
   void _updateMap(String line) {
   final themeNotifier = Provider.of<ThemeNotifier>(context, listen: false);
@@ -231,9 +258,9 @@ class _Home extends State<Home> {
                         child: Container(
                           child: Center(
                         child: Image.asset(
-                        _currentMapPath ?? (themeNotifier.isDarkMode
-                          ? 'assets/images/station/StationMap_dark.jpg'
-                          : 'assets/images/station/StationMap.jpg'),
+                          _currentMapPath ?? (themeNotifier.isDarkMode
+                              ? 'assets/images/station/StationMap_dark.jpg'
+                              : 'assets/images/station/StationMap.jpg'),
                         ),
                           ),
                         ),
@@ -260,10 +287,9 @@ class _Home extends State<Home> {
                             underline: SizedBox(),
                             onChanged: (String? newValue) {
                               if (newValue != null) {
-                                print('드롭다운 선택 값: $newValue');
-                                final themeNotifier = Provider.of<ThemeNotifier>(context, listen: false);
-                                print('현재 모드 (다크모드 여부): ${themeNotifier.isDarkMode}');
-                                _updateMap(newValue);
+                                setState(() {
+                                  _updateMap(newValue);
+                                });
                               }
                             },
 
