@@ -185,7 +185,11 @@ class _WriteStationPageState extends State<WriteStationPage> {
         leading: GestureDetector(
           onTap: () {
             if (Navigator.canPop(context)) {
-              Navigator.pop(context);
+              Navigator.pop(context, {
+                'startStation': _startStationController.text,
+                'endStation': _endStationController.text,
+                'searchHistory': _searchHistory,
+              });
             } else {
               print('뒤로가기 실패: 네비게이션 스택에 이전 페이지가 없음'); // 디버깅용 로그
             }
