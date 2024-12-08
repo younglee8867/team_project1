@@ -228,7 +228,7 @@ class _Home extends State<Home> {
                           child: Center(
                             child: Image.asset(
                               themeNotifier.isDarkMode
-                              ?_currentMapPathTodark
+                              ?_currentMapPath
                               :_currentMapPath),
                           ),
                         ),
