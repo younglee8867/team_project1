@@ -1,4 +1,7 @@
 // 공통 로직 또는 유틸리티 함수
+import 'package:provider/provider.dart';
+
+import '../constants/displayMode.dart';
 
 class SharedStationData {
   static List<Map<String, dynamic>> searchHistory = [];
@@ -23,7 +26,6 @@ class SharedStationData {
     // 새 검색 기록 추가
     searchHistory.insert(0, station);
   }
-
 
   // 즐겨찾기 상태
   static void toggleFavoriteStatus(String stationName) {
@@ -61,17 +63,36 @@ void toggleFavorite(List<Map<String, dynamic>> history, int index) {
   }
 }
 
-Map<String, String> getStationMap() {
+Map<String, String> getStationMapLight() {
   return {
-    '전체': 'assets/images/station/StationMap.jpg',
-    '1호선': 'assets/images/station/Line1.jpg',
-    '2호선': 'assets/images/station/Line2.jpg',
-    '3호선': 'assets/images/station/Line3.jpg',
-    '4호선': 'assets/images/station/Line4.jpg',
-    '5호선': 'assets/images/station/Line5.jpg',
-    '6호선': 'assets/images/station/Line6.jpg',
-    '7호선': 'assets/images/station/Line7.jpg',
-    '8호선': 'assets/images/station/Line8.jpg',
-    '9호선': 'assets/images/station/Line9.jpg',
+          '전체': 'assets/images/station/StationMap.jpg',
+          '1호선': 'assets/images/station/Line1.jpg',
+          '2호선': 'assets/images/station/Line2.jpg',
+          '3호선': 'assets/images/station/Line3.jpg',
+          '4호선': 'assets/images/station/Line4.jpg',
+          '5호선': 'assets/images/station/Line5.jpg',
+          '6호선': 'assets/images/station/Line6.jpg',
+          '7호선': 'assets/images/station/Line7.jpg',
+          '8호선': 'assets/images/station/Line8.jpg',
+          '9호선': 'assets/images/station/Line9.jpg',
+        
+  };
+
+}
+
+
+
+Map<String, String> getStationMapDark() {
+  return {
+    '전체': 'assets/images/station/stationMap_dark_.jpg',
+    '1호선': 'assets/images/station/Line1_dark_.jpg',
+    '2호선': 'assets/images/station/Line2_dark_.jpg',
+    '3호선': 'assets/images/station/Line3_dark_.jpg',
+    '4호선': 'assets/images/station/Line4_dark_.jpg',
+    '5호선': 'assets/images/station/Line5_dark_.jpg',
+    '6호선': 'assets/images/station/Line6_dark_.jpg',
+    '7호선': 'assets/images/station/Line7_dark_.jpg',
+    '8호선': 'assets/images/station/Line8_dark_.jpg',
+    '9호선': 'assets/images/station/Line9_dark_.jpg',
   };
 }
