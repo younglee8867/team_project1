@@ -1,6 +1,4 @@
 // 공통 로직 또는 유틸리티 함수
-//11.29 SharedStationData로 길찾기페이지와 역검색페이지에서
-// 통합적으로 관리하도록 했습니다..
 
 class SharedStationData {
   static List<Map<String, dynamic>> searchHistory = [];

@@ -1,5 +1,4 @@
 // 즐겨찾기 화면
-//11.29 SharedStationData를 통해 favoriteOnly를 관리
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/SearchSta/SearchStaInfo.dart';
 import 'package:flutter_application_1/main.dart';
@@ -36,9 +35,9 @@ class _FavoriteStaState extends State<FavoriteSta> {
     });
   }
 
-      // 숫자만 추출하는 함수
+  // 숫자만 추출하는 함수
   String extractNumber(String input) {
-    final RegExp numberRegex = RegExp(r'\d+'); // 숫자에 해당하는 정규식
+    final RegExp numberRegex = RegExp(r'\d+');
     final match = numberRegex.firstMatch(input);
     return match?.group(0) ?? ''; // 숫자가 없으면 빈 문자열 반환
   }

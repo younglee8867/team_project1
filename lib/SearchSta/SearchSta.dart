@@ -1,20 +1,14 @@
 // 역검색
-//11.29 검색 기록을 SharedStationData에서 가져옴
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/killingTime/killingTime.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:provider/provider.dart';
 import '../constants/displayMode.dart';
-
-// 위젯
 import '../widgets/searchBar.dart';
 import '../widgets/searchResultItem.dart';
 import '../widgets/menuOverlay.dart';
-
-// 다른 화면 파일 or util
 import '../SearchSta/SearchStaInfo.dart';
 import '../FindWay/StationMap.dart';
 import '../Setting/Settings.dart';

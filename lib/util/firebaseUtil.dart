@@ -1,3 +1,4 @@
+// 데이터베이스 결과 가져옴
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<Map<String, dynamic>?> fetchStationData(String stationName) async {

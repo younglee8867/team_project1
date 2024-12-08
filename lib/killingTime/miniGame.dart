@@ -1,8 +1,8 @@
+// 사과게임
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-//import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:provider/provider.dart';
 import '../constants/displayMode.dart';
 
@@ -27,7 +27,6 @@ class AppleGame extends StatefulWidget {
 }
 
 class _AppleGameState extends State<AppleGame> {
-  //late AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer.newPlayer();
 
   List<Apple> _apples = []; // 사과 리스트
   List<Apple> _selectedApples = []; // 선택된 사과 리스트
@@ -45,16 +44,6 @@ class _AppleGameState extends State<AppleGame> {
   void initState() {
     super.initState();
     _startTimer();
-    /*    _assetsAudioPlayer.open(
-      Audio("assets/appleGame.mp3"),
-      loopMode: LoopMode.single, //반복 여부 (LoopMode.none : 없음)
-      autoStart: false, //자동 시작 여부
-      showNotification: false, //스마트폰 알림 창에 띄울지 여부
-        );
-    _assetsAudioPlayer.play(); //재생
-    _assetsAudioPlayer.pause(); //멈춤
-    _assetsAudioPlayer.stop(); //정지
-    */
   }
 
 
@@ -69,8 +58,8 @@ class _AppleGameState extends State<AppleGame> {
     final double usableWidth = width; 
     final double usableHeight = height; 
 
-    final int columns = (usableWidth / (appleSize + padding)).floor() +1; // 가로 열 수
-    final int rows = (usableHeight / (appleSize + padding)).floor(); // 세로 행 수
+    final int columns = 30; // 가로 열 수
+    final int rows = 14; // 세로 행 수
 
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < columns; j++) {
@@ -220,18 +209,12 @@ class _AppleGameState extends State<AppleGame> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0), // 이미지 간 간격
             child: GestureDetector(
-               onTap: (() async {
-                //await audioPlayer.play(AssetSource('assets/sound/appleGame.ogg'));
-                print("click!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-              }),
               child: Image.asset(
               'assets/images/miniGame/gameMusic.png',
               height: 30,
               width: 30,
-              
             ),
             ) 
-
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0), // 이미지 간 간격
@@ -243,27 +226,27 @@ class _AppleGameState extends State<AppleGame> {
           ),
         ],
       ),
- body: Padding(
-      padding: const EdgeInsets.all(20.0), // 전체 화면에 패딩 추가
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // 점수 표시
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20.0), // 아래 간격 추가
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 300),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: themeNotifier.isDarkMode? const Color.fromARGB(255, 226, 226, 226): Color(0xff978080),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                'Score: $_score',
-                style: TextStyle(fontSize: 30, color: themeNotifier.isDarkMode? Color(0xff978080): Color.fromARGB(255, 226, 226, 226),),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0), // 전체 화면에 패딩 추가
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 점수 표시
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20.0), // 아래 간격 추가
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                decoration: BoxDecoration(
+                  color: themeNotifier.isDarkMode? const Color.fromARGB(255, 226, 226, 226): Color(0xff978080),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  'Score: $_score',
+                  style: TextStyle(fontSize: 30, color: themeNotifier.isDarkMode? Color(0xff978080): Color.fromARGB(255, 226, 226, 226),),
+                ),
               ),
             ),
-          ),
 
           // 타이머
           Padding(
@@ -319,11 +302,11 @@ class _AppleGameState extends State<AppleGame> {
                 final screenHeight = constraints.maxHeight;
 
                 // 화면 크기가 변경될 때만 사과를 다시 생성
-                if (_lastWidth != screenWidth || _lastHeight != screenHeight) {
-                  _lastWidth = screenWidth;
-                  _lastHeight = screenHeight;
+                if (_apples.isEmpty || (_lastWidth == 0 && _lastHeight == 0)) {
                   _generateApples(screenWidth, screenHeight);
                 }
+                _lastWidth = screenWidth;
+                _lastHeight = screenHeight;
 
                 return Stack(
                   children: [

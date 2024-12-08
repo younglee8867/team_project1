@@ -7,35 +7,6 @@ class BonFire extends StatefulWidget {
 }
 
 class _BonFire extends State<BonFire> {
-  AudioPlayer audioPlayer = AudioPlayer();
-  bool isPlaying = false;
-
-
-  // 오디오 재생
-  /*void _play() async{
-    if(isPlaying){
-      await audioPlayer.pause();
-    }else{
-      await audioPlayer.play('bonFire.mp3' as Source);
-    }
-    setState(() {
-      isPlaying = !isPlaying;
-    });
-  }
-
-  void _stop() async{
-    await audioPlayer.stop();
-    setState(() {
-      isPlaying = false;
-    });
-  }*/
-
-  @override
-  void dispose() {
-    //audioPlayer.stop();
-    //audioPlayer.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,10 +24,6 @@ class _BonFire extends State<BonFire> {
               ),
             ),
           ),
-          /*IconButton(
-            //onPressed: _play, 
-            icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-          ),*/
 
           // 뒤로가기 버튼
           Positioned(
