@@ -108,7 +108,7 @@ class _Home extends State<Home> {
   String? _selectedLine = '전체';
   String _currentMapPath = 'assets/images/station/StationMap.jpg'; // 초기 노선도 경로
   String _currentMapPathTodark =
-      'assets/images/station/StationMap_dark_.jpg'; // 다크모드 노선도
+      'assets/images/station/stationMap_dark_.jpg'; // 다크모드 노선도
 
   void _toggleMenuVisibility() {
     setState(() {
@@ -118,10 +118,17 @@ class _Home extends State<Home> {
 
   // 드롭박스 값 변경 시 노선도 업데이트
   void _updateMap(String line) {
-    final stationMap = getStationMap();
+    final themeNotifier = Provider.of<ThemeNotifier>(context, listen: false);
+    final stationMap =
+        themeNotifier.isDarkMode ? getStationMapDark() : getStationMapLight();
+
     setState(() {
-      _currentMapPath =
-          stationMap[line] ?? 'assets/images/station/StationMap.jpg';
+      themeNotifier.isDarkMode
+          ? _currentMapPath =
+              stationMap[line] ?? 'assets/images/station/StationMap_dark_.jpg'
+          : _currentMapPath =
+              stationMap[line] ?? 'assets/images/station/StationMap.jpg';
+
       _selectedLine = line;
     });
   }
@@ -226,10 +233,9 @@ class _Home extends State<Home> {
                         maxScale: 4.0,
                         child: Container(
                           child: Center(
-                            child: Image.asset(
-                              themeNotifier.isDarkMode
-                              ?_currentMapPathTodark
-                              :_currentMapPath),
+                            child: Image.asset(themeNotifier.isDarkMode
+                                ? _currentMapPathTodark
+                                : _currentMapPath),
                           ),
                         ),
                       ),

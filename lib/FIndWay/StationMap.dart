@@ -30,6 +30,7 @@ class _StationMapState extends State<StationMap> {
   List<Map<String, dynamic>> _searchHistory = []; // 검색 기록 리스트
   String? _selectedLine = '전체'; // 드롭다운의 초기 선택값 설정
   String _currentMapPath = 'assets/images/station/StationMap.jpg'; // 초기 노선도 경로
+  String _currentMapPathTodark = 'assets/images/station/StationMap_dark_.jpg';
 
   // 출발역과 도착역을 교환하는 메서드
   void _swapStations() {
@@ -78,7 +79,10 @@ class _StationMapState extends State<StationMap> {
 
   // 드롭박스 값 변경 시 노선도 업데이트
   void _updateMap(String line) {
-    final stationMap = getStationMap();
+    final themeNotifier = Provider.of<ThemeNotifier>(context, listen: false);
+    final stationMap =
+        themeNotifier.isDarkMode ? getStationMapDark() : getStationMapLight();
+
     setState(() {
       _currentMapPath =
           stationMap[line] ?? 'assets/images/station/StationMap.jpg';
@@ -90,7 +94,7 @@ class _StationMapState extends State<StationMap> {
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-            backgroundColor: themeNotifier.isDarkMode
+      backgroundColor: themeNotifier.isDarkMode
           ? const Color.fromARGB(255, 38, 38, 38) // 다크 모드 배경
           : Colors.white,
       appBar: AppBar(
@@ -140,8 +144,8 @@ class _StationMapState extends State<StationMap> {
                             prefixIcon: Icon(Icons.search),
                             prefixIconColor: Color(0xff386B88),
                             fillColor: themeNotifier.isDarkMode
-                                        ? const Color.fromARGB(179, 211, 211, 211)
-                                        :Colors.white, // 배경색 설정
+                                ? const Color.fromARGB(179, 211, 211, 211)
+                                : Colors.white, // 배경색 설정
                             filled: true, // 배경색 활성화
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
@@ -149,8 +153,8 @@ class _StationMapState extends State<StationMap> {
                             ),
                             hintStyle: TextStyle(
                               color: themeNotifier.isDarkMode
-                                    ?const Color.fromARGB(255, 27, 27, 27)
-                                    : Color(0xFFABABAB),
+                                  ? const Color.fromARGB(255, 27, 27, 27)
+                                  : Color(0xFFABABAB),
                             )),
                         onTap: () => _navigateToSearch(context),
                         readOnly: true, // 클릭 시에만 검색 페이지로 이동
@@ -163,16 +167,16 @@ class _StationMapState extends State<StationMap> {
                             prefixIcon: Icon(Icons.search),
                             prefixIconColor: Color(0xff386B88),
                             fillColor: themeNotifier.isDarkMode
-                                        ? const Color.fromARGB(179, 211, 211, 211)
-                                        :Colors.white, // 배경색 설정
-                            filled: true, // 배경색 활성화                            
+                                ? const Color.fromARGB(179, 211, 211, 211)
+                                : Colors.white, // 배경색 설정
+                            filled: true, // 배경색 활성화
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
                             hintStyle: TextStyle(
                               color: themeNotifier.isDarkMode
-                                    ?const Color.fromARGB(255, 27, 27, 27)
-                                    : Color(0xFFABABAB),     
+                                  ? const Color.fromARGB(255, 27, 27, 27)
+                                  : Color(0xFFABABAB),
                             )),
                         onTap: () => _navigateToSearch(context),
                         readOnly: true, // 클릭 시에만 검색 페이지로 이동
@@ -193,7 +197,9 @@ class _StationMapState extends State<StationMap> {
                     maxScale: 4.0,
                     child: Container(
                       child: Center(
-                        child: Image.asset(_currentMapPath),
+                        child: Image.asset(themeNotifier.isDarkMode
+                            ? _currentMapPathTodark
+                            : _currentMapPath),
                       ),
                     ),
                   ),
@@ -212,9 +218,9 @@ class _StationMapState extends State<StationMap> {
                         value: _selectedLine,
                         icon: Icon(Icons.arrow_drop_down,
                             color: Colors.white, size: 18),
-                            dropdownColor: themeNotifier.isDarkMode
-                                ? Color.fromARGB(255, 68, 97, 113)
-                                : Color.fromARGB(255, 128, 180, 210),
+                        dropdownColor: themeNotifier.isDarkMode
+                            ? Color.fromARGB(255, 68, 97, 113)
+                            : Color.fromARGB(255, 128, 180, 210),
                         style: TextStyle(color: Colors.white),
                         underline: SizedBox(),
                         onChanged: (String? newValue) {

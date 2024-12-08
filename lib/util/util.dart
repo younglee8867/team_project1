@@ -24,7 +24,6 @@ class SharedStationData {
     searchHistory.insert(0, station);
   }
 
-
   // 즐겨찾기 상태
   static void toggleFavoriteStatus(String stationName) {
     for (var station in searchHistory) {
@@ -61,7 +60,7 @@ void toggleFavorite(List<Map<String, dynamic>> history, int index) {
   }
 }
 
-Map<String, String> getStationMap() {
+Map<String, String> getStationMapLight() {
   return {
     '전체': 'assets/images/station/StationMap.jpg',
     '1호선': 'assets/images/station/Line1.jpg',
@@ -75,3 +74,62 @@ Map<String, String> getStationMap() {
     '9호선': 'assets/images/station/Line9.jpg',
   };
 }
+
+Map<String, String> getStationMapDark() {
+  return {
+    '전체': 'assets/images/station/stationMap_dark_.jpg',
+    '1호선': 'assets/images/station/Line1_dark_.jpg',
+    '2호선': 'assets/images/station/Line2_dark_.jpg',
+    '3호선': 'assets/images/station/Line3_dark_.jpg',
+    '4호선': 'assets/images/station/Line4_dark_.jpg',
+    '5호선': 'assets/images/station/Line5_dark_.jpg',
+    '6호선': 'assets/images/station/Line6_dark_.jpg',
+    '7호선': 'assets/images/station/Line7_dark_.jpg',
+    '8호선': 'assets/images/station/Line8_dark_.jpg',
+    '9호선': 'assets/images/station/Line9_dark_.jpg',
+  };
+}
+/* Map<String, Map<String, String>> getStationMap() {
+  return {
+    '전체': {
+      'light': 'assets/images/station/StationMap.jpg',
+      'dark': 'assets/images/station/stationMap_dark_.jpg',
+    },
+    '1호선': {
+      'light': 'assets/images/station/Line1.jpg',
+      'dark': 'assets/images/station/Line1_dark_.jpg',
+    },
+    '2호선': {
+      'light': 'assets/images/station/Line2.jpg',
+      'dark': 'assets/images/station/Line2_dark+.jpg',
+    },
+    '3호선': {
+      'light': 'assets/images/station/Line3.jpg',
+      'dark': 'assets/images/station/Line3_dark_.jpg',
+    },
+    '4호선': {
+      'light': 'assets/images/station/Line4.jpg',
+      'dark': 'assets/images/station/Line4_dark_.jpg',
+    },
+    '5호선': {
+      'light': 'assets/images/station/Line5.jpg',
+      'dark': 'assets/images/station/Line5_dark_.jpg',
+    },
+    '6호선': {
+      'light': 'assets/images/station/Line6.jpg',
+      'dark': 'assets/images/station/Line6_dark_.jpg',
+    },
+    '7호선': {
+      'light': 'assets/images/station/Line7.jpg',
+      'dark': 'assets/images/station/Line7_dark_.jpg',
+    },
+    '8호선': {
+      'light': 'assets/images/station/Line8.jpg',
+      'dark': 'assets/images/station/Line8_dark_.jpg',
+    },
+    '9호선': {
+      'light': 'assets/images/station/Line9.jpg',
+      'dark': 'assets/images/station/Line9_dark_.jpg',
+    },
+  };
+} */
